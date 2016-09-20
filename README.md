@@ -13,6 +13,36 @@ React Native module to support Azure Notification Hub push notifications on Andr
 - [Code of Conduct](CODE_OF_CONDUCT.md)
 - [License](#license)
 
+# Prerequisites
+
+## Android
+
+The documentation that follows assumes you have generated a React Native Android project using the `react-native-cli`, i.e.:
+
+```
+react-native init myapp
+```
+
+In addition to the standard React Native requirements, you will also need to install the following Android SDK components with your prefered SDK management tools:
+* Google Play services
+
+## Windows
+
+The documentation that follows assumes you have generated a React Native Windows project using the `react-native-cli` and `rnpm-plugin-windows`, i.e.:
+
+```
+react-native init myapp
+cd myapp
+npm i --save-dev rnpm-plugin-windows
+react-native windows
+```
+
+It also assumes you have Visual Studio 2015 installed ([Visual Studio Community](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx) is fine).
+
+## iOS
+
+Coming soon.
+
 # Getting Started
 
 ```
