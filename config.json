@@ -1,5 +1,0 @@
-{
-    "connectionString": "<your Azure Notification Hub connection string>",
-    "hubName": "<your Azure Notification Hub name>",
-    "senderId": "<your FCM sender ID>"
-}

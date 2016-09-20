@@ -16,4 +16,4 @@ public class ReactNativeInstanceIDService extends FirebaseInstanceIdService {
         Intent intent = new Intent(this, ReactNativeRegistrationIntentService.class);
         startService(intent);
     }
-};
+}
