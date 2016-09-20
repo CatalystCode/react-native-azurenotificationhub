@@ -5,7 +5,7 @@ React Native module to support Azure Notification Hub push notifications on Andr
 # Installation
 
 ```
-npm isntall react-native-azurenotificationhub
+npm install react-native-azurenotificationhub
 ```
 
 ## Set up Azure Notification Hub
@@ -21,6 +21,25 @@ npm isntall react-native-azurenotificationhub
 ![Get Connection String](img/GetConnectionString.png)
 
 ## Android Installation
+
+### Register app with Notification Hub
+
+* Log in to the [Firebase console](https://firebase.google.com/console/) and create a new Firebase project if you don't already have one.
+* After your project is created click **Add Firebase to your Android app** and folow the instructions provided.
+
+![Add Firebase to Android](./img/AddFirebaseToAndroid.png).
+
+* In the Firebase Console, click the cog for your project and then click **Project Settings**
+
+![Firebase Project Settings](./img/FirebaseProjectSettings.png)
+
+* Click the **Cloud Messaging** tab in your project settings and copy the value of the **Server key** and **Sender ID**. The former will be used to configure the Notification Hub Access Policy and and the latter for your React Native module registration.
+
+* Back on the [Azure Portal](https://portal.azure.com) page for your notification hub, select **Settings > Notification Services > Google (GCM)**. Enter the FCM **Server key** you copied from the [Firebase console](https://firebase.google.com/console/) and click **Save**.
+
+![Configure GCM](./img/ConfigureGCM.png)
+
+### Export React Native Module from app
 
 Coming soon.
 
@@ -46,6 +65,8 @@ Coming soon.
 ![Application Secrets](img/ApplicationSecrets.png)
 
 * Back on the [Azure Portal](https://portal.azure.com) page for your notification hub, select **Settings > Notification Services > Windows (WNS)**. Then enter the **Application Secret** password in the Security Key field. Enter your **Package SID** value that you obtained from WNS in the previous section, and then click **Save**.
+
+![Configure WNS](./img/ConfigureWNS.png)
 
 ### Export React Native Module from app
 
