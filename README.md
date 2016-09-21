@@ -82,7 +82,77 @@ npm install react-native-azurenotificationhub
 
 ### Export React Native Module from app
 
-Coming soon.
+In `android/settings.gradle`
+
+```gradle
+...
+
+include ':react-native-azurenotificationhub'
+project(':react-native-azurenotificationhub').projectDir = file('../node_modules/react-native-azurenotificationhub/android')
+```
+
+In `android/app/build.gradle`
+
+```gradle
+...
+dependencies {
+    ...
+
+    compile project(':react-native-azurenotificationhub')
+    compile 'com.google.android.gms:play-services-gcm:9.4.0'
+    compile 'com.google.firebase:firebase-messaging:9.4.0'
+}
+```
+
+In `android/app/src/main/AndroidManifest.xml`
+
+```xml
+    ...
+    
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    
+    <application ...>
+      ...
+      <service
+        android:name="com.azure.reactnative.notificationhub.ReactNativeRegistrationIntentService"
+        android:exported="false">
+      </service>
+      <receiver android:name="com.microsoft.windowsazure.notifications.NotificationsBroadcastReceiver"
+        android:permission="com.google.android.c2dm.permission.SEND">
+        <intent-filter>
+          <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+        </intent-filter>
+      </receiver>
+    ...
+```
+
+Register the module package in `MainApplication.java`
+
+```java
+import com.azure.reactnative.notificationhub.ReactNativeNotificationHubPackage;
+
+public class MainApplication extends Application implements ReactApplication {
+
+  private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
+    @Override
+    protected boolean getUseDeveloperSupport() {
+      return BuildConfig.DEBUG;
+    }
+
+    @Override
+    protected List<ReactPackage> getPackages() {
+      return Arrays.<ReactPackage>asList(
+          new MainReactPackage(),
+          new ReactNativeNotificationHubPackage() // <-- Add this package
+      );
+    }
+  };
+
+  ...
+}
+```
 
 ## Windows Installation
 
@@ -123,6 +193,14 @@ Coming soon.
 * In **MainPage.cs** of your Windows Store app, add the the `ReactAzureNotificationHubPacakge` to your configured set of packages:
 
 ```c#
+using ReactWindowsAzureNotificationHub;
+
+namespace ...
+{
+    public class MainPage : ReactPage
+    {
+        ...
+        
         public override List<IReactPackage> Packages
         {
             get
@@ -130,10 +208,14 @@ Coming soon.
                 new List<IReactPackage>
                 {
                     new MainReactPackage(),
-                    new ReactAzureNotificationHubPackage(), // Also add using ReactWindowsAzureNotificationHub;
+                    new ReactAzureNotificationHubPackage(), // <-- Add this package
                 }
             }
         }
+        
+        ...
+    }
+}
 ```
 
 * At this point you can register and unregister from the Azure Notification Hub instance using JavaScript as in the following example:
