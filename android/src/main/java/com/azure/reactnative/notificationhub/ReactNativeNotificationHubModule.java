@@ -5,11 +5,10 @@ import android.content.Intent;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.gcm.*;
 
+import com.microsoft.windowsazure.messaging.NotificationHub;
 import com.microsoft.windowsazure.notifications.NotificationsManager;
 
-import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
@@ -23,6 +22,8 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
 
     private static final String ERROR_INVALID_ARGUMENTS = "E_INVALID_ARGUMENTS";
     private static final String ERROR_PLAY_SERVICES = "E_PLAY_SERVICES";
+    private static final String ERROR_NOTIFICATION_HUB = "E_NOTIFICATION_HUB";
+    private static final String ERROR_NOT_REGISTERED = "E_NOT_REGISTERED";
 
     public ReactNativeNotificationHubModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -77,8 +78,26 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
     }
 
     @ReactMethod
-    public void unregister(ReadableMap config) {
+    public void unregister(Promise promise) {
+        NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
 
+        ReactContext reactContext = getReactApplicationContext();
+        String connectionString = notificationHubUtil.getConnectionString(reactContext);
+        String hubName = notificationHubUtil.getHubName(reactContext);
+        String registrationId = notificationHubUtil.getRegistrationID(reactContext);
+
+        if (connectionString == null || hubName == null || registrationId == null) {
+            promise.reject(ERROR_NOT_REGISTERED, "No registration to Azure Notification Hub.");
+        }
+
+        NotificationHub hub = new NotificationHub(hubName, connectionString, reactContext);
+        try {
+            hub.unregister();
+        } catch (Exception e) {
+            promise.reject(ERROR_NOTIFICATION_HUB, e);
+        }
+
+        NotificationsManager.stopHandlingNotifications(reactContext);
     }
 
     private static class GoogleApiAvailabilityRunnable implements Runnable {
