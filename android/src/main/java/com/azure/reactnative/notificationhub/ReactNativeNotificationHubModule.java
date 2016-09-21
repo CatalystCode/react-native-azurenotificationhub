@@ -14,6 +14,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.UiThreadUtil;
 
@@ -52,9 +53,19 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
             promise.reject(ERROR_INVALID_ARGUMENTS, "Sender ID cannot be null.");
         }
 
+        String[] tags = null;
+        if (config.hasKey("tags") && !config.isNull("tags")) {
+            ReadableArray tagsJson = config.getArray("tags");
+            tags = new String[tagsJson.size()];
+            for (int i = 0; i < tagsJson.size(); ++i) {
+                tags[i] = tagsJson.getString(i);
+            }
+        }
+
         ReactContext reactContext = getReactApplicationContext();
         notificationHubUtil.setConnectionString(reactContext, connectionString);
         notificationHubUtil.setHubName(reactContext, hubName);
+        notificationHubUtil.setTags(reactContext, tags);
 
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         int resultCode = apiAvailability.isGooglePlayServicesAvailable(reactContext);
@@ -93,11 +104,11 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
         NotificationHub hub = new NotificationHub(hubName, connectionString, reactContext);
         try {
             hub.unregister();
+            notificationHubUtil.setRegistrationID(reactContext, null);
+            NotificationsManager.stopHandlingNotifications(reactContext);
         } catch (Exception e) {
             promise.reject(ERROR_NOTIFICATION_HUB, e);
         }
-
-        NotificationsManager.stopHandlingNotifications(reactContext);
     }
 
     private static class GoogleApiAvailabilityRunnable implements Runnable {
