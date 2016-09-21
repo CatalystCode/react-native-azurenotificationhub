@@ -9,6 +9,10 @@ namespace ReactWindowsAzureNotificationHub
     class ReactAzureNotificationHubModule : ReactContextNativeModuleBase
     {
         private const string RegistrationFailure = "E_REGISTRATION_FAILED";
+        private const string ErrorInvalidArguments = "E_INVALID_ARGUMENTS";
+
+        private string _connectionString;
+        private string _hubName;
 
         public ReactAzureNotificationHubModule(ReactContext reactContext) 
             : base(reactContext)
@@ -24,45 +28,61 @@ namespace ReactWindowsAzureNotificationHub
         }
 
         [ReactMethod]
-        public async void register(JObject config, IPromise callback)
+        public async void register(JObject config, IPromise promise)
         {
+            _connectionString = config.Value<string>("connectionString");
+            _hubName = config.Value<string>("hubName");
+            var tags = config["tags"]?.ToObject<string[]>();
+
+            AssertArguments(promise);
+
             try
             {
-                var hubName = config.Value<string>("hubName");
-                var connectionString = config.Value<string>("connectionString");
                 var channel = await PushNotificationChannelManager.CreatePushNotificationChannelForApplicationAsync().AsTask().ConfigureAwait(false);
-                var hub = new NotificationHub(hubName, connectionString);
-                var result = await hub.RegisterNativeAsync(channel.Uri).ConfigureAwait(false);
-
+                var hub = new NotificationHub(_hubName, _connectionString);
+                var result = await hub.RegisterNativeAsync(channel.Uri, tags).ConfigureAwait(false);
                 if (result.RegistrationId != null)
                 {
-                    callback.Resolve(result.RegistrationId);
+                    promise.Resolve(result.RegistrationId);
                 }
                 else
                 {
-                    callback.Reject(RegistrationFailure, "Registration was not successful.");
+                    promise.Reject(RegistrationFailure, "Registration was not successful.");
                 }
             }
             catch (Exception ex)
             {
-                callback.Reject(ex);
+                promise.Reject(ex);
             }
         }
 
         [ReactMethod]
-        public async void unregister(JObject config, IPromise callback)
+        public async void unregister(IPromise promise)
         {
+            AssertArguments(promise);
+
             try
             {
-                var hubName = config.Value<string>("hubName");
-                var connectionString = config.Value<string>("connectionString");
-                var hub = new NotificationHub(hubName, connectionString);
+                var hub = new NotificationHub(_hubName, _connectionString);
                 await hub.UnregisterNativeAsync();
-                callback.Resolve(true);
+                promise.Resolve(true);
             }
             catch (Exception ex)
             {
-                callback.Reject(ex);
+                promise.Reject(ex);
+            }
+        }
+
+        private void AssertArguments(IPromise promise)
+        {
+            if (_connectionString == null)
+            {
+                promise.Reject(ErrorInvalidArguments, "Connection string cannot be null.");
+            }
+
+            if (_hubName == null)
+            {
+                promise.Reject(ErrorInvalidArguments, "Hub name cannot be null.");
             }
         }
     }
