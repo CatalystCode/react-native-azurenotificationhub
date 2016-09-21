@@ -5,11 +5,12 @@ React Native module to support Azure Notification Hub push notifications on Andr
 # Quick Links
 
 - [Getting Started](#getting-started)
-  - [Set up Azure Notification Hub](#set-up-azure-notification-hub)
+  - [Create a Notification Hub](#create-a-notification-hub)
   - [Android Installation](#android-installation)
   - [Windows Installation](#windows-installation)
   - [iOS Installation](#ios-installation)
   - [JavaScript Configuration](#javascript-configuration)
+  - [Publishing Notifications](#publishing-notifications)
 - [Code of Conduct](CODE_OF_CONDUCT.md)
 - [License](#license)
 
@@ -49,9 +50,7 @@ Coming soon.
 npm install react-native-azurenotificationhub
 ```
 
-## Set up Azure Notification Hub
-
-### Creating a new Notification Hub
+## Create a Notification Hub
 
 * Log on to the [Azure Portal](https://portal.azure.com) and create a new **Notification Hub**.
 
@@ -267,6 +266,10 @@ class myapp extends Component {
   }
 ```
 
-## License
+## Publishing Notifications
+
+Coming soon.
+
+# License
 
 The React Native Azure Notification Hub plugin is provided under the [MIT License](LICENSE).
