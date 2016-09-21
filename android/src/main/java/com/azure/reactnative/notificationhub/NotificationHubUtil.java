@@ -63,11 +63,13 @@ public class NotificationHubUtil {
     }
 
     public String[] getTags(Context context) {
-        return getPrefArray(context, KEY_FOR_PREFS_TAGS);
+        Set<String> set = getPrefSet(context, KEY_FOR_PREFS_TAGS);
+        return set != null ? set.toArray(new String[set.size()]) : null;
     }
 
     public void setTags(Context context, String[] tags) {
-        setPrefArray(context, KEY_FOR_PREFS_TAGS, tags);
+        Set<String> set = tags != null ? new HashSet<>(Arrays.asList(tags)) : null;
+        setPrefSet(context, KEY_FOR_PREFS_TAGS, set);
     }
 
     private String getPref(Context context, String key) {
@@ -76,11 +78,10 @@ public class NotificationHubUtil {
         return prefs.getString(key, null);
     }
 
-    private String[] getPrefArray(Context context, String key) {
+    private Set<String> getPrefSet(Context context, String key) {
         SharedPreferences prefs =
                 context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
-        Set<String> set = prefs.getStringSet(key, null);
-        return set.toArray(new String[set.size()]);
+        return prefs.getStringSet(key, null);
     }
 
     private void setPref(Context context, String key, String value) {
@@ -90,10 +91,10 @@ public class NotificationHubUtil {
         editor.apply();
     }
 
-    private void setPrefArray(Context context, String key, String[] value) {
+    private void setPrefSet(Context context, String key, Set<String> value) {
         SharedPreferences.Editor editor =
                 context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE).edit();
-        editor.putStringSet(key, new HashSet<>(Arrays.asList(value)));
+        editor.putStringSet(key, value);
         editor.apply();
     }
 }

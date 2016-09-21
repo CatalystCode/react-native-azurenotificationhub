@@ -53,9 +53,9 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
             promise.reject(ERROR_INVALID_ARGUMENTS, "Sender ID cannot be null.");
         }
 
-        ReadableArray tagsJson = config.getArray("tags");
         String[] tags = null;
-        if (tagsJson != null) {
+        if (config.hasKey("tags") && !config.isNull("tags")) {
+            ReadableArray tagsJson = config.getArray("tags");
             tags = new String[tagsJson.size()];
             for (int i = 0; i < tagsJson.size(); ++i) {
                 tags[i] = tagsJson.getString(i);
@@ -104,11 +104,11 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
         NotificationHub hub = new NotificationHub(hubName, connectionString, reactContext);
         try {
             hub.unregister();
+            notificationHubUtil.setRegistrationID(reactContext, null);
+            NotificationsManager.stopHandlingNotifications(reactContext);
         } catch (Exception e) {
             promise.reject(ERROR_NOTIFICATION_HUB, e);
         }
-
-        NotificationsManager.stopHandlingNotifications(reactContext);
     }
 
     private static class GoogleApiAvailabilityRunnable implements Runnable {
