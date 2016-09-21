@@ -57,10 +57,6 @@ npm install react-native-azurenotificationhub
 
 ![Create Notification Hub](img/CreateNotificationHub.png)
 
-* Take note of the two connection strings that are made available to you in **Settings > Access Policies**, as you will need them to handle push notifications later.
-
-![Get Connection String](img/GetConnectionString.png)
-
 ## Android Installation
 
 ### Register app with Notification Hub
@@ -218,19 +214,34 @@ namespace ...
 }
 ```
 
-* At this point you can register and unregister from the Azure Notification Hub instance using JavaScript as in the following example:
+## iOS Installation
+
+Coming soon.
+
+## JavaScript Configuration
+
+On the [Azure Portal](https://portal.azure.com) page for your notification hub, copy a connection string from **Settings > Access Policies**.
+
+![Get Connection String](img/GetConnectionString.png)
+
+The example below shows how you can register and unregister from Azure Notification Hub in your React component.
 
 ```js
 const NotificationHub = require('react-native-azurenotificationhub');
 
+const connectionString = '...'; // The Notification Hub connection string
+const hubName = '...';          // The Notification Hub name
+const senderID = '...';         // The Sender ID from the Cloud Messaging tab of the Firebase console
+const tags = [ ... ];           // The set of tags to subscribe to
+
 class myapp extends Component {
   register() {
-    NotificationHub.register({connectionString, hubName})
+    NotificationHub.register({connectionString, hubName, senderID, tags})
       .catch(reason => console.warn(reason));
   }
 
   unregister() {
-    NotificationHub.unregister({connectionString, hubName})
+    NotificationHub.unregister()
       .catch(reason => console.warn(reason));
   }
 
@@ -255,14 +266,6 @@ class myapp extends Component {
     );
   }
 ```
-
-## iOS Installation
-
-Coming soon.
-
-## JavaScript Configuration
-
-Coming soon.
 
 ## License
 
