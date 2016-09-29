@@ -50,11 +50,6 @@ RCT_EXPORT_MODULE();
                              object:nil];
     
     [notificationCenter addObserver:self
-                           selector:@selector(didFailToRegisterForRemoteNotificationsWithErrorCallback:)
-                               name:@"didFailToRegisterForRemoteNotificationsWithError"
-                             object:nil];
-    
-    [notificationCenter addObserver:self
                            selector:@selector(didReceiveRemoteNotificationCallback:)
                                name:@"didReceiveRemoteNotification"
                              object:nil];

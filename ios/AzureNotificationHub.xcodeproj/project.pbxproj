@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		4553DB701D9C714F00EA5145 /* AzureNotificationHub.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4553DB6F1D9C714F00EA5145 /* AzureNotificationHub.h */; };
 		4553DB721D9C714F00EA5145 /* AzureNotificationHub.m in Sources */ = {isa = PBXBuildFile; fileRef = 4553DB711D9C714F00EA5145 /* AzureNotificationHub.m */; };
-		4575C1701D9C719500600F2A /* WindowsAzureMessaging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4575C16E1D9C719500600F2A /* WindowsAzureMessaging.framework */; };
-		4575C1711D9C719500600F2A /* WindowsAzureMobileServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4575C16F1D9C719500600F2A /* WindowsAzureMobileServices.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -30,8 +28,6 @@
 		4553DB6C1D9C714F00EA5145 /* libAzureNotificationHub.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libAzureNotificationHub.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		4553DB6F1D9C714F00EA5145 /* AzureNotificationHub.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AzureNotificationHub.h; sourceTree = "<group>"; };
 		4553DB711D9C714F00EA5145 /* AzureNotificationHub.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AzureNotificationHub.m; sourceTree = "<group>"; };
-		4575C16E1D9C719500600F2A /* WindowsAzureMessaging.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WindowsAzureMessaging.framework; path = Frameworks/WindowsAzureMessaging.framework; sourceTree = "<group>"; };
-		4575C16F1D9C719500600F2A /* WindowsAzureMobileServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WindowsAzureMobileServices.framework; path = Frameworks/WindowsAzureMobileServices.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -39,8 +35,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4575C1711D9C719500600F2A /* WindowsAzureMobileServices.framework in Frameworks */,
-				4575C1701D9C719500600F2A /* WindowsAzureMessaging.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,7 +45,6 @@
 			isa = PBXGroup;
 			children = (
 				4553DB6E1D9C714F00EA5145 /* AzureNotificationHub */,
-				4575C1721D9C719700600F2A /* Frameworks */,
 				4553DB6D1D9C714F00EA5145 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -71,15 +64,6 @@
 				4553DB711D9C714F00EA5145 /* AzureNotificationHub.m */,
 			);
 			path = AzureNotificationHub;
-			sourceTree = "<group>";
-		};
-		4575C1721D9C719700600F2A /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				4575C16E1D9C719500600F2A /* WindowsAzureMessaging.framework */,
-				4575C16F1D9C719500600F2A /* WindowsAzureMobileServices.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -235,7 +219,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Frameworks",
 				);
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../../node_modules/react-native/React/**";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../../../node_modules/react-native/React/**",
+					"$(SRCROOT)/**",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -251,7 +238,10 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Frameworks",
 				);
-				HEADER_SEARCH_PATHS = "$(SRCROOT)/../../../node_modules/react-native/React/**";
+				HEADER_SEARCH_PATHS = (
+					"$(SRCROOT)/../../../node_modules/react-native/React/**",
+					"$(SRCROOT)/**",
+				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
