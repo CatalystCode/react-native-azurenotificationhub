@@ -14,6 +14,18 @@
 // The default error code to use as the `code` property for callback error objects
 RCT_EXTERN NSString *const RCTErrorUnspecified;
 
+// Notifications registration
+NSString *const RCTAppDidRegisterForRemoteNotifications     = @"RCTApplicationDidRegisterForRemoteNotifications";
+NSString *const RCTAppDidReceiveRemoteNotification          = @"RCTAppDidReceiveRemoteNotification";
+NSString *const RCTDeviceToken                              = @"RCTDeviceToken";
+NSString *const RCTRemoteNotificationUserInfo               = @"RCTRemoteNotificationUserInfo";
+NSString *const RCTRegistrationFailure                      = @"E_REGISTRATION_FAILED";
+NSString *const RCTErrorInvalidArguments                    = @"E_INVALID_ARGUMENTS";
+
+// Keys
+NSString *const RCTConnectionStringKey                      = @"connectionString";
+NSString *const RCTHubNameKey                               = @"hubName";
+
 @implementation AzureNotificationHub
 {
 @private
@@ -46,12 +58,12 @@ RCT_EXPORT_MODULE();
     // Add the notification observers
     [notificationCenter addObserver:self
                            selector:@selector(didRegisterForRemoteNotificationsWithDeviceTokenCallback:)
-                               name:@"didRegisterForRemoteNotificationsWithDeviceToken"
+                               name:RCTAppDidRegisterForRemoteNotifications
                              object:nil];
     
     [notificationCenter addObserver:self
                            selector:@selector(didReceiveRemoteNotificationCallback:)
-                               name:@"didReceiveRemoteNotification"
+                               name:RCTAppDidReceiveRemoteNotification
                              object:nil];
     
     // Register the device handle with the Apple Push Notification service
@@ -71,8 +83,8 @@ RCT_EXPORT_METHOD(register:(nonnull NSDictionary *)config
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
     // Store the connection string and hub name
-    _connectionString = [config objectForKey:@"connectionString"];
-    _hubName = [config objectForKey:@"hubName"];
+    _connectionString = [config objectForKey:RCTConnectionStringKey];
+    _hubName = [config objectForKey:RCTHubNameKey];
     
     // Check arguments
     if (![self assertArguments:reject])
@@ -93,7 +105,7 @@ RCT_EXPORT_METHOD(register:(nonnull NSDictionary *)config
                                 {
                                     if (error != nil)
                                     {
-                                        reject(@"E_REGISTRATION_FAILED", @"Registration was not successful.", nil);
+                                        reject(RCTRegistrationFailure, @"Registration was not successful.", nil);
                                     }
                                     else
                                     {
@@ -138,12 +150,12 @@ RCT_EXPORT_METHOD(unregister:(RCTPromiseResolveBlock)resolve
     RCTLogInfo(@"Device handle registered");
     
     // Save the device token
-    _deviceToken = [[notification userInfo] objectForKey:@"deviceToken"];
+    _deviceToken = [[notification userInfo] objectForKey:RCTDeviceToken];
 }
 
 - (void)didReceiveRemoteNotificationCallback:(NSNotification *)notification
 {
-    NSDictionary *userInfo = [[notification userInfo] objectForKey:@"userInfo"];
+    NSDictionary *userInfo = [[notification userInfo] objectForKey:RCTRemoteNotificationUserInfo];
     RCTLogInfo(@"%@", userInfo);
 }
 
@@ -151,19 +163,19 @@ RCT_EXPORT_METHOD(unregister:(RCTPromiseResolveBlock)resolve
 {
     if (_deviceToken == nil)
     {
-        reject(@"E_REGISTRATION_FAILED", @"The device handle isn't registered with the Apple Push Notification service", nil);
+        reject(RCTRegistrationFailure, @"The device handle isn't registered with the Apple Push Notification service", nil);
         return false;
     }
     
     if (_connectionString == nil)
     {
-        reject(@"E_REGISTRATION_FAILED", @"Connection string cannot be null.", nil);
+        reject(RCTRegistrationFailure, @"Connection string cannot be null.", nil);
         return false;
     }
     
     if (_hubName == nil)
     {
-        reject(@"E_INVALID_ARGUMENTS", @"Hub name cannot be null.", nil);
+        reject(RCTErrorInvalidArguments, @"Hub name cannot be null.", nil);
         return false;
     }
     

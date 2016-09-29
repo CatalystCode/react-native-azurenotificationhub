@@ -9,6 +9,11 @@
 #import <Foundation/Foundation.h>
 #import "RCTBridgeModule.h"
 
+RCT_EXTERN NSString *const RCTAppDidRegisterForRemoteNotifications;
+RCT_EXTERN NSString *const RCTAppDidReceiveRemoteNotification;
+RCT_EXTERN NSString *const RCTDeviceToken;
+RCT_EXTERN NSString *const RCTRemoteNotificationUserInfo;
+
 @interface AzureNotificationHub : NSObject <RCTBridgeModule>
 
 @end
