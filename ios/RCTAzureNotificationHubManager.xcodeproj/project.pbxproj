@@ -7,31 +7,31 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4553DB701D9C714F00EA5145 /* AzureNotificationHub.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 4553DB6F1D9C714F00EA5145 /* AzureNotificationHub.h */; };
-		4553DB721D9C714F00EA5145 /* AzureNotificationHub.m in Sources */ = {isa = PBXBuildFile; fileRef = 4553DB711D9C714F00EA5145 /* AzureNotificationHub.m */; };
+		458BD41D1D9EDE5E007E3F13 /* RCTAzureNotificationHubManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 458BD41C1D9EDE5E007E3F13 /* RCTAzureNotificationHubManager.h */; };
+		458BD41F1D9EDE5E007E3F13 /* RCTAzureNotificationHubManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 458BD41E1D9EDE5E007E3F13 /* RCTAzureNotificationHubManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		4553DB6A1D9C714F00EA5145 /* CopyFiles */ = {
+		458BD4171D9EDE5E007E3F13 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
-				4553DB701D9C714F00EA5145 /* AzureNotificationHub.h in CopyFiles */,
+				458BD41D1D9EDE5E007E3F13 /* RCTAzureNotificationHubManager.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		4553DB6C1D9C714F00EA5145 /* libAzureNotificationHub.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libAzureNotificationHub.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		4553DB6F1D9C714F00EA5145 /* AzureNotificationHub.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AzureNotificationHub.h; sourceTree = "<group>"; };
-		4553DB711D9C714F00EA5145 /* AzureNotificationHub.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AzureNotificationHub.m; sourceTree = "<group>"; };
+		458BD4191D9EDE5E007E3F13 /* libRCTAzureNotificationHubManager.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRCTAzureNotificationHubManager.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		458BD41C1D9EDE5E007E3F13 /* RCTAzureNotificationHubManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RCTAzureNotificationHubManager.h; sourceTree = "<group>"; };
+		458BD41E1D9EDE5E007E3F13 /* RCTAzureNotificationHubManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RCTAzureNotificationHubManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		4553DB691D9C714F00EA5145 /* Frameworks */ = {
+		458BD4161D9EDE5E007E3F13 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -41,95 +41,95 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		4553DB631D9C714F00EA5145 = {
+		458BD4101D9EDE5E007E3F13 = {
 			isa = PBXGroup;
 			children = (
-				4553DB6E1D9C714F00EA5145 /* AzureNotificationHub */,
-				4553DB6D1D9C714F00EA5145 /* Products */,
+				458BD41B1D9EDE5E007E3F13 /* RCTAzureNotificationHubManager */,
+				458BD41A1D9EDE5E007E3F13 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		4553DB6D1D9C714F00EA5145 /* Products */ = {
+		458BD41A1D9EDE5E007E3F13 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4553DB6C1D9C714F00EA5145 /* libAzureNotificationHub.a */,
+				458BD4191D9EDE5E007E3F13 /* libRCTAzureNotificationHubManager.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		4553DB6E1D9C714F00EA5145 /* AzureNotificationHub */ = {
+		458BD41B1D9EDE5E007E3F13 /* RCTAzureNotificationHubManager */ = {
 			isa = PBXGroup;
 			children = (
-				4553DB6F1D9C714F00EA5145 /* AzureNotificationHub.h */,
-				4553DB711D9C714F00EA5145 /* AzureNotificationHub.m */,
+				458BD41C1D9EDE5E007E3F13 /* RCTAzureNotificationHubManager.h */,
+				458BD41E1D9EDE5E007E3F13 /* RCTAzureNotificationHubManager.m */,
 			);
-			path = AzureNotificationHub;
+			path = RCTAzureNotificationHubManager;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		4553DB6B1D9C714F00EA5145 /* AzureNotificationHub */ = {
+		458BD4181D9EDE5E007E3F13 /* RCTAzureNotificationHubManager */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4553DB751D9C714F00EA5145 /* Build configuration list for PBXNativeTarget "AzureNotificationHub" */;
+			buildConfigurationList = 458BD4221D9EDE5E007E3F13 /* Build configuration list for PBXNativeTarget "RCTAzureNotificationHubManager" */;
 			buildPhases = (
-				4553DB681D9C714F00EA5145 /* Sources */,
-				4553DB691D9C714F00EA5145 /* Frameworks */,
-				4553DB6A1D9C714F00EA5145 /* CopyFiles */,
+				458BD4151D9EDE5E007E3F13 /* Sources */,
+				458BD4161D9EDE5E007E3F13 /* Frameworks */,
+				458BD4171D9EDE5E007E3F13 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = AzureNotificationHub;
-			productName = AzureNotificationHub;
-			productReference = 4553DB6C1D9C714F00EA5145 /* libAzureNotificationHub.a */;
+			name = RCTAzureNotificationHubManager;
+			productName = RCTAzureNotificationHubManager;
+			productReference = 458BD4191D9EDE5E007E3F13 /* libRCTAzureNotificationHubManager.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		4553DB641D9C714F00EA5145 /* Project object */ = {
+		458BD4111D9EDE5E007E3F13 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = Microsoft;
 				TargetAttributes = {
-					4553DB6B1D9C714F00EA5145 = {
+					458BD4181D9EDE5E007E3F13 = {
 						CreatedOnToolsVersion = 7.3.1;
 					};
 				};
 			};
-			buildConfigurationList = 4553DB671D9C714F00EA5145 /* Build configuration list for PBXProject "AzureNotificationHub" */;
+			buildConfigurationList = 458BD4141D9EDE5E007E3F13 /* Build configuration list for PBXProject "RCTAzureNotificationHubManager" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
-			mainGroup = 4553DB631D9C714F00EA5145;
-			productRefGroup = 4553DB6D1D9C714F00EA5145 /* Products */;
+			mainGroup = 458BD4101D9EDE5E007E3F13;
+			productRefGroup = 458BD41A1D9EDE5E007E3F13 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				4553DB6B1D9C714F00EA5145 /* AzureNotificationHub */,
+				458BD4181D9EDE5E007E3F13 /* RCTAzureNotificationHubManager */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		4553DB681D9C714F00EA5145 /* Sources */ = {
+		458BD4151D9EDE5E007E3F13 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4553DB721D9C714F00EA5145 /* AzureNotificationHub.m in Sources */,
+				458BD41F1D9EDE5E007E3F13 /* RCTAzureNotificationHubManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		4553DB731D9C714F00EA5145 /* Debug */ = {
+		458BD4201D9EDE5E007E3F13 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -173,7 +173,7 @@
 			};
 			name = Debug;
 		};
-		4553DB741D9C714F00EA5145 /* Release */ = {
+		458BD4211D9EDE5E007E3F13 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -211,14 +211,9 @@
 			};
 			name = Release;
 		};
-		4553DB761D9C714F00EA5145 /* Debug */ = {
+		458BD4231D9EDE5E007E3F13 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ENABLE_BITCODE = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks",
-				);
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../../../node_modules/react-native/React/**",
 					"$(SRCROOT)/**",
@@ -230,14 +225,9 @@
 			};
 			name = Debug;
 		};
-		4553DB771D9C714F00EA5145 /* Release */ = {
+		458BD4241D9EDE5E007E3F13 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ENABLE_BITCODE = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Frameworks",
-				);
 				HEADER_SEARCH_PATHS = (
 					"$(SRCROOT)/../../../node_modules/react-native/React/**",
 					"$(SRCROOT)/**",
@@ -252,25 +242,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		4553DB671D9C714F00EA5145 /* Build configuration list for PBXProject "AzureNotificationHub" */ = {
+		458BD4141D9EDE5E007E3F13 /* Build configuration list for PBXProject "RCTAzureNotificationHubManager" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4553DB731D9C714F00EA5145 /* Debug */,
-				4553DB741D9C714F00EA5145 /* Release */,
+				458BD4201D9EDE5E007E3F13 /* Debug */,
+				458BD4211D9EDE5E007E3F13 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4553DB751D9C714F00EA5145 /* Build configuration list for PBXNativeTarget "AzureNotificationHub" */ = {
+		458BD4221D9EDE5E007E3F13 /* Build configuration list for PBXNativeTarget "RCTAzureNotificationHubManager" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				4553DB761D9C714F00EA5145 /* Debug */,
-				4553DB771D9C714F00EA5145 /* Release */,
+				458BD4231D9EDE5E007E3F13 /* Debug */,
+				458BD4241D9EDE5E007E3F13 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 4553DB641D9C714F00EA5145 /* Project object */;
+	rootObject = 458BD4111D9EDE5E007E3F13 /* Project object */;
 }

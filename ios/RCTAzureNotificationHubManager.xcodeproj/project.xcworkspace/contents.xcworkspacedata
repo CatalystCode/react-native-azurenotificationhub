@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:AzureNotificationHub.xcodeproj">
+      location = "self:RCTAzureNotificationHubManager.xcodeproj">
    </FileRef>
 </Workspace>

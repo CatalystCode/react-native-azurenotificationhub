@@ -4,7 +4,7 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>AzureNotificationHub.xcscheme</key>
+		<key>RCTAzureNotificationHubManager.xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
@@ -12,7 +12,7 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>4553DB6B1D9C714F00EA5145</key>
+		<key>458BD4181D9EDE5E007E3F13</key>
 		<dict>
 			<key>primary</key>
 			<true/>

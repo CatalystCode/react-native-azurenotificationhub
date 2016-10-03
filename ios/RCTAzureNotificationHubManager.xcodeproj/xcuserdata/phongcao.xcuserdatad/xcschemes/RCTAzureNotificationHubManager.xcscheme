@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "4553DB6B1D9C714F00EA5145"
-               BuildableName = "libAzureNotificationHub.a"
-               BlueprintName = "AzureNotificationHub"
-               ReferencedContainer = "container:AzureNotificationHub.xcodeproj">
+               BlueprintIdentifier = "458BD4181D9EDE5E007E3F13"
+               BuildableName = "libRCTAzureNotificationHubManager.a"
+               BlueprintName = "RCTAzureNotificationHubManager"
+               ReferencedContainer = "container:RCTAzureNotificationHubManager.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,10 +45,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4553DB6B1D9C714F00EA5145"
-            BuildableName = "libAzureNotificationHub.a"
-            BlueprintName = "AzureNotificationHub"
-            ReferencedContainer = "container:AzureNotificationHub.xcodeproj">
+            BlueprintIdentifier = "458BD4181D9EDE5E007E3F13"
+            BuildableName = "libRCTAzureNotificationHubManager.a"
+            BlueprintName = "RCTAzureNotificationHubManager"
+            ReferencedContainer = "container:RCTAzureNotificationHubManager.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -63,10 +63,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "4553DB6B1D9C714F00EA5145"
-            BuildableName = "libAzureNotificationHub.a"
-            BlueprintName = "AzureNotificationHub"
-            ReferencedContainer = "container:AzureNotificationHub.xcodeproj">
+            BlueprintIdentifier = "458BD4181D9EDE5E007E3F13"
+            BuildableName = "libRCTAzureNotificationHubManager.a"
+            BlueprintName = "RCTAzureNotificationHubManager"
+            ReferencedContainer = "container:RCTAzureNotificationHubManager.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
