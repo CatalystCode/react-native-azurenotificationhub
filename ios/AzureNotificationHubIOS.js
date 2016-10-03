@@ -218,7 +218,7 @@ class AzureNotificationHubIOS {
     invariant(
       type === 'notification' || type === 'register' || type === 'registrationError' || 
       type === 'registerAzureNotificationHub' || type === 'azureNotificationHubRegistrationError' || type === 'localNotification',
-      'PushNotificationIOS only supports `notification`, `register`, `registrationError`, and `localNotification` events'
+      'AzureNotificationHubIOS only supports `notification`, `register`, `registrationError`, `registerAzureNotificationHub`, `azureNotificationHubRegistrationError` and `localNotification` events'
     );
     var listener;
     if (type === 'notification') {
@@ -275,7 +275,7 @@ class AzureNotificationHubIOS {
     invariant(
       type === 'notification' || type === 'register' || type === 'registrationError' || 
       type === 'registerAzureNotificationHub' || type === 'azureNotificationHubRegistrationError' || type === 'localNotification',
-      'PushNotificationIOS only supports `notification`, `register`, `registrationError`, and `localNotification` events'
+      'AzureNotificationHubIOS only supports `notification`, `register`, `registrationError`, `registerAzureNotificationHub`, `azureNotificationHubRegistrationError` and `localNotification` events'
     );
     var listener = _notifHandlers.get(handler);
     if (!listener) {
