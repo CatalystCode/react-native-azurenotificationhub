@@ -15,7 +15,7 @@ import {NativeEventEmitter} from 'react-native';
 import {NativeModules} from 'react-native';
 
 const RCTAzureNotificationHubManager = NativeModules.AzureNotificationHubManager;
-const invariant = require('../../react-native/node_modules/fbjs/lib/invariant');
+const invariant = require('fbjs/lib/invariant');
 
 const PushNotificationEmitter = new NativeEventEmitter(RCTAzureNotificationHubManager);
 

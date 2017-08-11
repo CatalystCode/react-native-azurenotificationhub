@@ -10,10 +10,10 @@
 #import <WindowsAzureMessaging/WindowsAzureMessaging.h>
 #import "RCTAzureNotificationHubManager.h"
 
-#import "RCTBridge.h"
-#import "RCTConvert.h"
-#import "RCTEventDispatcher.h"
-#import "RCTUtils.h"
+#import "React/RCTBridge.h"
+#import "React/RCTConvert.h"
+#import "React/RCTEventDispatcher.h"
+#import "React/RCTUtils.h"
 
 // The default error code to use as the `code` property for callback error objects
 RCT_EXTERN NSString *const RCTErrorUnspecified;
@@ -35,6 +35,7 @@ NSString *const RCTErrorInvalidArguments                        = @"E_INVALID_AR
 // Keys
 NSString *const RCTConnectionStringKey                          = @"connectionString";
 NSString *const RCTHubNameKey                                   = @"hubName";
+NSString *const RCTTagsKey                                      = @"tags";
 
 @implementation RCTConvert (UILocalNotification)
 
@@ -69,6 +70,9 @@ NSString *const RCTHubNameKey                                   = @"hubName";
     
     // The Notification Hub name
     NSString *_hubName;
+    
+    // The Notification Hub tags
+    NSSet *_tags;
 }
 
 static NSDictionary *RCTFormatLocalNotification(UILocalNotification *notification)
@@ -441,10 +445,11 @@ RCT_EXPORT_METHOD(register:(nonnull NSString *)deviceToken
                   resolver:(RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject)
 {
-    // Store the connection string and hub name
+    // Store the connection string, hub name and tags
     _connectionString = [config objectForKey:RCTConnectionStringKey];
     _hubName = [config objectForKey:RCTHubNameKey];
-    
+    _tags = [config objectForKey:RCTTagsKey];
+
     // Check arguments
     if (![self assertArguments:reject])
     {
@@ -452,14 +457,14 @@ RCT_EXPORT_METHOD(register:(nonnull NSString *)deviceToken
     }
     
     // Initialize hub
-    SBNotificationHub* hub = [[SBNotificationHub alloc] initWithConnectionString:_connectionString
+    SBNotificationHub *hub = [[SBNotificationHub alloc] initWithConnectionString:_connectionString
                                                              notificationHubPath:_hubName];
     
     // Register for native notifications
     dispatch_async(dispatch_get_main_queue(), ^
     {
        [hub registerNativeWithDeviceToken:deviceToken
-                                     tags:nil
+                                     tags:_tags
                                completion:^(NSError* error)
         {
             if (error != nil)
@@ -488,13 +493,13 @@ RCT_EXPORT_METHOD(unregister:(RCTPromiseResolveBlock)resolve
     }
     
     // Initialize hub
-    SBNotificationHub* hub = [[SBNotificationHub alloc] initWithConnectionString:_connectionString
+    SBNotificationHub *hub = [[SBNotificationHub alloc] initWithConnectionString:_connectionString
                                                              notificationHubPath:_hubName];
     
     // Unregister for native notifications
     dispatch_async(dispatch_get_main_queue(), ^
     {
-       [hub unregisterNativeWithCompletion:^(NSError* error)
+       [hub unregisterNativeWithCompletion:^(NSError *error)
         {
             if (error != nil)
             {
