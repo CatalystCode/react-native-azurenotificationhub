@@ -16,7 +16,6 @@ public class ReactNativeNotificationHubPackage implements ReactPackage {
         return Collections.<NativeModule>singletonList(new ReactNativeNotificationHubModule(reactContext));
     }
 
-    @Override
     public List<Class<? extends JavaScriptModule>> createJSModules() {
         return Collections.emptyList();
     }
