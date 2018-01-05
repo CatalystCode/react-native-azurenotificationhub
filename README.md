@@ -83,6 +83,20 @@ npm install react-native-azurenotificationhub
 
 ![Configure GCM](./img/ConfigureGCM.png)
 
+### Merging of icon resources
+
+In `android/app/src/main/AndroidManifest.xml`
+
+```xml  
+    <application
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:replace="android:icon"
+      ...>
+    </application>
+```
+
+This resolves the error caused by the manifest merger tool for gradle.
+
 ### Export React Native Module from app
 
 In `android/settings.gradle`
