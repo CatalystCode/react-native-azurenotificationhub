@@ -24,7 +24,7 @@
 /* Begin PBXBuildFile section */
 		8471C92B16EABF5600C73674 /* SBLocalStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 8471C92916EABF5600C73674 /* SBLocalStorage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8471C92C16EABF5600C73674 /* SBLocalStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 8471C92A16EABF5600C73674 /* SBLocalStorage.m */; };
-		848CB70A16FBE52D00183E8D /* SBTemplateRegistration.h in Headers */ = {isa = PBXBuildFile; fileRef = 848CB70816FBE52D00183E8D /* SBTemplateRegistration.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		848CB70A16FBE52D00183E8D /* SBTemplateRegistration.h in Headers */ = {isa = PBXBuildFile; fileRef = 848CB70816FBE52D00183E8D /* SBTemplateRegistration.h */; };
 		848CB70B16FBE52D00183E8D /* SBTemplateRegistration.m in Sources */ = {isa = PBXBuildFile; fileRef = 848CB70916FBE52D00183E8D /* SBTemplateRegistration.m */; };
 		848CB73C16FCC78E00183E8D /* SBStoredRegistrationEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 848CB73A16FCC78E00183E8D /* SBStoredRegistrationEntry.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		848CB73D16FCC78E00183E8D /* SBStoredRegistrationEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 848CB73B16FCC78E00183E8D /* SBStoredRegistrationEntry.m */; };
@@ -36,10 +36,10 @@
 		A358373A16AA3B080041E372 /* SBNotificationHub.h in Headers */ = {isa = PBXBuildFile; fileRef = A358371816AA39850041E372 /* SBNotificationHub.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A358373C16AA3B0B0041E372 /* SBRegistration.h in Headers */ = {isa = PBXBuildFile; fileRef = A358371C16AA39850041E372 /* SBRegistration.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		A358373D16AA3B0D0041E372 /* WindowsAzureMessaging.h in Headers */ = {isa = PBXBuildFile; fileRef = 906E404016A86A3200817A11 /* WindowsAzureMessaging.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A358373E16AA3B120041E372 /* SBNotificationHubHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A358370E16AA39850041E372 /* SBNotificationHubHelper.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A358373F16AA3B140041E372 /* SBRegistrationParser.h in Headers */ = {isa = PBXBuildFile; fileRef = A358371016AA39850041E372 /* SBRegistrationParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A358373E16AA3B120041E372 /* SBNotificationHubHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = A358370E16AA39850041E372 /* SBNotificationHubHelper.h */; };
+		A358373F16AA3B140041E372 /* SBRegistrationParser.h in Headers */ = {isa = PBXBuildFile; fileRef = A358371016AA39850041E372 /* SBRegistrationParser.h */; };
 		A358374016AA3B160041E372 /* SBTokenProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = A358371216AA39850041E372 /* SBTokenProvider.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A358374116AA3B190041E372 /* SBURLConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = A358371416AA39850041E372 /* SBURLConnection.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A358374116AA3B190041E372 /* SBURLConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = A358371416AA39850041E372 /* SBURLConnection.h */; };
 		A358374216AA3B1B0041E372 /* SBNotificationHubHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = A358370F16AA39850041E372 /* SBNotificationHubHelper.m */; };
 		A358374316AA3B1D0041E372 /* SBRegistrationParser.m in Sources */ = {isa = PBXBuildFile; fileRef = A358371116AA39850041E372 /* SBRegistrationParser.m */; };
 		A358374416AA3B1E0041E372 /* SBTokenProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = A358371316AA39850041E372 /* SBTokenProvider.m */; };
