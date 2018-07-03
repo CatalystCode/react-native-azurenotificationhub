@@ -110,6 +110,20 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
             promise.reject(ERROR_NOTIFICATION_HUB, e);
         }
     }
+	
+	@ReactMethod
+    public void getRegistrationId(Promise promise) {
+        NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
+        ReactContext reactContext = getReactApplicationContext();
+        String registrationId = notificationHubUtil.getRegistrationID(reactContext);
+
+        if (registrationId == null) {
+            promise.reject(ERROR_NOT_REGISTERED, "No registration to Azure Notification Hub.");
+        }
+        else {
+            promise.resolve(registrationId);
+        }
+	}
 
     private static class GoogleApiAvailabilityRunnable implements Runnable {
         private final Activity activity;
