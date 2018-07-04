@@ -414,7 +414,7 @@ On the [Azure Portal](https://portal.azure.com) page for your notification hub, 
 
 The example below shows how you can register and unregister from Azure Notification Hub in your React component.
 
-### Android / Windows
+### Windows
 
 ```js
 const NotificationHub = require('react-native-azurenotificationhub');
@@ -455,6 +455,70 @@ class myapp extends Component {
       </View>
     );
   }
+```
+
+### Android
+
+```js
+const NotificationHub = require('react-native-azurenotificationhub');
+const PushNotificationEmitter = new NativeEventEmitter(NotificationHub);
+
+const NOTIF_REGISTER_AZURE_HUB_EVENT = 'azureNotificationHubRegistered';
+const NOTIF_AZURE_HUB_REGISTRATION_ERROR_EVENT = 'azureNotificationHubRegistrationError';
+const DEVICE_NOTIF_EVENT = 'remoteNotificationReceived';
+
+const connectionString = '...'; // The Notification Hub connection string
+const hubName = '...';          // The Notification Hub name
+const senderID = '...';         // The Sender ID from the Cloud Messaging tab of the Firebase console
+const tags = [ ... ];           // The set of tags to subscribe to
+
+class myapp extends Component {
+  register() 
+    PushNotificationEmitter.addListener(NOTIF_REGISTER_AZURE_HUB_EVENT, this._onAzureNotificationHubRegistered);
+    PushNotificationEmitter.addListener(NOTIF_AZURE_HUB_REGISTRATION_ERROR_EVENT, this._onAzureNotificationHubRegistrationError);
+    PushNotificationEmitter.addListener(DEVICE_NOTIF_EVENT, this._onRemoteNotification);  
+  
+    NotificationHub.register({connectionString, hubName, senderID, tags})
+      .catch(reason => console.warn(reason));
+  }
+
+  unregister() {
+    NotificationHub.unregister()
+      .catch(reason => console.warn(reason));
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <TouchableOpacity onPress={this.register.bind(this)}>
+         <View style={styles.button}>
+           <Text style={styles.buttonText}>
+             Register
+           </Text> 
+         </View>
+       </TouchableOpacity>
+       <TouchableOpacity onPress={this.unregister.bind(this)}>
+         <View style={styles.button}>
+           <Text style={styles.buttonText}>
+             Unregister
+           </Text> 
+         </View>
+       </TouchableOpacity>
+      </View>
+    );
+  }
+  
+  _onAzureNotificationHubRegistered(registrationID) {
+    console.warn('RegistrationID: ' + registrationID);
+  }
+  
+  _onAzureNotificationHubRegistrationError(error) {
+    console.warn('Error: ' + error);
+  }
+  
+  _onRemoteNotification(notification) {
+    console.warn('Notification received: ' + notification);
+  }  
 ```
 
 ### iOS
