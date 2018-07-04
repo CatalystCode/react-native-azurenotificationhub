@@ -17,17 +17,22 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.facebook.react.bridge.ReadableMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.microsoft.windowsazure.notifications.NotificationsHandler;
 
+import java.util.Set;
+
 public class ReactNativeNotificationsHandler extends NotificationsHandler {
-    private static final String LOG_TAG = "AzureNotificationHub";
+    public static final String TAG = "ReactNativeNotificationsHandler";
+
     private static final long DEFAULT_VIBRATION = 300L;
 
     private Context context;
@@ -36,6 +41,21 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
     public void onReceive(Context context, Bundle bundle) {
         this.context = context;
         sendNotification(bundle);
+
+        JSONObject json = new JSONObject();
+        Set<String> keys = bundle.keySet();
+        for (String key : keys) {
+            try {
+                json.put(key, bundle.get(key));
+            } catch (JSONException e) {
+            }
+        }
+
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
+        Intent event= new Intent(TAG);
+        event.putExtra("event", ReactNativeNotificationHubModule.DEVICE_NOTIF_EVENT);
+        event.putExtra("data", json.toString());
+        localBroadcastManager.sendBroadcast(event);
     }
 
     private Class getMainActivityClass() {
@@ -58,18 +78,18 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
         try {
             Class intentClass = getMainActivityClass();
             if (intentClass == null) {
-                Log.e(LOG_TAG, "No activity class found for the notification");
+                Log.e(TAG, "No activity class found for the notification");
                 return;
             }
 
             if (bundle.getString("message") == null) {
-                Log.e(LOG_TAG, "No message specified for the notification");
+                Log.e(TAG, "No message specified for the notification");
                 return;
             }
 
             String notificationIdString = bundle.getString("id");
             if (notificationIdString == null) {
-                Log.e(LOG_TAG, "No notification ID specified for the notification");
+                Log.e(TAG, "No notification ID specified for the notification");
                 return;
             }
 
@@ -211,7 +231,7 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
             try {
                 actionsArray = bundle.getString("actions") != null ? new JSONArray(bundle.getString("actions")) : null;
             } catch (JSONException e) {
-                Log.e(LOG_TAG, "Exception while converting actions to JSON object.", e);
+                Log.e(TAG, "Exception while converting actions to JSON object.", e);
             }
 
             if (actionsArray != null) {
@@ -224,7 +244,7 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
                     try {
                         action = actionsArray.getString(i);
                     } catch (JSONException e) {
-                        Log.e(LOG_TAG, "Exception while getting action from actionsArray.", e);
+                        Log.e(TAG, "Exception while getting action from actionsArray.", e);
                         continue;
                     }
 
@@ -249,7 +269,7 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
                 notificationManager.notify(notificationID, info);
             }
         } catch (Exception e) {
-            Log.e(LOG_TAG, "failed to send push notification", e);
+            Log.e(TAG, "failed to send push notification", e);
         }
     }
 

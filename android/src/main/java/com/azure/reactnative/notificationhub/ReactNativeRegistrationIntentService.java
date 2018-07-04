@@ -2,6 +2,7 @@ package com.azure.reactnative.notificationhub;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.firebase.FirebaseApp;
@@ -11,7 +12,7 @@ import com.microsoft.windowsazure.messaging.NotificationHub;
 
 public class ReactNativeRegistrationIntentService extends IntentService {
 
-    private static final String TAG = "AzureNotificationHub";
+    public static final String TAG = "ReactNativeRegistration";
 
     public ReactNativeRegistrationIntentService() {
         super(TAG);
@@ -19,6 +20,9 @@ public class ReactNativeRegistrationIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
+        Intent event= new Intent(TAG);
+
         try {
             NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
             String connectionString = notificationHubUtil.getConnectionString(this);
@@ -49,9 +53,17 @@ public class ReactNativeRegistrationIntentService extends IntentService {
 
                 notificationHubUtil.setRegistrationID(this, regID);
                 notificationHubUtil.setFCMToken(this, token);
+
+                event.putExtra("event", ReactNativeNotificationHubModule.NOTIF_REGISTER_AZURE_HUB_EVENT);
+                event.putExtra("data", regID);
+                localBroadcastManager.sendBroadcast(event);
             }
         } catch (Exception e) {
             Log.e(TAG, "Failed to complete token refresh", e);
+
+            event.putExtra("event", ReactNativeNotificationHubModule.NOTIF_AZURE_HUB_REGISTRATION_ERROR_EVENT);
+            event.putExtra("data", e.getMessage());
+            localBroadcastManager.sendBroadcast(event);
         }
     }
 }
