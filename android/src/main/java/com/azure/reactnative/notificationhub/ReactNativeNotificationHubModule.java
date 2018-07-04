@@ -1,8 +1,13 @@
 package com.azure.reactnative.notificationhub;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
@@ -19,6 +24,10 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.UiThreadUtil;
 
 public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule {
+    public static final String NOTIF_REGISTER_AZURE_HUB_EVENT = "azureNotificationHubRegistered";
+    public static final String NOTIF_AZURE_HUB_REGISTRATION_ERROR_EVENT = "azureNotificationHubRegistrationError";
+    public static final String DEVICE_NOTIF_EVENT = "remoteNotificationReceived";
+
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     private static final String ERROR_INVALID_ARGUMENTS = "E_INVALID_ARGUMENTS";
@@ -26,8 +35,16 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
     private static final String ERROR_NOTIFICATION_HUB = "E_NOTIFICATION_HUB";
     private static final String ERROR_NOT_REGISTERED = "E_NOT_REGISTERED";
 
+    private ReactApplicationContext  mReactContext;
+    private LocalBroadcastReceiver  mLocalBroadcastReceiver;
+
     public ReactNativeNotificationHubModule(ReactApplicationContext reactContext) {
         super(reactContext);
+        this.mReactContext = reactContext;
+        this.mLocalBroadcastReceiver = new LocalBroadcastReceiver();
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(reactContext);
+        localBroadcastManager.registerReceiver(mLocalBroadcastReceiver, new IntentFilter(ReactNativeRegistrationIntentService.TAG));
+        localBroadcastManager.registerReceiver(mLocalBroadcastReceiver, new IntentFilter(ReactNativeNotificationsHandler.TAG));
     }
 
     @Override
@@ -110,20 +127,16 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
             promise.reject(ERROR_NOTIFICATION_HUB, e);
         }
     }
-	
-	@ReactMethod
-    public void getRegistrationId(Promise promise) {
-        NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
-        ReactContext reactContext = getReactApplicationContext();
-        String registrationId = notificationHubUtil.getRegistrationID(reactContext);
 
-        if (registrationId == null) {
-            promise.reject(ERROR_NOT_REGISTERED, "No registration to Azure Notification Hub.");
+    public class LocalBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String event = intent.getStringExtra("event");
+            String data = intent.getStringExtra("data");
+            mReactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                    .emit(event, data);
         }
-        else {
-            promise.resolve(registrationId);
-        }
-	}
+    }
 
     private static class GoogleApiAvailabilityRunnable implements Runnable {
         private final Activity activity;
