@@ -3,6 +3,7 @@ package com.azure.reactnative.notificationhub;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -32,7 +33,7 @@ import java.util.Set;
 
 public class ReactNativeNotificationsHandler extends NotificationsHandler {
     public static final String TAG = "ReactNativeNotificationsHandler";
-
+    private static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
     private static final long DEFAULT_VIBRATION = 300L;
 
     private Context context;
@@ -102,7 +103,7 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
                 title = context.getPackageManager().getApplicationLabel(appInfo).toString();
             }
 
-            NotificationCompat.Builder notification = new NotificationCompat.Builder(context)
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
                     .setContentTitle(title)
                     .setTicker(bundle.getString("ticker"))
                     .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
@@ -217,6 +218,7 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
             NotificationManager notificationManager = notificationManager();
+            checkOrCreateChannel(notificationManager);
 
             notification.setContentIntent(pendingIntent);
 
@@ -275,5 +277,22 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
 
     private NotificationManager notificationManager() {
         return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    }
+
+    private static boolean channelCreated = false;
+    private static void checkOrCreateChannel(NotificationManager manager) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            return;
+        if (channelCreated)
+            return;
+        if (manager == null)
+            return;
+         final CharSequence name = "rn-push-notification-channel";
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+        NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance);
+        channel.enableLights(true);
+        channel.enableVibration(true);
+        manager.createNotificationChannel(channel);
+        channelCreated = true;
     }
 }
