@@ -5,8 +5,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -23,12 +25,13 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.UiThreadUtil;
 
-public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule {
+public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
     public static final String NOTIF_REGISTER_AZURE_HUB_EVENT = "azureNotificationHubRegistered";
     public static final String NOTIF_AZURE_HUB_REGISTRATION_ERROR_EVENT = "azureNotificationHubRegistrationError";
     public static final String DEVICE_NOTIF_EVENT = "remoteNotificationReceived";
 
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private static final int NOTIFICATION_DELAY_ON_START = 3000;
 
     private static final String ERROR_INVALID_ARGUMENTS = "E_INVALID_ARGUMENTS";
     private static final String ERROR_PLAY_SERVICES = "E_PLAY_SERVICES";
@@ -45,6 +48,7 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(reactContext);
         localBroadcastManager.registerReceiver(mLocalBroadcastReceiver, new IntentFilter(ReactNativeRegistrationIntentService.TAG));
         localBroadcastManager.registerReceiver(mLocalBroadcastReceiver, new IntentFilter(ReactNativeNotificationsHandler.TAG));
+        reactContext.addLifecycleEventListener(this);
     }
 
     @Override
@@ -128,6 +132,23 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
         }
     }
 
+    @Override
+    public void onHostResume() {
+        Activity activity = getCurrentActivity();
+        if (activity != null) {
+            Intent intent = activity.getIntent();
+            if (intent != null) {
+                Bundle bundle = intent.getBundleExtra("notification");
+                if (bundle != null) {
+                    new ReactNativeNotificationsHandler().sendBroadcast(mReactContext, bundle, NOTIFICATION_DELAY_ON_START);
+                }
+            }
+        }
+    }
+    @Override
+    public void onHostPause() {}
+    @Override
+    public void onHostDestroy() {}
     public class LocalBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {

@@ -473,10 +473,14 @@ const senderID = '...';         // The Sender ID from the Cloud Messaging tab of
 const tags = [ ... ];           // The set of tags to subscribe to
 
 class myapp extends Component {
-  register() 
+  constructor(props) {
+    super(props);
+    PushNotificationEmitter.addListener(DEVICE_NOTIF_EVENT, this._onRemoteNotification);
+  }
+
+  register() {
     PushNotificationEmitter.addListener(NOTIF_REGISTER_AZURE_HUB_EVENT, this._onAzureNotificationHubRegistered);
     PushNotificationEmitter.addListener(NOTIF_AZURE_HUB_REGISTRATION_ERROR_EVENT, this._onAzureNotificationHubRegistrationError);
-    PushNotificationEmitter.addListener(DEVICE_NOTIF_EVENT, this._onRemoteNotification);  
   
     NotificationHub.register({connectionString, hubName, senderID, tags})
       .catch(reason => console.warn(reason));
