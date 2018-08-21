@@ -42,21 +42,32 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
     public void onReceive(Context context, Bundle bundle) {
         this.context = context;
         sendNotification(bundle);
+        sendBroadcast(context, bundle, 0);
+    }
 
+    public void sendBroadcast(final Context context, final Bundle bundle, final long delay) {
+        (new Thread() {
+            public void run() {
+                try
+                {
+                    Thread.currentThread().sleep(delay);
         JSONObject json = new JSONObject();
         Set<String> keys = bundle.keySet();
         for (String key : keys) {
             try {
                 json.put(key, bundle.get(key));
-            } catch (JSONException e) {
+                        } catch (JSONException e) {}
             }
-        }
 
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
         Intent event= new Intent(TAG);
         event.putExtra("event", ReactNativeNotificationHubModule.DEVICE_NOTIF_EVENT);
         event.putExtra("data", json.toString());
+                    LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
         localBroadcastManager.sendBroadcast(event);
+                }
+                catch (Exception e) {}
+            }
+        }).start();
     }
 
     private Class getMainActivityClass() {
