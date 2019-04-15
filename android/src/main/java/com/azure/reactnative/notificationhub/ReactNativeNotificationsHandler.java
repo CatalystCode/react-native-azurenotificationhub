@@ -32,7 +32,8 @@ import com.microsoft.windowsazure.notifications.NotificationsHandler;
 import java.util.Set;
 
 public class ReactNativeNotificationsHandler extends NotificationsHandler {
-    public static final String TAG = "ReactNativeNotificationsHandler";
+    public static final String TAG = "ReactNativeNotification";
+
     private static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
     private static final long DEFAULT_VIBRATION = 300L;
 
@@ -48,24 +49,24 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
     public void sendBroadcast(final Context context, final Bundle bundle, final long delay) {
         (new Thread() {
             public void run() {
-                try
-                {
+                try {
                     Thread.currentThread().sleep(delay);
-        JSONObject json = new JSONObject();
-        Set<String> keys = bundle.keySet();
-        for (String key : keys) {
-            try {
-                json.put(key, bundle.get(key));
-                        } catch (JSONException e) {}
-            }
+                    JSONObject json = new JSONObject();
+                    Set<String> keys = bundle.keySet();
+                    for (String key : keys) {
+                        try {
+                            json.put(key, bundle.get(key));
+                        } catch (JSONException e) {
+                        }
+                    }
 
-        Intent event= new Intent(TAG);
-        event.putExtra("event", ReactNativeNotificationHubModule.DEVICE_NOTIF_EVENT);
-        event.putExtra("data", json.toString());
+                    Intent event = new Intent(TAG);
+                    event.putExtra("event", ReactNativeNotificationHubModule.DEVICE_NOTIF_EVENT);
+                    event.putExtra("data", json.toString());
                     LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
-        localBroadcastManager.sendBroadcast(event);
+                    localBroadcastManager.sendBroadcast(event);
+                } catch (Exception e) {
                 }
-                catch (Exception e) {}
             }
         }).start();
     }
@@ -291,6 +292,7 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
     }
 
     private static boolean channelCreated = false;
+
     private static void checkOrCreateChannel(NotificationManager manager) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return;
@@ -298,7 +300,7 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
             return;
         if (manager == null)
             return;
-         final CharSequence name = "rn-push-notification-channel";
+        final CharSequence name = "rn-push-notification-channel";
         int importance = NotificationManager.IMPORTANCE_DEFAULT;
         NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance);
         channel.enableLights(true);
