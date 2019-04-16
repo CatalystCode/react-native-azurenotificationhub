@@ -99,7 +99,7 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
                 return;
             }
 
-            String notificationIdString = bundle.getString("id");
+            String notificationIdString = bundle.getString("google.message_id");
             if (notificationIdString == null) {
                 Log.e(TAG, "No notification ID specified for the notification");
                 return;
@@ -223,7 +223,7 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
                 }
             }
 
-            int notificationID = Integer.parseInt(notificationIdString);
+            int notificationID = notificationIdString.hashCode();
 
             PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationID, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
