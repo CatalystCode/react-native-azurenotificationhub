@@ -90,7 +90,7 @@ In `android/app/src/main/AndroidManifest.xml`
 ```xml  
     <application
       xmlns:tools="http://schemas.android.com/tools"
-      tools:replace="android:icon"
+      tools:replace="android:icon,android:allowBackup"
       ...>
     </application>
 ```
@@ -108,6 +108,21 @@ include ':react-native-azurenotificationhub'
 project(':react-native-azurenotificationhub').projectDir = file('../node_modules/react-native-azurenotificationhub/android')
 ```
 
+In `android/build.gradle`
+
+```gradle
+...
+
+buildscript {
+	...
+    dependencies {
+        ...
+        classpath 'com.google.gms:google-services:4.2.0'
+    }
+}
+
+```
+
 In `android/app/build.gradle`
 
 ```gradle
@@ -115,10 +130,13 @@ In `android/app/build.gradle`
 dependencies {
     ...
 
-    compile project(':react-native-azurenotificationhub')
-    compile 'com.google.android.gms:play-services-gcm:9.4.0'
-    compile 'com.google.firebase:firebase-messaging:9.4.0'
+    implementation project(':react-native-azurenotificationhub')
+    implementation 'com.google.firebase:firebase-messaging:17.6.0'
+    implementation 'com.google.firebase:firebase-core:16.0.8'
 }
+
+apply plugin: 'com.google.gms.google-services'
+
 ```
 
 In `android/app/src/main/AndroidManifest.xml`
@@ -127,21 +145,28 @@ In `android/app/src/main/AndroidManifest.xml`
     ...
     
     <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     
     <application ...>
       ...
-      <service
-        android:name="com.azure.reactnative.notificationhub.ReactNativeRegistrationIntentService"
-        android:exported="false">
-      </service>
-      <receiver android:name="com.microsoft.windowsazure.notifications.NotificationsBroadcastReceiver"
-        android:permission="com.google.android.c2dm.permission.SEND">
-        <intent-filter>
-          <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-        </intent-filter>
-      </receiver>
+        <service
+            android:name="com.azure.reactnative.notificationhub.ReactNativeRegistrationIntentService"
+            android:exported="false" />
+
+        <service
+            android:name="com.azure.reactnative.notificationhub.ReactNativeFirebaseMessagingService"
+            android:stopWithTask="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name="com.microsoft.windowsazure.notifications.NotificationsBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND">
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+            </intent-filter>
+        </receiver>
     ...
 ```
 
