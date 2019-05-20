@@ -23,6 +23,7 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.UiThreadUtil;
+import com.microsoft.windowsazure.notifications.NotificationsManager;
 
 public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
     public static final String NOTIF_REGISTER_AZURE_HUB_EVENT = "azureNotificationHubRegistered";
@@ -105,6 +106,7 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
 
         Intent intent = new Intent(reactContext, ReactNativeRegistrationIntentService.class);
         reactContext.startService(intent);
+        NotificationsManager.handleNotifications(reactContext, senderID, ReactNativeNotificationsHandler.class);
     }
 
     @ReactMethod
@@ -124,6 +126,7 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
         try {
             hub.unregister();
             notificationHubUtil.setRegistrationID(reactContext, null);
+            NotificationsManager.stopHandlingNotifications(reactContext);
         } catch (Exception e) {
             promise.reject(ERROR_NOTIFICATION_HUB, e);
         }
