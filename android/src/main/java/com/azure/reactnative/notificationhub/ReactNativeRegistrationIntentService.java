@@ -8,6 +8,7 @@ import android.util.Log;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.microsoft.windowsazure.notifications.NotificationsManager;
 import com.microsoft.windowsazure.messaging.NotificationHub;
 
 import java.util.concurrent.ExecutorService;
@@ -62,6 +63,8 @@ public class ReactNativeRegistrationIntentService extends IntentService {
 
                                 notificationHubUtil.setRegistrationID(ReactNativeRegistrationIntentService.this, regID);
                                 notificationHubUtil.setFCMToken(ReactNativeRegistrationIntentService.this, token);
+
+                                NotificationsManager.handleNotifications(ReactNativeRegistrationIntentService.this, regID, ReactNativeNotificationsHandler.class);
 
                                 event.putExtra("event", ReactNativeNotificationHubModule.NOTIF_REGISTER_AZURE_HUB_EVENT);
                                 event.putExtra("data", regID);

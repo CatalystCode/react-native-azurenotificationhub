@@ -148,6 +148,10 @@ In `android/app/src/main/AndroidManifest.xml`
     
     <application ...>
       ...
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
         <service
             android:name="com.azure.reactnative.notificationhub.ReactNativeRegistrationIntentService"
             android:exported="false" />

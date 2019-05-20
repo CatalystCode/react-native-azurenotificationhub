@@ -274,7 +274,6 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
             }
 
             Notification info = notification.build();
-            info.defaults |= Notification.DEFAULT_LIGHTS;
 
             if (bundle.containsKey("tag")) {
                 String tag = bundle.getString("tag");
