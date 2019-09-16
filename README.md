@@ -377,22 +377,10 @@ namespace ...
 
 ![SetProvisioningProfile](./img/SetProvisioningProfile.png)
 
-* Drag **node_modules/react-native-azurenotificationhub/ios/RCTAzureNotificationHubManager.xcodeproj** and **node_modules/react-native-azurenotificationhub/ios/WindowsAzureMessaging.xcodeproj** to your project on Xcode (usually under the Libraries group on Xcode).
-
-![AddLibsIOS](./img/AddLibsIOS.png)
-
-* Click on your main project file (the one that represents the **.xcodeproj**), select **Build Phases** and drag the static libraries from the **Products** folder inside the libraries you are importing to **Link Binary With Libraries**
-
-![LinkLibsIOS](./img/LinkLibsIOS.png)
-
-* Add **$(SRCROOT)/../node_modules/react-native-azurenotificationhub/ios** to **Header Search Paths** and select **recursive**
-
-![IncludeHeaderIOS](./img/IncludeHeaderIOS.png)
-
 * To enable support for notification and register events you need to augment your AppDelegate. At the top of your **AppDelegate.m**:
 
 ```objective-c
-#import "RCTAzureNotificationHubManager.h"
+#import "<RNAzureNotificationHub/RCTAzureNotificationHubManager.h>"
 ```
 
 * And then add the following code in the same file:
