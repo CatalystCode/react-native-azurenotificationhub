@@ -98,16 +98,6 @@ In `android/app/src/main/AndroidManifest.xml`
 This resolves the error caused by the manifest merger tool for gradle.
 
 ### Export React Native Module from app
-
-In `android/settings.gradle`
-
-```gradle
-...
-
-include ':react-native-azurenotificationhub'
-project(':react-native-azurenotificationhub').projectDir = file('../node_modules/react-native-azurenotificationhub/android')
-```
-
 In `android/build.gradle`
 
 ```gradle
@@ -130,7 +120,7 @@ In `android/app/build.gradle`
 dependencies {
     ...
 
-    implementation project(':react-native-azurenotificationhub')
+    implementation project(':react-native-azurenotificationhub') // <- Note only include this line if using a version of RN < 0.60 since it will be auto linked
     implementation 'com.google.firebase:firebase-messaging:17.6.0'
     implementation 'com.google.firebase:firebase-core:16.0.8'
 }
@@ -172,6 +162,17 @@ In `android/app/src/main/AndroidManifest.xml`
             </intent-filter>
         </receiver>
     ...
+```
+
+### If using a version of React Native before [RN 0.60](https://github.com/facebook/react-native/releases/tag/v0.60.0) that does not support autolinking:
+
+In `android/settings.gradle`
+
+```gradle
+...
+
+include ':react-native-azurenotificationhub'
+project(':react-native-azurenotificationhub').projectDir = file('../node_modules/react-native-azurenotificationhub/android')
 ```
 
 Register the module package in `MainApplication.java`
