@@ -381,7 +381,7 @@ namespace ...
 * To enable support for notification and register events you need to augment your AppDelegate. At the top of your **AppDelegate.m**:
 
 ```objective-c
-#import "<RNAzureNotificationHub/RCTAzureNotificationHubManager.h>"
+#import <RNAzureNotificationHub/RCTAzureNotificationHubManager.h>
 ```
 
 * And then add the following code in the same file:
