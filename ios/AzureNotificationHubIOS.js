@@ -204,9 +204,9 @@ class AzureNotificationHubIOS {
    * Valid events are:
    *
    * - `notification` : Fired when a remote notification is received. The
-   *   handler will be invoked with an instance of `PushNotificationIOS`.
+   *   handler will be invoked with an instance of `AzureNotificationHubIOS`.
    * - `localNotification` : Fired when a local notification is received. The
-   *   handler will be invoked with an instance of `PushNotificationIOS`.
+   *   handler will be invoked with an instance of `AzureNotificationHubIOS`.
    * - `register`: Fired when the user registers for remote notifications. The
    *   handler will be invoked with a hex string representing the deviceToken.
    * - `registrationError`: Fired when the user fails to register for remote

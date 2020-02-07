@@ -539,6 +539,7 @@ class myapp extends Component {
   }
   
   _onRemoteNotification(notification) {
+    // Note notification will be a JSON string for android
     console.warn('Notification received: ' + notification);
   }  
 ```
@@ -550,20 +551,50 @@ const NotificationHub = require('react-native-azurenotificationhub/index.ios');
 
 const connectionString = '...'; // The Notification Hub connection string
 const hubName = '...';          // The Notification Hub name
-const senderID = '...';         // The Sender ID from the Cloud Messaging tab of the Firebase console
 const tags = [ ... ];           // The set of tags to subscribe to
 
 var remoteNotificationsDeviceToken = '';  // The device token registered with APNS
 
 class myapp extends Component {
   requestPermissions() {
+    // register: Fired when the user registers for remote notifications. The
+    // handler will be invoked with a hex string representing the deviceToken.
     NotificationHub.addEventListener('register', this._onRegistered);
+
+    // registrationError: Fired when the user fails to register for remote
+    // notifications. Typically occurs when APNS is having issues, or the device
+    // is a simulator. The handler will be invoked with {message: string, code: number, details: any}.
     NotificationHub.addEventListener('registrationError', this._onRegistrationError);
-    NotificationHub.addEventListener('registerAzureNotificationHub', this._onAzureNotificationHubRegistered);
+
+    // registerAzureNotificationHub: Fired when registration with azure notification hubs successful
+    // with object {success: true}
+    NotificationHub.addEventListener('registerAzureNotificationHub' this._onAzureNotificationHubRegistered);
+
+    // azureNotificationHubRegistrationError: Fired when registration with azure notification hubs
+    // fails with object {message: string, details: any} 
     NotificationHub.addEventListener('azureNotificationHubRegistrationError', this._onAzureNotificationHubRegistrationError);
+
+    // notification: Fired when a remote notification is received. The
+    // handler will be invoked with an instance of `PushNotificationIOS`.
     NotificationHub.addEventListener('notification', this._onRemoteNotification);
+
+    // localNotification: Fired when a local notification is received. The
+    // handler will be invoked with an instance of `PushNotificationIOS`.
     NotificationHub.addEventListener('localNotification', this._onLocalNotification);
 
+    // Requests notification permissions from iOS, prompting the user's
+    // dialog box. By default, it will request all notification permissions, but
+    // a subset of these can be requested by passing a map of requested
+    // permissions.
+    // The following permissions are supported:
+    //  - `alert`
+    //  - `badge`
+    //  - `sound`
+    //
+    // returns a promise that will resolve when the user accepts,
+    // rejects, or if the permissions were previously rejected. The promise
+    // resolves to the current state of the permission of 
+    // {alert: boolean, badge: boolean,sound: boolean }
     NotificationHub.requestPermissions();
   }
 
@@ -659,6 +690,7 @@ class myapp extends Component {
   }
 
   _onLocalNotification(notification){
+    // Note notification will be object for iOS
     AlertIOS.alert(
       'Local Notification Received',
       'Alert message: ' + notification.getMessage(),
