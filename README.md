@@ -575,11 +575,11 @@ class myapp extends Component {
     NotificationHub.addEventListener('azureNotificationHubRegistrationError', this._onAzureNotificationHubRegistrationError);
 
     // notification: Fired when a remote notification is received. The
-    // handler will be invoked with an instance of `PushNotificationIOS`.
+    // handler will be invoked with an instance of `AzureNotificationHubIOS`.
     NotificationHub.addEventListener('notification', this._onRemoteNotification);
 
     // localNotification: Fired when a local notification is received. The
-    // handler will be invoked with an instance of `PushNotificationIOS`.
+    // handler will be invoked with an instance of `AzureNotificationHubIOS`.
     NotificationHub.addEventListener('localNotification', this._onLocalNotification);
 
     // Requests notification permissions from iOS, prompting the user's
