@@ -599,7 +599,7 @@ class myapp extends Component {
   }
 
   register() {
-    NotificationHub.register(remoteNotificationsDeviceToken, {connectionString, hubName, senderID, tags});
+    NotificationHub.register(remoteNotificationsDeviceToken, {connectionString, hubName, tags});
   }
 
   unregister() {
