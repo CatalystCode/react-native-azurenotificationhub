@@ -22,19 +22,22 @@ steps:
     versionSpec: '10.15.3'
   displayName: 'Install Node'
 
-- script: cd ../react-native-azurenotificationhub-sample && npm install
+- script: npm install
   displayName: 'Install dependencies'
+  workingDirectory: '../react-native-azurenotificationhub-sample'
 
 - script: |
     rm -R ../react-native-azurenotificationhub-sample/node_modules/react-native-azurenotificationhub
     cp -R ../react-native-azurenotificationhub ../react-native-azurenotificationhub-sample/node_modules
   displayName: 'Copying react-native-azurenotificationhub'  
 
-- script: cd ../react-native-azurenotificationhub-sample && npm run lint
+- script: npm run lint
   displayName: 'Run lint'
+  workingDirectory: '../react-native-azurenotificationhub-sample'
 
-- script: cd ../react-native-azurenotificationhub-sample && npm run test
-  displayName: 'Run unit tests'  
+- script: npm run test
+  displayName: 'Run unit tests'
+  workingDirectory: '../react-native-azurenotificationhub-sample'
 
 - task: Gradle@2
   displayName: 'Building Android'
@@ -45,10 +48,10 @@ steps:
   continueOnError: false
 
 - script: |
-    cd ../react-native-azurenotificationhub-sample/ios
     pod install
     sudo cp -R ../node_modules/react-native-azurenotificationhub/ios Pods/RNAzureNotificationHub
-  displayName: 'Install CocoaPods dependencies'    
+  displayName: 'Install CocoaPods dependencies'
+  workingDirectory: '../react-native-azurenotificationhub-sample/ios'
 
 - task: Xcode@5
   displayName: 'Building iOS'
