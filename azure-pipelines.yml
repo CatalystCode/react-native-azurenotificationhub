@@ -1,7 +1,8 @@
 trigger:
   branches:
     include:
-    - thcao/cicd
+    - master
+    - releases/*
     exclude:
     - refs/tag/*
 
