@@ -10,12 +10,9 @@ pool:
   vmImage: 'macOS-10.13'
 
 steps:
-- checkout: self
-  path: react-native-azurenotificationhub
-
 - script: |
-    git clone https://github.com/phongcao/react-native-azurenotificationhub-sample.git ../react-native-azurenotificationhub-sample
-  displayName: 'Cloning react-native-azurenotificationhub-sample'
+    mv ./sample ../
+  displayName: 'Prepare sample project'
 
 - task: NodeTool@0
   inputs:
@@ -24,26 +21,27 @@ steps:
 
 - script: npm install
   displayName: 'Install dependencies'
-  workingDirectory: '../react-native-azurenotificationhub-sample'
+  workingDirectory: '../sample'
 
 - script: |
-    rm -R ../react-native-azurenotificationhub-sample/node_modules/react-native-azurenotificationhub
-    cp -R ../react-native-azurenotificationhub ../react-native-azurenotificationhub-sample/node_modules
-  displayName: 'Copying react-native-azurenotificationhub'  
+    rm -R ./node_modules/react-native-azurenotificationhub/*
+    cp -R ../s/* ./node_modules/react-native-azurenotificationhub/
+  displayName: 'Copying react-native-azurenotificationhub'
+  workingDirectory: '../sample'
 
 - script: npm run lint
   displayName: 'Run lint'
-  workingDirectory: '../react-native-azurenotificationhub-sample'
+  workingDirectory: '../sample'
 
 - script: npm run test
   displayName: 'Run unit tests'
-  workingDirectory: '../react-native-azurenotificationhub-sample'
+  workingDirectory: '../sample'
 
 - task: Gradle@2
   displayName: 'Building Android'
   inputs:
-    workingDirectory: '../react-native-azurenotificationhub-sample/android'
-    gradleWrapperFile: '../react-native-azurenotificationhub-sample/android/gradlew'
+    workingDirectory: '../sample/android'
+    gradleWrapperFile: '../sample/android/gradlew'
     tasks: 'assembleRelease'
   continueOnError: false
 
@@ -51,7 +49,7 @@ steps:
     pod install
     sudo cp -R ../node_modules/react-native-azurenotificationhub/ios Pods/RNAzureNotificationHub
   displayName: 'Install CocoaPods dependencies'
-  workingDirectory: '../react-native-azurenotificationhub-sample/ios'
+  workingDirectory: '../sample/ios'
 
 - task: Xcode@5
   displayName: 'Building iOS'
@@ -60,7 +58,7 @@ steps:
     scheme: 'ReactNativeAzureNotificationHubSample'
     sdk: 'iphoneos'
     configuration: 'Release'
-    xcWorkspacePath: '../react-native-azurenotificationhub-sample/ios/ReactNativeAzureNotificationHubSample.xcworkspace'
+    xcWorkspacePath: '../sample/ios/ReactNativeAzureNotificationHubSample.xcworkspace'
     xcodeVersion: '10'
     signingOption: 'nosign'
     useXcpretty: 'false'
