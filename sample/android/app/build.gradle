@@ -184,6 +184,9 @@ dependencies {
     implementation project(":react-native-azurenotificationhub")  // From node_modules
     implementation "com.google.firebase:firebase-messaging:17.6.0"
     implementation "com.google.firebase:firebase-core:16.0.8"
+    implementation "com.microsoft.azure:notification-hubs-android-sdk:0.4@aar"
+    testImplementation "org.powermock:powermock-api-mockito:1.6.2"
+    testImplementation "org.powermock:powermock-module-junit4:1.6.2"
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";

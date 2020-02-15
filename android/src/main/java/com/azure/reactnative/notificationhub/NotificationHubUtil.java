@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.facebook.react.bridge.ReactContext;
+import com.microsoft.windowsazure.messaging.NotificationHub;
+
 public class NotificationHubUtil {
     private static NotificationHubUtil sharedNotificationHubUtilInstance = null;
 
@@ -24,7 +27,7 @@ public class NotificationHubUtil {
             "AzureNotificationHub_Tags";
 
     public static NotificationHubUtil getInstance() {
-        if(sharedNotificationHubUtilInstance == null) {
+        if (sharedNotificationHubUtilInstance == null) {
             sharedNotificationHubUtilInstance = new NotificationHubUtil();
         }
         return sharedNotificationHubUtilInstance;
@@ -70,6 +73,11 @@ public class NotificationHubUtil {
     public void setTags(Context context, String[] tags) {
         Set<String> set = tags != null ? new HashSet<>(Arrays.asList(tags)) : null;
         setPrefSet(context, KEY_FOR_PREFS_TAGS, set);
+    }
+
+    public NotificationHub createNotificationHub(String hubName, String connectionString, ReactContext reactContext) {
+        NotificationHub hub = new NotificationHub(hubName, connectionString, reactContext);
+        return hub;
     }
 
     private String getPref(Context context, String key) {

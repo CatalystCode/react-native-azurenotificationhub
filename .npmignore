@@ -1,3 +1,4 @@
-azure-pipelines.yml
 .gitattributes
+.gitignore
+azure-pipelines.yml
 sample
