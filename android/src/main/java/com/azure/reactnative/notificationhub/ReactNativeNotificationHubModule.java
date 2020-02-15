@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.facebook.react.bridge.LifecycleEventListener;
@@ -26,20 +27,27 @@ import com.facebook.react.bridge.UiThreadUtil;
 import com.microsoft.windowsazure.notifications.NotificationsManager;
 
 public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
+    public static final String AZURE_NOTIFICATION_HUB_NAME = "AzureNotificationHub";
     public static final String NOTIF_REGISTER_AZURE_HUB_EVENT = "azureNotificationHubRegistered";
     public static final String NOTIF_AZURE_HUB_REGISTRATION_ERROR_EVENT = "azureNotificationHubRegistrationError";
     public static final String DEVICE_NOTIF_EVENT = "remoteNotificationReceived";
 
+    public static final String ERROR_INVALID_ARGUMENTS = "E_INVALID_ARGUMENTS";
+    public static final String ERROR_INVALID_CONNECTION_STRING = "Connection string cannot be null.";
+    public static final String ERROR_INVALID_HUBNAME = "Hub name cannot be null.";
+    public static final String ERROR_INVALID_SENDER_ID = "Sender ID cannot be null.";
+    public static final String ERROR_PLAY_SERVICES = "E_PLAY_SERVICES";
+    public static final String ERROR_PLAY_SERVICES_DISABLED = "User must enable Google Play Services.";
+    public static final String ERROR_PLAY_SERVICES_UNSUPPORTED = "This device is not supported by Google Play Services.";
+    public static final String ERROR_NOTIFICATION_HUB = "E_NOTIFICATION_HUB";
+    public static final String ERROR_NOT_REGISTERED = "E_NOT_REGISTERED";
+    public static final String ERROR_NOT_REGISTERED_DESC = "No registration to Azure Notification Hub.";
+
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final int NOTIFICATION_DELAY_ON_START = 3000;
 
-    private static final String ERROR_INVALID_ARGUMENTS = "E_INVALID_ARGUMENTS";
-    private static final String ERROR_PLAY_SERVICES = "E_PLAY_SERVICES";
-    private static final String ERROR_NOTIFICATION_HUB = "E_NOTIFICATION_HUB";
-    private static final String ERROR_NOT_REGISTERED = "E_NOT_REGISTERED";
-
-    private ReactApplicationContext  mReactContext;
-    private LocalBroadcastReceiver  mLocalBroadcastReceiver;
+    private ReactApplicationContext mReactContext;
+    private LocalBroadcastReceiver mLocalBroadcastReceiver;
 
     public ReactNativeNotificationHubModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -53,7 +61,7 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
 
     @Override
     public String getName() {
-        return "AzureNotificationHub";
+        return AZURE_NOTIFICATION_HUB_NAME;
     }
 
     @ReactMethod
@@ -61,17 +69,20 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
         NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
         String connectionString = config.getString("connectionString");
         if (connectionString == null) {
-            promise.reject(ERROR_INVALID_ARGUMENTS, "Connection string cannot be null.");
+            promise.reject(ERROR_INVALID_ARGUMENTS, ERROR_INVALID_CONNECTION_STRING);
+            return;
         }
 
         String hubName = config.getString("hubName");
         if (hubName == null) {
-            promise.reject(ERROR_INVALID_ARGUMENTS, "Hub name cannot be null.");
+            promise.reject(ERROR_INVALID_ARGUMENTS, ERROR_INVALID_HUBNAME);
+            return;
         }
 
         String senderID = config.getString("senderID");
         if (senderID == null) {
-            promise.reject(ERROR_INVALID_ARGUMENTS, "Sender ID cannot be null.");
+            promise.reject(ERROR_INVALID_ARGUMENTS, ERROR_INVALID_SENDER_ID);
+            return;
         }
 
         String[] tags = null;
@@ -97,9 +108,9 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
                                 getCurrentActivity(),
                                 apiAvailability,
                                 resultCode));
-                promise.reject(ERROR_PLAY_SERVICES, "User must enable Google Play Services.");
+                promise.reject(ERROR_PLAY_SERVICES, ERROR_PLAY_SERVICES_DISABLED);
             } else {
-                promise.reject(ERROR_PLAY_SERVICES, "This device is not supported by Google Play Services.");
+                promise.reject(ERROR_PLAY_SERVICES, ERROR_PLAY_SERVICES_UNSUPPORTED);
             }
             return;
         }
@@ -118,10 +129,11 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
         String registrationId = notificationHubUtil.getRegistrationID(reactContext);
 
         if (connectionString == null || hubName == null || registrationId == null) {
-            promise.reject(ERROR_NOT_REGISTERED, "No registration to Azure Notification Hub.");
+            promise.reject(ERROR_NOT_REGISTERED, ERROR_NOT_REGISTERED_DESC);
+            return;
         }
 
-        NotificationHub hub = new NotificationHub(hubName, connectionString, reactContext);
+        NotificationHub hub = notificationHubUtil.createNotificationHub(hubName, connectionString, reactContext);
         try {
             hub.unregister();
             notificationHubUtil.setRegistrationID(reactContext, null);
@@ -144,10 +156,15 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
             }
         }
     }
+
     @Override
-    public void onHostPause() {}
+    public void onHostPause() {
+    }
+
     @Override
-    public void onHostDestroy() {}
+    public void onHostDestroy() {
+    }
+
     public class LocalBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {

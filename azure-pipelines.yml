@@ -44,6 +44,14 @@ steps:
     gradleWrapperFile: '../sample/android/gradlew'
     tasks: 'assembleRelease'
   continueOnError: false
+  
+- task: Gradle@2
+  displayName: 'Running Android unit tests'
+  inputs:
+    workingDirectory: '../sample/android'
+    gradleWrapperFile: '../sample/android/gradlew'
+    tasks: 'test'
+  continueOnError: false  
 
 - script: |
     pod install
