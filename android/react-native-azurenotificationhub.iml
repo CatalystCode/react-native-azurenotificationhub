@@ -101,7 +101,6 @@
     <orderEntry type="library" name="Gradle: com.squareup.okhttp3:okhttp:3.12.1@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.squareup.okio:okio:1.15.0@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.google.auto.value:auto-value-annotations:1.6@jar" level="project" />
-    <orderEntry type="library" name="Gradle: __local_aars__:C.\Projects\react-native-azurenotificationhub\sample\node_modules\react-native-azurenotificationhub\android\libs\notifications-handler-release.aar:unspecified@jar" level="project" />
     <orderEntry type="library" name="Gradle: com.facebook.react:react-native:0.61.5@aar" level="project" />
     <orderEntry type="library" name="Gradle: androidx.appcompat:appcompat:1.0.2@aar" level="project" />
     <orderEntry type="library" name="Gradle: com.google.firebase:firebase-messaging:17.6.0@aar" level="project" />

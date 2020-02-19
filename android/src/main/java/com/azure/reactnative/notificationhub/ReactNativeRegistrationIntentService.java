@@ -70,7 +70,8 @@ public class ReactNativeRegistrationIntentService extends IntentService {
                                 localBroadcastManager.sendBroadcast(event);
 
                                 // Create notification handler
-                                ReactNativeFirebaseMessagingService.createNotificationHandler(ReactNativeRegistrationIntentService.this);
+                                ReactNativeFirebaseMessagingService.createNotificationHandler(
+                                        ReactNativeRegistrationIntentService.this);
                             }
                         } catch (Exception e) {
                             Log.e(TAG, "Failed to complete token refresh", e);

@@ -170,7 +170,8 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
             if (intent != null) {
                 Bundle bundle = intent.getBundleExtra("notification");
                 if (bundle != null) {
-                    new ReactNativeNotificationsHandler().sendBroadcast(bundle, NOTIFICATION_DELAY_ON_START);
+                    new ReactNativeNotificationsHandler().sendBroadcast(
+                            mReactContext, bundle, NOTIFICATION_DELAY_ON_START);
                 }
             }
         }

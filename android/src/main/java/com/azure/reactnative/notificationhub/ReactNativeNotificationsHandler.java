@@ -1,9 +1,6 @@
 package com.azure.reactnative.notificationhub;
 
-import android.app.AlarmManager;
-import android.app.Application;
 import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -32,13 +29,11 @@ import java.util.Set;
 public class ReactNativeNotificationsHandler {
     public static final String TAG = "ReactNativeNotification";
 
+    public static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
+
     private static final long DEFAULT_VIBRATION = 300L;
 
-    private static Context appContext;
-    private static boolean channelCreated;
-    private static NotificationChannel notificationChannel;
-
-    public void sendBroadcast(final Bundle bundle, final long delay) {
+    public void sendBroadcast(final Context context, final Bundle bundle, final long delay) {
         (new Thread() {
             public void run() {
                 try {
@@ -55,7 +50,7 @@ public class ReactNativeNotificationsHandler {
                     Intent event = new Intent(TAG);
                     event.putExtra("event", ReactNativeNotificationHubModule.DEVICE_NOTIF_EVENT);
                     event.putExtra("data", json.toString());
-                    LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(appContext);
+                    LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
                     localBroadcastManager.sendBroadcast(event);
                 } catch (Exception e) {
                 }
@@ -63,9 +58,9 @@ public class ReactNativeNotificationsHandler {
         }).start();
     }
 
-    public void sendNotification(Bundle bundle) {
+    public void sendNotification(Context context, Bundle bundle, String notificationChannelID) {
         try {
-            Class intentClass = getMainActivityClass();
+            Class intentClass = getMainActivityClass(context);
             if (intentClass == null) {
                 Log.e(TAG, "No activity class found for the notification");
                 return;
@@ -82,13 +77,13 @@ public class ReactNativeNotificationsHandler {
                 return;
             }
 
-            Resources res = appContext.getResources();
-            String packageName = appContext.getPackageName();
+            Resources res = context.getResources();
+            String packageName = context.getPackageName();
 
             String title = bundle.getString("title");
             if (title == null) {
-                ApplicationInfo appInfo = appContext.getApplicationInfo();
-                title = appContext.getPackageManager().getApplicationLabel(appInfo).toString();
+                ApplicationInfo appInfo = context.getApplicationInfo();
+                title = context.getPackageManager().getApplicationLabel(appInfo).toString();
             }
 
             int priority = NotificationCompat.PRIORITY_DEFAULT;
@@ -113,7 +108,7 @@ public class ReactNativeNotificationsHandler {
                 }
             }
 
-            NotificationCompat.Builder notification = new NotificationCompat.Builder(appContext, notificationChannel.getId())
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(context, notificationChannelID)
                     .setContentTitle(title)
                     .setTicker(bundle.getString("ticker"))
                     .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
@@ -180,7 +175,7 @@ public class ReactNativeNotificationsHandler {
 
             notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
 
-            Intent intent = new Intent(appContext, intentClass);
+            Intent intent = new Intent(context, intentClass);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             bundle.putBoolean("userInteraction", true);
             intent.putExtra("notification", bundle);
@@ -196,14 +191,14 @@ public class ReactNativeNotificationsHandler {
                         // The reason is to make the iOS and android javascript interfaces compatible
 
                         int resId;
-                        if (appContext.getResources().getIdentifier(soundName, "raw", appContext.getPackageName()) != 0) {
-                            resId = appContext.getResources().getIdentifier(soundName, "raw", appContext.getPackageName());
+                        if (context.getResources().getIdentifier(soundName, "raw", context.getPackageName()) != 0) {
+                            resId = context.getResources().getIdentifier(soundName, "raw", context.getPackageName());
                         } else {
                             soundName = soundName.substring(0, soundName.lastIndexOf('.'));
-                            resId = appContext.getResources().getIdentifier(soundName, "raw", appContext.getPackageName());
+                            resId = context.getResources().getIdentifier(soundName, "raw", context.getPackageName());
                         }
 
-                        soundUri = Uri.parse("android.resource://" + appContext.getPackageName() + "/" + resId);
+                        soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + resId);
                     }
                 }
                 notification.setSound(soundUri);
@@ -224,7 +219,7 @@ public class ReactNativeNotificationsHandler {
 
             int notificationID = notificationIdString.hashCode();
 
-            PendingIntent pendingIntent = PendingIntent.getActivity(appContext, notificationID, intent,
+            PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationID, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
             notification.setContentIntent(pendingIntent);
@@ -258,18 +253,19 @@ public class ReactNativeNotificationsHandler {
                     }
 
                     Intent actionIntent = new Intent();
-                    actionIntent.setAction(appContext.getPackageName() + "." + action);
+                    actionIntent.setAction(context.getPackageName() + "." + action);
                     // Add "action" for later identifying which button gets pressed.
                     bundle.putString("action", action);
                     actionIntent.putExtra("notification", bundle);
-                    PendingIntent pendingActionIntent = PendingIntent.getBroadcast(appContext, notificationID, actionIntent,
+                    PendingIntent pendingActionIntent = PendingIntent.getBroadcast(context, notificationID, actionIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT);
                     notification.addAction(icon, action, pendingActionIntent);
                 }
             }
 
             Notification info = notification.build();
-            NotificationManager notificationManager = appContext.getSystemService(NotificationManager.class);
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(
+                    Context.NOTIFICATION_SERVICE);
             if (bundle.containsKey("tag")) {
                 String tag = bundle.getString("tag");
                 notificationManager.notify(tag, notificationID, info);
@@ -281,19 +277,9 @@ public class ReactNativeNotificationsHandler {
         }
     }
 
-    public void createChannelAndHandleNotifications(Context context, NotificationChannel channel) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !channelCreated) {
-            appContext = context;
-            notificationChannel = channel;
-            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-            channelCreated = true;
-        }
-    }
-
-    private Class getMainActivityClass() {
-        String packageName = appContext.getPackageName();
-        Intent launchIntent = appContext.getPackageManager().getLaunchIntentForPackage(packageName);
+    private Class getMainActivityClass(Context context) {
+        String packageName = context.getPackageName();
+        Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
         String className = launchIntent.getComponent().getClassName();
         try {
             return Class.forName(className);
