@@ -68,6 +68,13 @@ buildscript {
     }
 }
 
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://dl.bintray.com/microsoftazuremobile/SDK' }
+    }
+}
+
 ```
 
 In `android/app/build.gradle`
@@ -92,6 +99,8 @@ In `android/app/src/main/AndroidManifest.xml`
     ...
     
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     
     <application ...>
       ...
@@ -110,14 +119,6 @@ In `android/app/src/main/AndroidManifest.xml`
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-        <receiver
-            android:name="com.microsoft.windowsazure.notifications.NotificationsBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-            </intent-filter>
-        </receiver>
     ...
 ```
 
