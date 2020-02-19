@@ -15,12 +15,10 @@ public class ReactNativeFirebaseMessagingService extends FirebaseMessagingServic
 
     private static final String TAG = "ReactNativeFMS";
 
-    private static ReactNativeNotificationsHandler notificationHandler;
     private static String notificationChannelID;
 
-    public static void createNotificationHandler(Context context) {
-        if (notificationHandler == null) {
-            notificationHandler = new ReactNativeNotificationsHandler();
+    public static void createNotificationChannel(Context context) {
+        if (notificationChannelID == null) {
             NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
             NotificationChannelBuilder builder = new NotificationChannelBuilder();
             if (notificationHubUtil.hasChannelImportance(context)) {
@@ -62,12 +60,12 @@ public class ReactNativeFirebaseMessagingService extends FirebaseMessagingServic
     public void onMessageReceived(RemoteMessage remoteMessage) {
         Log.d(TAG, "Remote message from: " + remoteMessage.getFrom());
 
-        if (notificationHandler == null) {
-            createNotificationHandler(this);
+        if (notificationChannelID == null) {
+            createNotificationChannel(this);
         }
 
         Bundle bundle = remoteMessage.toIntent().getExtras();
-        notificationHandler.sendNotification(this, bundle, notificationChannelID);
-        notificationHandler.sendBroadcast(this, bundle, 0);
+        ReactNativeNotificationsHandler.sendNotification(this, bundle, notificationChannelID);
+        ReactNativeNotificationsHandler.sendBroadcast(this, bundle, 0);
     }
 }

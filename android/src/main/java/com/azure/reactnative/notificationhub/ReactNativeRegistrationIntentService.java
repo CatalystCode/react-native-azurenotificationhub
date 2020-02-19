@@ -70,7 +70,7 @@ public class ReactNativeRegistrationIntentService extends IntentService {
                                 localBroadcastManager.sendBroadcast(event);
 
                                 // Create notification handler
-                                ReactNativeFirebaseMessagingService.createNotificationHandler(
+                                ReactNativeFirebaseMessagingService.createNotificationChannel(
                                         ReactNativeRegistrationIntentService.this);
                             }
                         } catch (Exception e) {

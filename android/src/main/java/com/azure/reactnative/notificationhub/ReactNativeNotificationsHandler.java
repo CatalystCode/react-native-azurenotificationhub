@@ -26,14 +26,17 @@ import org.json.JSONObject;
 
 import java.util.Set;
 
-public class ReactNativeNotificationsHandler {
+public final class ReactNativeNotificationsHandler {
     public static final String TAG = "ReactNativeNotification";
 
     public static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
 
     private static final long DEFAULT_VIBRATION = 300L;
 
-    public void sendBroadcast(final Context context, final Bundle bundle, final long delay) {
+    private ReactNativeNotificationsHandler() {
+    }
+
+    public static void sendBroadcast(final Context context, final Bundle bundle, final long delay) {
         (new Thread() {
             public void run() {
                 try {
@@ -58,7 +61,7 @@ public class ReactNativeNotificationsHandler {
         }).start();
     }
 
-    public void sendNotification(Context context, Bundle bundle, String notificationChannelID) {
+    public static void sendNotification(Context context, Bundle bundle, String notificationChannelID) {
         try {
             Class intentClass = getMainActivityClass(context);
             if (intentClass == null) {
@@ -277,7 +280,7 @@ public class ReactNativeNotificationsHandler {
         }
     }
 
-    private Class getMainActivityClass(Context context) {
+    private static Class getMainActivityClass(Context context) {
         String packageName = context.getPackageName();
         Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
         String className = launchIntent.getComponent().getClassName();
