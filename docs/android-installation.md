@@ -174,10 +174,14 @@ const NOTIF_REGISTER_AZURE_HUB_EVENT = 'azureNotificationHubRegistered';
 const NOTIF_AZURE_HUB_REGISTRATION_ERROR_EVENT = 'azureNotificationHubRegistrationError';
 const DEVICE_NOTIF_EVENT = 'remoteNotificationReceived';
 
-const connectionString = '...'; // The Notification Hub connection string
-const hubName = '...';          // The Notification Hub name
-const senderID = '...';         // The Sender ID from the Cloud Messaging tab of the Firebase console
-const tags = [ ... ];           // The set of tags to subscribe to
+const connectionString = '...';       // The Notification Hub connection string
+const hubName = '...';                // The Notification Hub name
+const senderID = '...';               // The Sender ID from the Cloud Messaging tab of the Firebase console
+const tags = [ ... ];                 // The set of tags to subscribe to
+const channelImportance = 3;    	    // The channel's importance (IMPORTANCE_DEFAULT = 3)
+const channelShowBadge = true;
+const channelEnableLights = true;
+const channelEnableVibration = true;
 
 class myapp extends Component {
   constructor(props) {
@@ -189,8 +193,17 @@ class myapp extends Component {
     PushNotificationEmitter.addListener(NOTIF_REGISTER_AZURE_HUB_EVENT, this._onAzureNotificationHubRegistered);
     PushNotificationEmitter.addListener(NOTIF_AZURE_HUB_REGISTRATION_ERROR_EVENT, this._onAzureNotificationHubRegistrationError);
   
-    NotificationHub.register({connectionString, hubName, senderID, tags})
-      .catch(reason => console.warn(reason));
+   NotificationHub.register({
+      connectionString,
+      hubName,
+      senderID,
+      tags,
+      channelImportance,
+      channelShowBadge,
+      channelEnableLights,
+      channelEnableVibration
+    })
+    .catch(reason => console.warn(reason));
   }
 
   unregister() {

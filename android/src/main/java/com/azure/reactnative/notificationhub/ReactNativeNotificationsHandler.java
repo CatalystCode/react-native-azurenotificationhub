@@ -27,26 +27,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.microsoft.windowsazure.notifications.NotificationsHandler;
-
 import java.util.Set;
 
-public class ReactNativeNotificationsHandler extends NotificationsHandler {
+public class ReactNativeNotificationsHandler {
     public static final String TAG = "ReactNativeNotification";
 
-    private static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
     private static final long DEFAULT_VIBRATION = 300L;
 
-    private Context context;
+    private static Context appContext;
+    private static boolean channelCreated;
+    private static NotificationChannel notificationChannel;
 
-    @Override
-    public void onReceive(Context context, Bundle bundle) {
-        this.context = context;
-        sendNotification(bundle);
-        sendBroadcast(context, bundle, 0);
-    }
-
-    public void sendBroadcast(final Context context, final Bundle bundle, final long delay) {
+    public void sendBroadcast(final Bundle bundle, final long delay) {
         (new Thread() {
             public void run() {
                 try {
@@ -63,7 +55,7 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
                     Intent event = new Intent(TAG);
                     event.putExtra("event", ReactNativeNotificationHubModule.DEVICE_NOTIF_EVENT);
                     event.putExtra("data", json.toString());
-                    LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
+                    LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(appContext);
                     localBroadcastManager.sendBroadcast(event);
                 } catch (Exception e) {
                 }
@@ -71,23 +63,7 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
         }).start();
     }
 
-    private Class getMainActivityClass() {
-        String packageName = context.getPackageName();
-        Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
-        String className = launchIntent.getComponent().getClassName();
-        try {
-            return Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private AlarmManager getAlarmManager() {
-        return (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-    }
-
-    private void sendNotification(Bundle bundle) {
+    public void sendNotification(Bundle bundle) {
         try {
             Class intentClass = getMainActivityClass();
             if (intentClass == null) {
@@ -106,20 +82,42 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
                 return;
             }
 
-            Resources res = context.getResources();
-            String packageName = context.getPackageName();
+            Resources res = appContext.getResources();
+            String packageName = appContext.getPackageName();
 
             String title = bundle.getString("title");
             if (title == null) {
-                ApplicationInfo appInfo = context.getApplicationInfo();
-                title = context.getPackageManager().getApplicationLabel(appInfo).toString();
+                ApplicationInfo appInfo = appContext.getApplicationInfo();
+                title = appContext.getPackageManager().getApplicationLabel(appInfo).toString();
             }
 
-            NotificationCompat.Builder notification = new NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+            int priority = NotificationCompat.PRIORITY_DEFAULT;
+            final String priorityString = bundle.getString("google.original_priority");
+            if (priorityString != null) {
+                switch (priorityString.toLowerCase()) {
+                    case "max":
+                        priority = NotificationCompat.PRIORITY_MAX;
+                        break;
+                    case "high":
+                        priority = NotificationCompat.PRIORITY_HIGH;
+                        break;
+                    case "low":
+                        priority = NotificationCompat.PRIORITY_LOW;
+                        break;
+                    case "min":
+                        priority = NotificationCompat.PRIORITY_MIN;
+                        break;
+                    case "normal":
+                        priority = NotificationCompat.PRIORITY_DEFAULT;
+                        break;
+                }
+            }
+
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(appContext, notificationChannel.getId())
                     .setContentTitle(title)
                     .setTicker(bundle.getString("ticker"))
                     .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setPriority(priority)
                     .setAutoCancel(bundle.getBoolean("autoCancel", true));
 
             String group = bundle.getString("group");
@@ -182,7 +180,7 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
 
             notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
 
-            Intent intent = new Intent(context, intentClass);
+            Intent intent = new Intent(appContext, intentClass);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             bundle.putBoolean("userInteraction", true);
             intent.putExtra("notification", bundle);
@@ -198,14 +196,14 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
                         // The reason is to make the iOS and android javascript interfaces compatible
 
                         int resId;
-                        if (context.getResources().getIdentifier(soundName, "raw", context.getPackageName()) != 0) {
-                            resId = context.getResources().getIdentifier(soundName, "raw", context.getPackageName());
+                        if (appContext.getResources().getIdentifier(soundName, "raw", appContext.getPackageName()) != 0) {
+                            resId = appContext.getResources().getIdentifier(soundName, "raw", appContext.getPackageName());
                         } else {
                             soundName = soundName.substring(0, soundName.lastIndexOf('.'));
-                            resId = context.getResources().getIdentifier(soundName, "raw", context.getPackageName());
+                            resId = appContext.getResources().getIdentifier(soundName, "raw", appContext.getPackageName());
                         }
 
-                        soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + resId);
+                        soundUri = Uri.parse("android.resource://" + appContext.getPackageName() + "/" + resId);
                     }
                 }
                 notification.setSound(soundUri);
@@ -226,11 +224,8 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
 
             int notificationID = notificationIdString.hashCode();
 
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationID, intent,
+            PendingIntent pendingIntent = PendingIntent.getActivity(appContext, notificationID, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
-
-            NotificationManager notificationManager = notificationManager();
-            checkOrCreateChannel(notificationManager);
 
             notification.setContentIntent(pendingIntent);
 
@@ -263,18 +258,18 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
                     }
 
                     Intent actionIntent = new Intent();
-                    actionIntent.setAction(context.getPackageName() + "." + action);
+                    actionIntent.setAction(appContext.getPackageName() + "." + action);
                     // Add "action" for later identifying which button gets pressed.
                     bundle.putString("action", action);
                     actionIntent.putExtra("notification", bundle);
-                    PendingIntent pendingActionIntent = PendingIntent.getBroadcast(context, notificationID, actionIntent,
+                    PendingIntent pendingActionIntent = PendingIntent.getBroadcast(appContext, notificationID, actionIntent,
                             PendingIntent.FLAG_UPDATE_CURRENT);
                     notification.addAction(icon, action, pendingActionIntent);
                 }
             }
 
             Notification info = notification.build();
-
+            NotificationManager notificationManager = appContext.getSystemService(NotificationManager.class);
             if (bundle.containsKey("tag")) {
                 String tag = bundle.getString("tag");
                 notificationManager.notify(tag, notificationID, info);
@@ -286,25 +281,25 @@ public class ReactNativeNotificationsHandler extends NotificationsHandler {
         }
     }
 
-    private NotificationManager notificationManager() {
-        return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+    public void createChannelAndHandleNotifications(Context context, NotificationChannel channel) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !channelCreated) {
+            appContext = context;
+            notificationChannel = channel;
+            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+            channelCreated = true;
+        }
     }
 
-    private static boolean channelCreated = false;
-
-    private static void checkOrCreateChannel(NotificationManager manager) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
-            return;
-        if (channelCreated)
-            return;
-        if (manager == null)
-            return;
-        final CharSequence name = "rn-push-notification-channel";
-        int importance = NotificationManager.IMPORTANCE_DEFAULT;
-        NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, name, importance);
-        channel.enableLights(true);
-        channel.enableVibration(true);
-        manager.createNotificationChannel(channel);
-        channelCreated = true;
+    private Class getMainActivityClass() {
+        String packageName = appContext.getPackageName();
+        Intent launchIntent = appContext.getPackageManager().getLaunchIntentForPackage(packageName);
+        String className = launchIntent.getComponent().getClassName();
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

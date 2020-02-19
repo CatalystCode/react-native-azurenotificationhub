@@ -24,7 +24,6 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.UiThreadUtil;
-import com.microsoft.windowsazure.notifications.NotificationsManager;
 
 public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
     public static final String AZURE_NOTIFICATION_HUB_NAME = "AzureNotificationHub";
@@ -97,7 +96,28 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
         ReactContext reactContext = getReactApplicationContext();
         notificationHubUtil.setConnectionString(reactContext, connectionString);
         notificationHubUtil.setHubName(reactContext, hubName);
+        notificationHubUtil.setSenderID(reactContext, senderID);
         notificationHubUtil.setTags(reactContext, tags);
+
+        if (config.hasKey("channelImportance")) {
+            int channelImportance = config.getInt("channelImportance");
+            notificationHubUtil.setChannelImportance(reactContext, channelImportance);
+        }
+
+        if (config.hasKey("channelShowBadge")) {
+            boolean channelShowBadge = config.getBoolean("channelShowBadge");
+            notificationHubUtil.setChannelShowBadge(reactContext, channelShowBadge);
+        }
+
+        if (config.hasKey("channelEnableLights")) {
+            boolean channelEnableLights = config.getBoolean("channelEnableLights");
+            notificationHubUtil.setChannelEnableLights(reactContext, channelEnableLights);
+        }
+
+        if (config.hasKey("channelEnableVibration")) {
+            boolean channelEnableVibration = config.getBoolean("channelEnableVibration");
+            notificationHubUtil.setChannelEnableVibration(reactContext, channelEnableVibration);
+        }
 
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         int resultCode = apiAvailability.isGooglePlayServicesAvailable(reactContext);
@@ -137,7 +157,6 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
         try {
             hub.unregister();
             notificationHubUtil.setRegistrationID(reactContext, null);
-            NotificationsManager.stopHandlingNotifications(reactContext);
         } catch (Exception e) {
             promise.reject(ERROR_NOTIFICATION_HUB, e);
         }
@@ -151,7 +170,7 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
             if (intent != null) {
                 Bundle bundle = intent.getBundleExtra("notification");
                 if (bundle != null) {
-                    new ReactNativeNotificationsHandler().sendBroadcast(mReactContext, bundle, NOTIFICATION_DELAY_ON_START);
+                    new ReactNativeNotificationsHandler().sendBroadcast(bundle, NOTIFICATION_DELAY_ON_START);
                 }
             }
         }
