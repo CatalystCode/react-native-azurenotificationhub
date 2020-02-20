@@ -175,6 +175,7 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
             if (intent != null) {
                 Bundle bundle = intent.getBundleExtra("notification");
                 if (bundle != null) {
+                    intent.removeExtra("notification");
                     bundle.putBoolean("foreground", false);
                     bundle.putBoolean("userInteraction", true);
                     bundle.putBoolean("coldstart", true);
