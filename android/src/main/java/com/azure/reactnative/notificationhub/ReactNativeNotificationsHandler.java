@@ -180,7 +180,9 @@ public final class ReactNativeNotificationsHandler {
 
             Intent intent = new Intent(context, intentClass);
             intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            bundle.putBoolean("userInteraction", true);
+            bundle.putBoolean("foreground", true);
+            bundle.putBoolean("userInteraction", false);
+            bundle.putBoolean("coldstart", false);
             intent.putExtra("notification", bundle);
 
             if (!bundle.containsKey("playSound") || bundle.getBoolean("playSound")) {
