@@ -5,11 +5,11 @@
 The documentation that follows assumes you have generated a React Native iOS project using the `react-native-cli`, i.e.:
 
 ```
-react-native init myapp
+react-native init ReactNativeAzureNotificationHubSample
 ```
 
 In addition to the standard React Native requirements, you will also need the following:
-* An iOS 8 (or later version)-capable device (simulator doesn't work with push notifications)
+* An iOS 9 (or later version)-capable device (simulator doesn't work with push notifications)
 * [Apple Developer Program](https://developer.apple.com/programs/) membership
 
 ## Install react-native-azurenotificationhub
@@ -44,77 +44,81 @@ npm install react-native-azurenotificationhub
 
 * If you have not already registered your app, navigate to the [iOS Provisioning Portal](http://go.microsoft.com/fwlink/p/?LinkId=272456) at the Apple Developer Center, log on with your Apple ID, click **Identifiers**, then click **App IDs**, and finally click on the **+** sign to register a new app.
 
-![RegisterAppId](./img/RegisterAppId.png)
+![RegisterAppId](./img/CreateApp.jpg)
+
+![RegisterAppIdCont](./img/CreateAppCont.jpg)
 
 * Update the following three fields for your new app and then click **Continue**:
 
-  * **Name**: Type a descriptive name for your app in the **Name** field in the **App ID Description** section.
+  * **Description**: Type a description for your app.
 
-  * **Bundle Identifier**: Under the **Explicit App ID** section, enter a **Bundle Identifier** in the form `<Organization Identifier>.<Product Name>` as mentioned in the [App Distribution Guide](https://developer.apple.com/library/mac/documentation/IDEs/Conceptual/AppDistributionGuide/ConfiguringYourApp/ConfiguringYourApp.html#//apple_ref/doc/uid/TP40012582-CH28-SW8). The *Organization Identifier* and *Product Name* you use must match the organization identifier and product name you will use when you create your XCode project. In the screeshot below *NotificationHubs* is used as a organization idenitifier and *GetStarted* is used as the product name. Making sure this matches the values you will use in your XCode project will allow you to use the correct publishing profile with XCode. 
+  * **Bundle ID**: Enter a Bundle Identifier in the form `<Organization Identifier>.<Product Name>` as mentioned in the [App Distribution Guide](https://developer.apple.com/library/mac/documentation/IDEs/Conceptual/AppDistributionGuide/ConfiguringYourApp/ConfiguringYourApp.html#//apple_ref/doc/uid/TP40012582-CH28-SW8). The *Organization Identifier* and *Product Name* you use must match the organization identifier and product name you will use when you create your XCode project. In the screenshot below, *org.reactjs.native.example* is used as the organization identifier and *ReactNativeAzureNotificationHubSample* is used as the product name. Making sure this matches the values you will use in your XCode project will allow you to use the correct publishing profile with XCode.
 
-  * **Push Notifications**: Check the **Push Notifications** option in the **App Services** section, .
+  * **Push Notifications**: Check the **Push Notifications** option in the **Capabilities** section.
 
-![CheckPushNotification](./img/CheckPushNotification.png)
+![RegisterApp](./img/RegisterApp.jpg)
 
 * This generates your App ID and requests you to confirm the information. Click **Register** to confirm the new App ID.
 
-* Once you click **Register**, you will see the **Registration complete** screen, as shown below. Click **Done**.
-
-![RegistrationComplete](./img/RegistrationComplete.png)
+![ConfirmApp](./img/ConfirmApp.jpg)
 
 * In the Developer Center, under App IDs, locate the app ID that you just created, and click on its row.
 
-![NavigateAppIDs](./img/NavigateAppIDs.png)
+![EditApp](./img/EditApp.jpg)
 
-* Clicking on the app ID will display the app details. Click the **Edit** button at the bottom.
+* Scroll to the bottom of the screen, and click the **Configure** button next to **Push Notifications**.
 
-* Scroll to the bottom of the screen, and click the **Create Certificate...** button under the section **Development Push SSL Certificate**.
+![ConfigPushNotif](./img/ConfigPushNotif.jpg)
 
-![CreateAPNSCertificate](./img/CreateAPNSCertificate.png)
+* Click the **Create Certificate** button.
 
-* Click **Choose File**, browse to the location where you saved the CSR file that you created in the first task, then click **Generate**.
+![ClickCreateCert](./img/ClickCreateCert.jpg)
 
-![GenerateAPNSCertificate](./img/GenerateAPNSCertificate.png)
+* Browse to the location where you saved the CSR file that you created in the first task, then click **Continue**.
 
-* After the certificate is created by the portal, click the **Download** button, and click **Done**.
+![ChooseCsr](./img/ChooseCsr.jpg)
 
-![DownloadAPNSCertificate](./img/DownloadAPNSCertificate.png)
+* Click the **Download** button to download the certificate.
+
+![DownloadCert](./img/DownloadCert.jpg)
 
 * Double-click the downloaded push certificate **aps_development.cer**.
 
-![ImportAPNSCertificate](./img/ImportAPNSCertificate.png)
+![OpenCert](./img/OpenCert.jpg)
 
-* In Keychain Access, right-click the new push certificate that you created in the **Certificates** category. Click **Export**, name the file, select the **.p12** format, and then click **Save**.
+* In Keychain Access, right-click on the certificate, click **Export**, name the file, select the **.p12** format, and then click **Save**.
 
-![ExportP12Certificate](./img/ExportP12Certificate.png)
+![ExportCert](./img/ExportCert.jpg)
 
 ## Create a provisioning profile for the app
 
-* Back in the <a href="http://go.microsoft.com/fwlink/p/?LinkId=272456" target="_blank">iOS Provisioning Portal</a>, select **Provisioning Profiles**, select **All**, and then click the **+** button to create a new profile. This launches the **Add iOS Provisioning Profile** Wizard
+* Back in the <a href="http://go.microsoft.com/fwlink/p/?LinkId=272456" target="_blank">iOS Provisioning Portal</a>, select **Profiles** and then click the **+** button to create a new profile.
 
-![AddIOSProvisioningProfile](./img/AddIOSProvisioningProfile.png)
+![CreateProfile](./img/CreateProfile.jpg)
 
-* Select **iOS App Development** under **Development** as the provisiong profile type, and click **Continue**. 
+* Select **iOS App Development** under **Development** as the provision profile type, and click **Continue**.
 
-* Next, select the app ID you just created from the **App ID** drop-down list, and click **Continue**
+![SelectIOSApp](./img/SelectIOSApp.jpg)
 
-![SelectCreatedAppId](./img/SelectCreatedAppId.png)
+* Next, select the app ID you just created from the **App ID** drop-down list, and click **Continue**.
 
-* In the **Select certificates** screen, select your usual development certificate used for code signing, and click **Continue**. This is not the push certificate you just created.
+![SelectApp.jpg](./img/SelectApp.jpg)
 
-![SelectIOSDevelopmentCertificate](./img/SelectIOSDevelopmentCertificate.png)
+* Under **Select certificates** section, select your usual development certificate used for code signing, and click **Continue**. This is not the push certificate you just created.
+
+![SelectCodeCert](./img/SelectCodeCert.jpg)
 
 * Next, select the **Devices** to use for testing, and click **Continue**
 
-![SelectIOSDevices](./img/SelectIOSDevices.png)
+![SelectDevice](./img/SelectDevice.jpg)
 
-* Finally, pick a name for the profile in **Profile Name**, click **Generate**.
+* Finally, pick a name for the profile and click **Generate**.
 
-![GenerateProfileName](./img/GenerateProfileName.png)
+![GenerateProfile](./img/GenerateProfile.jpg)
 
-* When the new provisioning profile is created click to download it and install it on your Xcode development machine. Then click **Done**.
+* Click the **Download** button to download the new profile. After that, you can double-click on the file to import it to XCode.
 
-![DownloadProvisioningProfile](./img/DownloadProvisioningProfile.png)
+![ProfileCreated](./img/ProfileCreated.jpg)
 
 ## Configure your Notification Hub for iOS push notifications
 
@@ -128,12 +132,12 @@ npm install react-native-azurenotificationhub
 
 * Make sure to use the same **Product Name** and **Organization Identifier** that you used when you previously set the bundle ID on the Apple Developer portal, i.e.:
 
-  * Product Name: *myapp*
+  * Product Name: *ReactNativeAzureNotificationHubSample*
   * Organization Identifier: *org.reactjs.native.example*
 
 * Remember to set **Provisioning Profile** to the provisioning profile that you created previously.
 
-![SetProvisioningProfile](./img/SetProvisioningProfile.png)
+![SelectXCodeProfile](./img/SelectXCodeProfile.png)
 
 * To enable support for notification and register events you need to augment your AppDelegate. At the top of your **AppDelegate.m**:
 
@@ -175,11 +179,19 @@ npm install react-native-azurenotificationhub
 }
 ```
 
-## XCode 8 changes
+## Enable Push Notifications capability
 
-With XCode 8, the entitlements are set from your local entitlements file rather than from the provisioning profile you created on the Apple Developer Portal. The entitlements will now need to be added to your Xcode build under Capabilities in addition to in your provisioning profile.
+In the project setting, select **Signing & Capabilities** and click **+** to add a capability:
 
-![XCode8Change](./img/XCode8Change.png)
+![SelectCapabilities](./img/SelectCapabilities.png)
+
+Double-click on **Push Notifications** to add it:
+
+![AddPushNotif](./img/AddPushNotif.png)
+
+Notice that **Push Notifications** capability has been added:
+
+![PushNotifEnabled](./img/PushNotifEnabled.png)
 
 ## JavaScript Configuration
 
@@ -190,15 +202,24 @@ On the [Azure Portal](https://portal.azure.com) page for your notification hub, 
 The example below shows how you can register and unregister from Azure Notification Hub in your React component.
 
 ```js
+import React, { Component } from 'react';
+import {
+  Alert,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
 const NotificationHub = require('react-native-azurenotificationhub/index.ios');
 
 const connectionString = '...'; // The Notification Hub connection string
 const hubName = '...';          // The Notification Hub name
 const tags = [ ... ];           // The set of tags to subscribe to
 
-var remoteNotificationsDeviceToken = '';  // The device token registered with APNS
+let remoteNotificationsDeviceToken = '';  // The device token registered with APNS
 
-class myapp extends Component {
+export default class App extends Component {
   requestPermissions() {
     // register: Fired when the user registers for remote notifications. The
     // handler will be invoked with a hex string representing the deviceToken.
@@ -211,7 +232,7 @@ class myapp extends Component {
 
     // registerAzureNotificationHub: Fired when registration with azure notification hubs successful
     // with object {success: true}
-    NotificationHub.addEventListener('registerAzureNotificationHub' this._onAzureNotificationHubRegistered);
+    NotificationHub.addEventListener('registerAzureNotificationHub', this._onAzureNotificationHubRegistered);
 
     // azureNotificationHubRegistrationError: Fired when registration with azure notification hubs
     // fails with object {message: string, details: any} 
@@ -279,7 +300,7 @@ class myapp extends Component {
 
   _onRegistered(deviceToken) {
     remoteNotificationsDeviceToken = deviceToken;
-    AlertIOS.alert(
+    Alert.alert(
       'Registered For Remote Push',
       `Device Token: ${deviceToken}`,
       [{
@@ -290,7 +311,7 @@ class myapp extends Component {
   }
 
   _onRegistrationError(error) {
-    AlertIOS.alert(
+    Alert.alert(
       'Failed To Register For Remote Push',
       `Error (${error.code}): ${error.message}`,
       [{
@@ -301,7 +322,7 @@ class myapp extends Component {
   }
 
   _onRemoteNotification(notification) {
-    AlertIOS.alert(
+    Alert.alert(
       'Push Notification Received',
       'Alert message: ' + notification.getMessage(),
       [{
@@ -312,7 +333,7 @@ class myapp extends Component {
   }
 
   _onAzureNotificationHubRegistered(registrationInfo) {
-    AlertIOS.alert('Registered For Azure notification hub',
+    Alert.alert('Registered For Azure notification hub',
       'Registered For Azure notification hub'
       [{
         text: 'Dismiss',
@@ -322,7 +343,7 @@ class myapp extends Component {
   }
 
   _onAzureNotificationHubRegistrationError(error) {
-    AlertIOS.alert(
+    Alert.alert(
       'Failed To Register For Azure Notification Hub',
       `Error (${error.code}): ${error.message}`,
       [{
@@ -334,7 +355,7 @@ class myapp extends Component {
 
   _onLocalNotification(notification){
     // Note notification will be object for iOS
-    AlertIOS.alert(
+    Alert.alert(
       'Local Notification Received',
       'Alert message: ' + notification.getMessage(),
       [{
@@ -344,4 +365,23 @@ class myapp extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+  },
+  welcome: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10,
+  },
+  instructions: {
+    textAlign: 'center',
+    color: '#333333',
+    marginBottom: 5,
+  },
+});
 ```
