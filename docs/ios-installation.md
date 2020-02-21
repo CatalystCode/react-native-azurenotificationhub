@@ -70,9 +70,11 @@ npm install react-native-azurenotificationhub
 
 ![ConfigPushNotif](./img/ConfigPushNotif.jpg)
 
-* Click the **Create Certificate** button, browse to the location where you saved the CSR file that you created in the first task, then click **Continue**.
+* Click the **Create Certificate** button.
 
 ![ClickCreateCert](./img/ClickCreateCert.jpg)
+
+* Browse to the location where you saved the CSR file that you created in the first task, then click **Continue**.
 
 ![ChooseCsr](./img/ChooseCsr.jpg)
 
@@ -94,9 +96,11 @@ npm install react-native-azurenotificationhub
 
 ![CreateProfile](./img/CreateProfile.jpg)
 
-* Select **iOS App Development** under **Development** as the provision profile type, and click **Continue**. 
+* Select **iOS App Development** under **Development** as the provision profile type, and click **Continue**.
 
-* Next, select the app ID you just created from the **App ID** drop-down list, and click **Continue**
+![SelectIOSApp](./img/SelectIOSApp.jpg)
+
+* Next, select the app ID you just created from the **App ID** drop-down list, and click **Continue**.
 
 ![SelectApp.jpg](./img/SelectApp.jpg)
 
@@ -184,6 +188,8 @@ In the project setting, select **Signing & Capabilities** and click **+** to add
 Double-click on **Push Notifications** to add it:
 
 ![AddPushNotif](./img/AddPushNotif.png)
+
+Notice that **Push Notifications** capability has been added:
 
 ![PushNotifEnabled](./img/PushNotifEnabled.png)
 
