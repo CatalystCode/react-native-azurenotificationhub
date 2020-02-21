@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.android.gms.common.ConnectionResult;
@@ -24,9 +25,9 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.UiThreadUtil;
-import com.microsoft.windowsazure.notifications.NotificationsManager;
 
-public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
+public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule implements
+        ActivityEventListener, LifecycleEventListener {
     public static final String AZURE_NOTIFICATION_HUB_NAME = "AzureNotificationHub";
     public static final String NOTIF_REGISTER_AZURE_HUB_EVENT = "azureNotificationHubRegistered";
     public static final String NOTIF_AZURE_HUB_REGISTRATION_ERROR_EVENT = "azureNotificationHubRegistrationError";
@@ -48,6 +49,7 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
 
     private ReactApplicationContext mReactContext;
     private LocalBroadcastReceiver mLocalBroadcastReceiver;
+    private boolean mIsForeground;
 
     public ReactNativeNotificationHubModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -57,6 +59,7 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
         localBroadcastManager.registerReceiver(mLocalBroadcastReceiver, new IntentFilter(ReactNativeRegistrationIntentService.TAG));
         localBroadcastManager.registerReceiver(mLocalBroadcastReceiver, new IntentFilter(ReactNativeNotificationsHandler.TAG));
         reactContext.addLifecycleEventListener(this);
+        reactContext.addActivityEventListener(this);
     }
 
     @Override
@@ -97,7 +100,28 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
         ReactContext reactContext = getReactApplicationContext();
         notificationHubUtil.setConnectionString(reactContext, connectionString);
         notificationHubUtil.setHubName(reactContext, hubName);
+        notificationHubUtil.setSenderID(reactContext, senderID);
         notificationHubUtil.setTags(reactContext, tags);
+
+        if (config.hasKey("channelImportance")) {
+            int channelImportance = config.getInt("channelImportance");
+            notificationHubUtil.setChannelImportance(reactContext, channelImportance);
+        }
+
+        if (config.hasKey("channelShowBadge")) {
+            boolean channelShowBadge = config.getBoolean("channelShowBadge");
+            notificationHubUtil.setChannelShowBadge(reactContext, channelShowBadge);
+        }
+
+        if (config.hasKey("channelEnableLights")) {
+            boolean channelEnableLights = config.getBoolean("channelEnableLights");
+            notificationHubUtil.setChannelEnableLights(reactContext, channelEnableLights);
+        }
+
+        if (config.hasKey("channelEnableVibration")) {
+            boolean channelEnableVibration = config.getBoolean("channelEnableVibration");
+            notificationHubUtil.setChannelEnableVibration(reactContext, channelEnableVibration);
+        }
 
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         int resultCode = apiAvailability.isGooglePlayServicesAvailable(reactContext);
@@ -137,7 +161,6 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
         try {
             hub.unregister();
             notificationHubUtil.setRegistrationID(reactContext, null);
-            NotificationsManager.stopHandlingNotifications(reactContext);
         } catch (Exception e) {
             promise.reject(ERROR_NOTIFICATION_HUB, e);
         }
@@ -145,13 +168,19 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
 
     @Override
     public void onHostResume() {
+        mIsForeground = true;
         Activity activity = getCurrentActivity();
         if (activity != null) {
             Intent intent = activity.getIntent();
             if (intent != null) {
                 Bundle bundle = intent.getBundleExtra("notification");
                 if (bundle != null) {
-                    new ReactNativeNotificationsHandler().sendBroadcast(mReactContext, bundle, NOTIFICATION_DELAY_ON_START);
+                    intent.removeExtra("notification");
+                    bundle.putBoolean("foreground", false);
+                    bundle.putBoolean("userInteraction", true);
+                    bundle.putBoolean("coldstart", true);
+                    ReactNativeNotificationsHandler.sendBroadcast(
+                            mReactContext, bundle, NOTIFICATION_DELAY_ON_START);
                 }
             }
         }
@@ -159,19 +188,37 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
 
     @Override
     public void onHostPause() {
+        mIsForeground = false;
     }
 
     @Override
     public void onHostDestroy() {
     }
 
+    @Override
+    public void onNewIntent(Intent intent) {
+        Bundle bundle = intent.getBundleExtra("notification");
+        if (bundle != null) {
+            bundle.putBoolean("foreground", false);
+            bundle.putBoolean("userInteraction", true);
+            ReactNativeNotificationsHandler.sendBroadcast(
+                    mReactContext, bundle, NOTIFICATION_DELAY_ON_START);
+        }
+    }
+
+    @Override
+    public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
+    }
+
     public class LocalBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String event = intent.getStringExtra("event");
-            String data = intent.getStringExtra("data");
-            mReactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                    .emit(event, data);
+            if (mIsForeground) {
+                String event = intent.getStringExtra("event");
+                String data = intent.getStringExtra("data");
+                mReactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                        .emit(event, data);
+            }
         }
     }
 

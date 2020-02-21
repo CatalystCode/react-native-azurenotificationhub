@@ -2,6 +2,8 @@
   package="com.reactnativeazurenotificationhubsample">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <application
       xmlns:tools="http://schemas.android.com/tools"
@@ -25,13 +27,6 @@
           <action android:name="com.google.firebase.MESSAGING_EVENT" />
         </intent-filter>
       </service>
-      <receiver
-        android:name="com.microsoft.windowsazure.notifications.NotificationsBroadcastReceiver"
-        android:permission="com.google.android.c2dm.permission.SEND">
-        <intent-filter>
-          <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-        </intent-filter>
-      </receiver>
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"

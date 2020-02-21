@@ -68,6 +68,13 @@ buildscript {
     }
 }
 
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://dl.bintray.com/microsoftazuremobile/SDK' }
+    }
+}
+
 ```
 
 In `android/app/build.gradle`
@@ -92,6 +99,8 @@ In `android/app/src/main/AndroidManifest.xml`
     ...
     
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     
     <application ...>
       ...
@@ -110,14 +119,6 @@ In `android/app/src/main/AndroidManifest.xml`
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-        <receiver
-            android:name="com.microsoft.windowsazure.notifications.NotificationsBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-            </intent-filter>
-        </receiver>
     ...
 ```
 
@@ -167,6 +168,15 @@ On the [Azure Portal](https://portal.azure.com) page for your notification hub, 
 The example below shows how you can register and unregister from Azure Notification Hub in your React component.
 
 ```js
+import React, { Component } from 'react';
+import { NativeEventEmitter } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+
 const NotificationHub = require('react-native-azurenotificationhub');
 const PushNotificationEmitter = new NativeEventEmitter(NotificationHub);
 
@@ -174,10 +184,14 @@ const NOTIF_REGISTER_AZURE_HUB_EVENT = 'azureNotificationHubRegistered';
 const NOTIF_AZURE_HUB_REGISTRATION_ERROR_EVENT = 'azureNotificationHubRegistrationError';
 const DEVICE_NOTIF_EVENT = 'remoteNotificationReceived';
 
-const connectionString = '...'; // The Notification Hub connection string
-const hubName = '...';          // The Notification Hub name
-const senderID = '...';         // The Sender ID from the Cloud Messaging tab of the Firebase console
-const tags = [ ... ];           // The set of tags to subscribe to
+const connectionString = '...';       // The Notification Hub connection string
+const hubName = '...';                // The Notification Hub name
+const senderID = '...';               // The Sender ID from the Cloud Messaging tab of the Firebase console
+const tags = [ ... ];                 // The set of tags to subscribe to
+const channelImportance = 3;    	    // The channel's importance (IMPORTANCE_DEFAULT = 3)
+const channelShowBadge = true;
+const channelEnableLights = true;
+const channelEnableVibration = true;
 
 class myapp extends Component {
   constructor(props) {
@@ -189,8 +203,17 @@ class myapp extends Component {
     PushNotificationEmitter.addListener(NOTIF_REGISTER_AZURE_HUB_EVENT, this._onAzureNotificationHubRegistered);
     PushNotificationEmitter.addListener(NOTIF_AZURE_HUB_REGISTRATION_ERROR_EVENT, this._onAzureNotificationHubRegistrationError);
   
-    NotificationHub.register({connectionString, hubName, senderID, tags})
-      .catch(reason => console.warn(reason));
+    NotificationHub.register({
+      connectionString,
+      hubName,
+      senderID,
+      tags,
+      channelImportance,
+      channelShowBadge,
+      channelEnableLights,
+      channelEnableVibration
+    })
+    .catch(reason => console.warn(reason));
   }
 
   unregister() {
@@ -230,5 +253,25 @@ class myapp extends Component {
   _onRemoteNotification(notification) {
     // Note notification will be a JSON string for android
     console.warn('Notification received: ' + notification);
-  }  
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+  },
+  welcome: {
+    fontSize: 20,
+    textAlign: 'center',
+    margin: 10,
+  },
+  instructions: {
+    textAlign: 'center',
+    color: '#333333',
+    marginBottom: 5,
+  },
+});
 ```
