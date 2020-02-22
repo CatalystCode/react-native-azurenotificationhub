@@ -82,5 +82,7 @@ steps:
     xcodeVersion: '10'
     signingOption: 'nosign'
     useXcpretty: 'false'
+    destination: 'platform=iOS Simulator, name=iPhone 8'
+    destinationPlatformOption: 'iOS'
     destinationTypeOption: 'simulators'
     destinationSimulators: 'iPhone 8'
