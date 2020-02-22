@@ -16,9 +16,9 @@ assignees: ''
 <!-- Which platforms does this issue apply (Android/iOS/Windows)? -->
 - Platforms: 
 <!-- [Android] Which version of Android? -->
-- Android version:
+- Android version: 
 <!-- [iOS] Which version of iOS? -->
-- iOS version:
+- iOS version: 
 
 ## Issues and Steps to Reproduce
 ***Replaces this with steps to repro your issue, if applicable.***
