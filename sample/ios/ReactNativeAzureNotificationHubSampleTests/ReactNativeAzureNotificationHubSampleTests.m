@@ -5,68 +5,80 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-#import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
+#import <RNAzureNotificationHub/RCTAzureNotificationHubManager.h>
 
-#import <React/RCTLog.h>
-#import <React/RCTRootView.h>
-
-#define TIMEOUT_SECONDS 600
-#define TEXT_TO_LOOK_FOR @"Welcome to React"
+@import OCMockito;
 
 @interface ReactNativeAzureNotificationHubSampleTests : XCTestCase
-
 @end
 
 @implementation ReactNativeAzureNotificationHubSampleTests
-
-- (BOOL)findSubviewInView:(UIView *)view matching:(BOOL(^)(UIView *view))test
 {
-  if (test(view)) {
-    return YES;
-  }
-  for (UIView *subview in [view subviews]) {
-    if ([self findSubviewInView:subview matching:test]) {
-      return YES;
-    }
-  }
-  return NO;
+  RCTAzureNotificationHubManager *hubManager;
+  NSMutableDictionary *config;
+  RCTPromiseResolveBlock resolver;
+  RCTPromiseRejectBlock rejecter;
 }
 
-- (void)testRendersWelcomeScreen
+- (void)setUp
 {
-  UIViewController *vc = [[[RCTSharedApplication() delegate] window] rootViewController];
-  NSDate *date = [NSDate dateWithTimeIntervalSinceNow:TIMEOUT_SECONDS];
-  BOOL foundElement = NO;
-
-  __block NSString *redboxError = nil;
-#ifdef DEBUG
-  RCTSetLogFunction(^(RCTLogLevel level, RCTLogSource source, NSString *fileName, NSNumber *lineNumber, NSString *message) {
-    if (level >= RCTLogLevelError) {
-      redboxError = message;
-    }
-  });
-#endif
-
-  while ([date timeIntervalSinceNow] > 0 && !foundElement && !redboxError) {
-    [[NSRunLoop mainRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
-    [[NSRunLoop mainRunLoop] runMode:NSRunLoopCommonModes beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
-
-    foundElement = [self findSubviewInView:vc.view matching:^BOOL(UIView *view) {
-      if ([view.accessibilityLabel isEqualToString:TEXT_TO_LOOK_FOR]) {
-        return YES;
-      }
-      return NO;
-    }];
-  }
-  
-#ifdef DEBUG
-  RCTSetLogFunction(RCTDefaultLogFunction);
-#endif
-
-  XCTAssertNil(redboxError, @"RedBox error: %@", redboxError);
-  XCTAssertTrue(foundElement, @"Couldn't find element with text '%@' in %d seconds", TEXT_TO_LOOK_FOR, TIMEOUT_SECONDS);
+  [super setUp];
+  hubManager = [[RCTAzureNotificationHubManager alloc] init];
+  config = [[NSMutableDictionary alloc] init];
+  resolver = ^(id result) {};
+  rejecter = ^(NSString *code, NSString *message, NSError *error) {};
 }
 
+- (void)testRegisterNoConnectionString
+{
+  __block NSString *errorMsg;
+  rejecter = ^(NSString *code, NSString *message, NSError *error)
+  {
+    errorMsg = message;
+  };
+
+  [hubManager register:@""
+                config:config
+              resolver:resolver
+              rejecter:rejecter];
+
+  XCTAssertEqualObjects(errorMsg, @"Connection string cannot be null.");
+}
+
+- (void)testRegisterNoHubName
+{
+  __block NSString *errorMsg;
+  rejecter = ^(NSString *code, NSString *message, NSError *error)
+  {
+    errorMsg = message;
+  };
+
+  [config setObject:@"Connection String" forKey:@"connectionString"];
+  [hubManager register:@""
+                config:config
+              resolver:resolver
+              rejecter:rejecter];
+
+  XCTAssertEqualObjects(errorMsg, @"Hub name cannot be null.");
+}
+
+- (void)testRegisterSuccessfully
+{
+  __block bool hasError = false;
+  rejecter = ^(NSString *code, NSString *message, NSError *error)
+  {
+    hasError = true;
+  };
+
+  [config setObject:@"Connection String" forKey:@"connectionString"];
+  [config setObject:@"Hub Name" forKey:@"hubName"];
+  [hubManager register:@""
+                config:config
+              resolver:resolver
+              rejecter:rejecter];
+
+  XCTAssertEqual(hasError, false);
+}
 
 @end

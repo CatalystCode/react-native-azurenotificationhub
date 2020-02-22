@@ -70,3 +70,17 @@ steps:
     xcodeVersion: '10'
     signingOption: 'nosign'
     useXcpretty: 'false'
+    
+- task: Xcode@5
+  displayName: 'Running iOS unit tests'
+  inputs:
+    actions: 'test'
+    scheme: 'ReactNativeAzureNotificationHubSample'
+    sdk: 'iphonesimulator'
+    configuration: 'Release'
+    xcWorkspacePath: '../sample/ios/ReactNativeAzureNotificationHubSample.xcworkspace'
+    xcodeVersion: '10'
+    signingOption: 'nosign'
+    useXcpretty: 'false'
+    destinationTypeOption: 'simulators'
+    destinationSimulators: 'iPhone 8'
