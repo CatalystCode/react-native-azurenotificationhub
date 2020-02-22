@@ -5,7 +5,7 @@
 The documentation that follows assumes you have generated a React Native Android project using the `react-native-cli`, i.e.:
 
 ```
-react-native init myapp
+react-native init ReactNativeAzureNotificationHubSample
 ```
 
 In addition to the standard React Native requirements, you will also need to install the following Android SDK components with your prefered SDK management tools:
@@ -193,7 +193,7 @@ const channelShowBadge = true;
 const channelEnableLights = true;
 const channelEnableVibration = true;
 
-class myapp extends Component {
+export default class App extends Component {
   constructor(props) {
     super(props);
     PushNotificationEmitter.addListener(DEVICE_NOTIF_EVENT, this._onRemoteNotification);

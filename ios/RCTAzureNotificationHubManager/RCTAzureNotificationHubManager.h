@@ -26,4 +26,14 @@
 // Required for the registrationError event, invoked from AppDelegate
 + (void)didFailToRegisterForRemoteNotificationsWithError:(NSError *)error;
 
+// Register with Azure Notification Hub
+- (void)register:(nonnull NSString *)deviceToken
+          config:(nonnull NSDictionary *)config
+        resolver:(nonnull RCTPromiseResolveBlock)resolve
+        rejecter:(nonnull RCTPromiseRejectBlock)reject;
+
+// Unregister with Azure Notification Hub
+- (void)unregister:(nonnull RCTPromiseResolveBlock)resolve
+          rejecter:(nonnull RCTPromiseRejectBlock)reject;
+
 @end
