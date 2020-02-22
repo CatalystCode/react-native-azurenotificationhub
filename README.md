@@ -2,6 +2,8 @@
 
 React Native module to support Azure Notification Hub push notifications on Android, iOS, and Windows.
 
+[![npm version](https://badge.fury.io/js/react-native-azurenotificationhub.svg)](https://badge.fury.io/js/react-native-azurenotificationhub)
+![npm](https://img.shields.io/npm/dm/react-native-azurenotificationhub)
 [![Build Status](https://dev.azure.com/phongthaicao/react-native-azurenotificationhub/_apis/build/status/CatalystCode.react-native-azurenotificationhub?branchName=master)](https://dev.azure.com/phongthaicao/react-native-azurenotificationhub/_apis/build/status/CatalystCode.react-native-azurenotificationhub?branchName=master)
 
 # Platform-specific Guides
