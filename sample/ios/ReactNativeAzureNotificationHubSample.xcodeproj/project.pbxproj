@@ -55,9 +55,9 @@
 		2D02E4901E0B4A5D006451C7 /* ReactNativeAzureNotificationHubSample-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ReactNativeAzureNotificationHubSample-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AAB39D4BDBE7F53EC74C4C4 /* libPods-ReactNativeAzureNotificationHubSample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ReactNativeAzureNotificationHubSample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B18387DF86E68D789995173 /* Pods-ReactNativeAzureNotificationHubSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativeAzureNotificationHubSample.release.xcconfig"; path = "Target Support Files/Pods-ReactNativeAzureNotificationHubSample/Pods-ReactNativeAzureNotificationHubSample.release.xcconfig"; sourceTree = "<group>"; };
-		45E30B45240821F000A339F1 /* RCTAzureNotificationHubManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTAzureNotificationHubManagerTests.m; sourceTree = "<group>"; };
-		45E30B46240821F000A339F1 /* RCTAzureNotificationHubUtilTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTAzureNotificationHubUtilTests.m; sourceTree = "<group>"; };
-		45E30B47240821F100A339F1 /* RCTAzureNotificationHandlerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTAzureNotificationHandlerTests.m; sourceTree = "<group>"; };
+		45E30B45240821F000A339F1 /* RCTAzureNotificationHubManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = RCTAzureNotificationHubManagerTests.m; sourceTree = "<group>"; tabWidth = 4; };
+		45E30B46240821F000A339F1 /* RCTAzureNotificationHubUtilTests.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = RCTAzureNotificationHubUtilTests.m; sourceTree = "<group>"; tabWidth = 4; };
+		45E30B47240821F100A339F1 /* RCTAzureNotificationHandlerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = RCTAzureNotificationHandlerTests.m; sourceTree = "<group>"; tabWidth = 4; };
 		C492EEB6FD7BE2BA8DC1EA48 /* Pods-ReactNativeAzureNotificationHubSampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativeAzureNotificationHubSampleTests.debug.xcconfig"; path = "Target Support Files/Pods-ReactNativeAzureNotificationHubSampleTests/Pods-ReactNativeAzureNotificationHubSampleTests.debug.xcconfig"; sourceTree = "<group>"; };
 		D66D2E73969F49ECF06FE6B3 /* Pods_ReactNativeAzureNotificationHubSampleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ReactNativeAzureNotificationHubSampleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -426,13 +426,11 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-ReactNativeAzureNotificationHubSampleTests/Pods-ReactNativeAzureNotificationHubSampleTests-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/OCHamcrest/OCHamcrest.framework",
-				"${BUILT_PRODUCTS_DIR}/OCMockito/OCMockito.framework",
+				"${BUILT_PRODUCTS_DIR}/OCMock/OCMock.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OCHamcrest.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OCMockito.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OCMock.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;

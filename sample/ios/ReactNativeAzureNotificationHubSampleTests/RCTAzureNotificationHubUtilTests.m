@@ -9,7 +9,7 @@
 #import <RNAzureNotificationHub/RCTAzureNotificationHub.h>
 #import <RNAzureNotificationHub/RCTAzureNotificationHubManager.h>
 
-@import OCMockito;
+@import OCMock;
 
 @interface RCTAzureNotificationHubUtilTests : XCTestCase
 @end
@@ -18,7 +18,7 @@
 
 - (void)setUp
 {
-  [super setUp];
+    [super setUp];
 }
 
 @end

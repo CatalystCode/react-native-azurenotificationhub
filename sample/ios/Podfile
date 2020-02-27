@@ -38,7 +38,7 @@ target 'ReactNativeAzureNotificationHubSample' do
   target 'ReactNativeAzureNotificationHubSampleTests' do
     inherit! :search_paths
     use_frameworks!
-    pod 'OCMockito', '~> 5.0'
+    pod 'OCMock', '~> 3.6'
   end
 
   use_native_modules!

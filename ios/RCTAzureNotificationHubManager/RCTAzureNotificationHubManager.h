@@ -12,19 +12,19 @@
 @interface RCTAzureNotificationHubManager : RCTEventEmitter
 
 // Required to register for notifications, invoked from AppDelegate
-+ (void)didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings;
++ (void)didRegisterUserNotificationSettings:(nonnull UIUserNotificationSettings *)notificationSettings;
 
 // Required for the register event, invoked from AppDelegate
-+ (void)didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken;
++ (void)didRegisterForRemoteNotificationsWithDeviceToken:(nonnull NSData *)deviceToken;
 
 // Required for the notification event, invoked from AppDelegate
-+ (void)didReceiveRemoteNotification:(NSDictionary *)notification;
++ (void)didReceiveRemoteNotification:(nonnull NSDictionary *)notification;
 
 // Required for the localNotification event, invoked from AppDelegate
-+ (void)didReceiveLocalNotification:(UILocalNotification *)notification;
++ (void)didReceiveLocalNotification:(nonnull UILocalNotification *)notification;
 
 // Required for the registrationError event, invoked from AppDelegate
-+ (void)didFailToRegisterForRemoteNotificationsWithError:(NSError *)error;
++ (void)didFailToRegisterForRemoteNotificationsWithError:(nonnull NSError *)error;
 
 // Register with Azure Notification Hub
 - (void)register:(nonnull NSString *)deviceToken

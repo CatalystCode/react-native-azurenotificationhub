@@ -13,14 +13,14 @@
 @interface RCTAzureNotificationHubUtil : NSObject
 
 // Format local notification
-+ (NSDictionary *)formatLocalNotification:(nonnull UILocalNotification *)notification;
++ (nonnull NSDictionary *)formatLocalNotification:(nonnull UILocalNotification *)notification;
 
 // Create Azure Notification Hub
-+ (SBNotificationHub *)createAzureNotificationHub:(nonnull NSString *)connectionString
-                                          hubName:(nonnull NSString *)hubName;
++ (nonnull SBNotificationHub *)createAzureNotificationHub:(nonnull NSString *)connectionString
+                                                  hubName:(nonnull NSString *)hubName;
 
 // Convert device token to string
-+ (NSString *)convertDeviceTokenToString:(nonnull NSData *)deviceToken;
++ (nonnull NSString *)convertDeviceTokenToString:(nonnull NSData *)deviceToken;
 
 // Get notification types with permissions
 + (UIUserNotificationType)getNotificationTypesWithPermissions:(nullable NSDictionary *)permissions;

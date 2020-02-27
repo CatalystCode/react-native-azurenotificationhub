@@ -16,7 +16,7 @@
 @implementation RCTAzureNotificationHubUtil
 
 // Format local notification
-+ (NSDictionary *)formatLocalNotification:(nonnull UILocalNotification *)notification
++ (nonnull NSDictionary *)formatLocalNotification:(nonnull UILocalNotification *)notification
 {
     NSMutableDictionary *formattedLocalNotification = [NSMutableDictionary dictionary];
     if (notification.fireDate)
@@ -38,8 +38,8 @@
 }
 
 // Create Azure Notification Hub
-+ (SBNotificationHub *)createAzureNotificationHub:(nonnull NSString *)connectionString
-                                          hubName:(nonnull NSString *)hubName
++ (nonnull SBNotificationHub *)createAzureNotificationHub:(nonnull NSString *)connectionString
+                                                  hubName:(nonnull NSString *)hubName
 {
     SBNotificationHub *hub = [[SBNotificationHub alloc] initWithConnectionString:connectionString
                                                              notificationHubPath:hubName];
@@ -48,7 +48,7 @@
 }
 
 // Convert device token to string
-+ (NSString *)convertDeviceTokenToString:(nonnull NSData *)deviceToken
++ (nonnull NSString *)convertDeviceTokenToString:(nonnull NSData *)deviceToken
 {
     NSMutableString *hexString = [NSMutableString string];
     NSUInteger deviceTokenLength = deviceToken.length;

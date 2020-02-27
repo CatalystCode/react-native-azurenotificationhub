@@ -19,9 +19,7 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.5)
-  - OCHamcrest (7.1.2)
-  - OCMockito (5.1.3):
-    - OCHamcrest (~> 7.0)
+  - OCMock (3.6)
   - RCTRequired (0.61.5)
   - RCTTypeSafety (0.61.5):
     - FBLazyVector (= 0.61.5)
@@ -232,7 +230,7 @@ DEPENDENCIES:
   - FBReactNativeSpec (from `../node_modules/react-native/Libraries/FBReactNativeSpec`)
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
-  - OCMockito (~> 5.0)
+  - OCMock (~> 3.6)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
   - React (from `../node_modules/react-native/`)
@@ -261,8 +259,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - boost-for-react-native
-    - OCHamcrest
-    - OCMockito
+    - OCMock
     - WindowsAzureMessaging
 
 EXTERNAL SOURCES:
@@ -326,8 +323,7 @@ SPEC CHECKSUMS:
   FBReactNativeSpec: 118d0d177724c2d67f08a59136eb29ef5943ec75
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
-  OCHamcrest: b284c9592c28c1e4025a8542e67ea41a635d0d73
-  OCMockito: 677cbb4a18fd492b5a4fb10144dada4de5ddb877
+  OCMock: 5ea90566be239f179ba766fd9fbae5885040b992
   RCTRequired: b153add4da6e7dbc44aebf93f3cf4fcae392ddf1
   RCTTypeSafety: 9aa1b91d7f9310fc6eadc3cf95126ffe818af320
   React: b6a59ef847b2b40bb6e0180a97d0ca716969ac78
@@ -351,6 +347,6 @@ SPEC CHECKSUMS:
   WindowsAzureMessaging: 3ec1c2ca507508e9595c34f6cf977e0c447fdd87
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
-PODFILE CHECKSUM: 3bd107b800d9b730589c7cb3495c1b265771f49f
+PODFILE CHECKSUM: 7bea7f3c6021bc946076bfddd71ac33f227e9bf2
 
-COCOAPODS: 1.8.3
+COCOAPODS: 1.8.4

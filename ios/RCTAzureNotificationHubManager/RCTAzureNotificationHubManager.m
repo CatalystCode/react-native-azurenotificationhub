@@ -119,7 +119,7 @@ RCT_EXPORT_MODULE()
     return true;
 }
 
-+ (void)didRegisterUserNotificationSettings:(__unused UIUserNotificationSettings *)notificationSettings
++ (void)didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
 {
     if ([UIApplication instancesRespondToSelector:@selector(registerForRemoteNotifications)])
     {
