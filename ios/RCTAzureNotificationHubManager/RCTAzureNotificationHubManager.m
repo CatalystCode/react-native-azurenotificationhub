@@ -15,16 +15,20 @@
 #import "React/RCTUtils.h"
 
 #import "RCTAzureNotificationHub.h"
+#import "RCTAzureNotificationHandler.h"
 #import "RCTAzureNotificationHubManager.h"
+#import "RCTAzureNotificationHubUtil.h"
 
 // The default error code to use as the `code` property for callback error objects
 RCT_EXTERN NSString *const RCTErrorUnspecified;
 
+static RCTAzureNotificationHandler *notificationHandler;
+static RCTPromiseResolveBlock requestPermissionsResolveBlock;
+static RCTPromiseRejectBlock requestPermissionsRejectBlock;
+
 @implementation RCTAzureNotificationHubManager
 {
 @private
-    RCTPromiseResolveBlock _requestPermissionsResolveBlock;
-    
     // The Notification Hub connection string
     NSString *_connectionString;
     
@@ -42,49 +46,6 @@ RCT_EXPORT_MODULE()
     return dispatch_get_main_queue();
 }
 
-- (void)startObserving
-{
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(handleLocalNotificationReceived:)
-                                                 name:RCTLocalNotificationReceived
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(handleRemoteNotificationReceived:)
-                                                 name:RCTRemoteNotificationReceived
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(handleRemoteNotificationRegistered:)
-                                                 name:RCTRemoteNotificationRegistered
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(handleRemoteNotificationRegisteredError:)
-                                                 name:RCTRemoteNotificationRegisteredError
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(handleAzureNotificationHubRegistered:)
-                                                 name:RCTAzureNotificationHubRegistered
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(handleAzureNotificationHubRegistrationError:)
-                                                 name:RCTAzureNotificationHubRegisteredError
-                                               object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(handleRegisterUserNotificationSettings:)
-                                                 name:RCTUserNotificationSettingsRegistered
-                                               object:nil];
-}
-
-- (void)stopObserving
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
 - (NSArray<NSString *> *)supportedEvents
 {
     return @[RCTLocalNotificationReceived,
@@ -95,133 +56,119 @@ RCT_EXPORT_MODULE()
              RCTAzureNotificationHubRegisteredError];
 }
 
+- (void)startObserving
+{
+    // Initialize notification handler
+    notificationHandler = [[RCTAzureNotificationHandler alloc] initWithEventEmitter:self];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:notificationHandler
+                                             selector:@selector(localNotificationReceived:)
+                                                 name:RCTLocalNotificationReceived
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:notificationHandler
+                                             selector:@selector(remoteNotificationReceived:)
+                                                 name:RCTRemoteNotificationReceived
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:notificationHandler
+                                             selector:@selector(remoteNotificationRegistered:)
+                                                 name:RCTRemoteNotificationRegistered
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:notificationHandler
+                                             selector:@selector(remoteNotificationRegisteredError:)
+                                                 name:RCTRemoteNotificationRegisteredError
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:notificationHandler
+                                             selector:@selector(azureNotificationHubRegistered:)
+                                                 name:RCTAzureNotificationHubRegistered
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:notificationHandler
+                                             selector:@selector(azureNotificationHubRegisteredError:)
+                                                 name:RCTAzureNotificationHubRegisteredError
+                                               object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:notificationHandler
+                                             selector:@selector(userNotificationSettingsRegistered:)
+                                                 name:RCTUserNotificationSettingsRegistered
+                                               object:nil];
+}
+
+- (void)stopObserving
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (bool)assertArguments:(RCTPromiseRejectBlock)reject
+{
+    if (_connectionString == nil)
+    {
+        reject(RCTErrorInvalidArguments, RCTErrorMissingConnectionString, nil);
+        return false;
+    }
+    
+    if (_hubName == nil)
+    {
+        reject(RCTErrorInvalidArguments, RCTErrorMissingHubName, nil);
+        return false;
+    }
+    
+    return true;
+}
+
 + (void)didRegisterUserNotificationSettings:(__unused UIUserNotificationSettings *)notificationSettings
 {
     if ([UIApplication instancesRespondToSelector:@selector(registerForRemoteNotifications)])
     {
         [[UIApplication sharedApplication] registerForRemoteNotifications];
         [[NSNotificationCenter defaultCenter] postNotificationName:RCTUserNotificationSettingsRegistered
-                                                            object:self
-                                                          userInfo:@{RCTUserInfoNotificationSettings: notificationSettings}];
+                                                            object:notificationHandler
+                                                          userInfo:@{
+                                                                        RCTUserInfoNotificationSettings: notificationSettings,
+                                                                        RCTUserInfoResolveBlock: requestPermissionsResolveBlock
+                                                                    }];
     }
 }
 
 + (void)didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
-    NSMutableString *hexString = [NSMutableString string];
-    NSUInteger deviceTokenLength = deviceToken.length;
-    const unsigned char *bytes = deviceToken.bytes;
-    for (NSUInteger i = 0; i < deviceTokenLength; i++)
-    {
-        [hexString appendFormat:@"%02x", bytes[i]];
-    }
-    
+    NSString *hexString = [RCTAzureNotificationHubUtil convertDeviceTokenToString:deviceToken];
     [[NSNotificationCenter defaultCenter] postNotificationName:RCTRemoteNotificationRegistered
-                                                        object:self
+                                                        object:notificationHandler
                                                       userInfo:@{RCTUserInfoDeviceToken: [hexString copy]}];
 }
 
 + (void)didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:RCTRemoteNotificationRegisteredError
-                                                        object:self
+                                                        object:notificationHandler
                                                       userInfo:@{RCTUserInfoError: error}];
 }
 
 + (void)didReceiveRemoteNotification:(NSDictionary *)notification
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:RCTRemoteNotificationReceived
-                                                        object:self
+                                                        object:notificationHandler
                                                       userInfo:notification];
 }
 
 + (void)didReceiveLocalNotification:(UILocalNotification *)notification
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:RCTLocalNotificationReceived
-                                                        object:self
-                                                      userInfo:RCTFormatLocalNotification(notification)];
+                                                        object:notificationHandler
+                                                      userInfo:[RCTAzureNotificationHubUtil formatLocalNotification:notification]];
 }
 
-- (void)handleLocalNotificationReceived:(NSNotification *)notification
-{
-    [self sendEventWithName:RCTLocalNotificationReceived
-                       body:notification.userInfo];
-}
-
-- (void)handleRemoteNotificationReceived:(NSNotification *)notification
-{
-    NSMutableDictionary *userInfo = [notification.userInfo mutableCopy];
-    userInfo[RCTUserInfoRemote] = @YES;
-    [self sendEventWithName:RCTRemoteNotificationReceived
-                       body:userInfo];
-}
-
-- (void)handleRemoteNotificationsRegistered:(NSNotification *)notification
-{
-    [self sendEventWithName:RCTRemoteNotificationRegistered
-                       body:notification.userInfo];
-}
-
-- (void)handleRemoteNotificationRegisteredError:(NSNotification *)notification
-{
-    NSError *error = notification.userInfo[RCTUserInfoError];
-    NSDictionary *errorDetails = @{
-                                    @"message": error.localizedDescription,
-                                    @"code": @(error.code),
-                                    @"details": error.userInfo,
-                                  };
-    [self sendEventWithName:RCTRemoteNotificationRegisteredError
-                       body:errorDetails];
-}
-
-- (void)handleAzureNotificationHubRegistered:(NSNotification *)notification
-{
-    [self sendEventWithName:RCTAzureNotificationHubRegistered
-                       body:notification.userInfo];
-}
-
-- (void)handleAzureNotificationHubRegisteredError:(NSNotification *)notification
-{
-    NSError *error = notification.userInfo[RCTUserInfoError];
-    NSDictionary *errorDetails = @{
-                                    @"message": error.localizedDescription,
-                                    @"code": @(error.code),
-                                    @"details": error.userInfo,
-                                  };
-    
-    [self sendEventWithName:RCTAzureNotificationHubRegisteredError
-                       body:errorDetails];
-}
-
-- (void)handleRegisterUserNotificationSettings:(NSNotification *)notification
-{
-    if (_requestPermissionsResolveBlock == nil)
-    {
-        return;
-    }
-    
-    UIUserNotificationSettings *notificationSettings = notification.userInfo[RCTUserInfoNotificationSettings];
-    NSDictionary *notificationTypes = @{
-                                         RCTNotificationTypeAlert: @((notificationSettings.types & UIUserNotificationTypeAlert) > 0),
-                                         RCTNotificationTypeSound: @((notificationSettings.types & UIUserNotificationTypeSound) > 0),
-                                         RCTNotificationTypeBadge: @((notificationSettings.types & UIUserNotificationTypeBadge) > 0),
-                                       };
-    
-    _requestPermissionsResolveBlock(notificationTypes);
-    _requestPermissionsResolveBlock = nil;
-}
-
-/**
- * Update the application icon badge number on the home screen
- */
+// Update the application icon badge number on the home screen
 RCT_EXPORT_METHOD(setApplicationIconBadgeNumber:(NSInteger)number)
 {
     RCTSharedApplication().applicationIconBadgeNumber = number;
 }
 
-/**
- * Get the current application icon badge number on the home screen
- */
+// Get the current application icon badge number on the home screen
 RCT_EXPORT_METHOD(getApplicationIconBadgeNumber:(RCTResponseSenderBlock)callback)
 {
     callback(@[@(RCTSharedApplication().applicationIconBadgeNumber)]);
@@ -237,37 +184,16 @@ RCT_EXPORT_METHOD(requestPermissions:(NSDictionary *)permissions
         return;
     }
     
-    if (_requestPermissionsResolveBlock != nil)
+    if (requestPermissionsResolveBlock != nil)
     {
         RCTLogError(@"%@", RCTErrorUnableToRequestPermissionsTwice);
         return;
     }
     
-    _requestPermissionsResolveBlock = resolve;
+    requestPermissionsResolveBlock = resolve;
+    requestPermissionsRejectBlock = reject;
     
-    UIUserNotificationType types = UIUserNotificationTypeNone;
-    if (permissions)
-    {
-        if ([RCTConvert BOOL:permissions[RCTNotificationTypeAlert]])
-        {
-            types |= UIUserNotificationTypeAlert;
-        }
-        
-        if ([RCTConvert BOOL:permissions[RCTNotificationTypeBadge]])
-        {
-            types |= UIUserNotificationTypeBadge;
-        }
-        
-        if ([RCTConvert BOOL:permissions[RCTNotificationTypeSound]])
-        {
-            types |= UIUserNotificationTypeSound;
-        }
-    }
-    else
-    {
-        types = UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound;
-    }
-    
+    UIUserNotificationType types = [RCTAzureNotificationHubUtil getNotificationTypesWithPermissions:permissions];
     UIApplication *app = RCTSharedApplication();
     if ([app respondsToSelector:@selector(registerUserNotificationSettings:)])
     {
@@ -359,7 +285,7 @@ RCT_EXPORT_METHOD(getInitialNotification:(RCTPromiseResolveBlock)resolve
     }
     else if (initialLocalNotification)
     {
-        resolve(RCTFormatLocalNotification(initialLocalNotification));
+        resolve([RCTAzureNotificationHubUtil formatLocalNotification:initialLocalNotification]);
     }
     else
     {
@@ -373,7 +299,7 @@ RCT_EXPORT_METHOD(getScheduledLocalNotifications:(RCTResponseSenderBlock)callbac
     NSMutableArray<NSDictionary *> *formattedScheduledLocalNotifications = [NSMutableArray new];
     for (UILocalNotification *notification in scheduledLocalNotifications)
     {
-        [formattedScheduledLocalNotifications addObject:RCTFormatLocalNotification(notification)];
+        [formattedScheduledLocalNotifications addObject:[RCTAzureNotificationHubUtil formatLocalNotification:notification]];
     }
     
     callback(@[formattedScheduledLocalNotifications]);
@@ -396,8 +322,8 @@ RCT_EXPORT_METHOD(register:(nonnull NSString *)deviceToken
     }
     
     // Initialize hub
-    SBNotificationHub *hub = [[SBNotificationHub alloc] initWithConnectionString:_connectionString
-                                                             notificationHubPath:_hubName];
+    SBNotificationHub *hub = [RCTAzureNotificationHubUtil createAzureNotificationHub:_connectionString
+                                                                             hubName:_hubName];
     
     // Register for native notifications
     dispatch_async(dispatch_get_main_queue(), ^
@@ -409,13 +335,13 @@ RCT_EXPORT_METHOD(register:(nonnull NSString *)deviceToken
             if (error != nil)
             {
                 [[NSNotificationCenter defaultCenter] postNotificationName:RCTAzureNotificationHubRegisteredError
-                                                                    object:self
+                                                                    object:notificationHandler
                                                                   userInfo:@{RCTUserInfoError: error}];
             }
             else
             {
                 [[NSNotificationCenter defaultCenter] postNotificationName:RCTAzureNotificationHubRegistered
-                                                                    object:self
+                                                                    object:notificationHandler
                                                                   userInfo:@{RCTUserInfoSuccess: @YES}];
             }
         }];
@@ -432,8 +358,8 @@ RCT_EXPORT_METHOD(unregister:(RCTPromiseResolveBlock)resolve
     }
     
     // Initialize hub
-    SBNotificationHub *hub = [[SBNotificationHub alloc] initWithConnectionString:_connectionString
-                                                             notificationHubPath:_hubName];
+    SBNotificationHub *hub = [RCTAzureNotificationHubUtil createAzureNotificationHub:_connectionString
+                                                                             hubName:_hubName];
     
     // Unregister for native notifications
     dispatch_async(dispatch_get_main_queue(), ^
@@ -443,28 +369,11 @@ RCT_EXPORT_METHOD(unregister:(RCTPromiseResolveBlock)resolve
             if (error != nil)
             {
                 [[NSNotificationCenter defaultCenter] postNotificationName:RCTErrorUnspecified
-                                                                    object:self
+                                                                    object:notificationHandler
                                                                   userInfo:@{RCTUserInfoError: error}];
             }
         }];
     });
-}
-
-- (bool)assertArguments:(RCTPromiseRejectBlock)reject
-{
-    if (_connectionString == nil)
-    {
-        reject(RCTErrorInvalidArguments, RCTErrorMissingConnectionString, nil);
-        return false;
-    }
-    
-    if (_hubName == nil)
-    {
-        reject(RCTErrorInvalidArguments, RCTErrorMissingHubName, nil);
-        return false;
-    }
-    
-    return true;
 }
 
 @end

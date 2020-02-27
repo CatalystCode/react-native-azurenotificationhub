@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00E356F31AD99517003FC87E /* ReactNativeAzureNotificationHubSampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* ReactNativeAzureNotificationHubSampleTests.m */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -16,7 +15,9 @@
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		2DCD954D1E0B4F2C00145EB5 /* ReactNativeAzureNotificationHubSampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* ReactNativeAzureNotificationHubSampleTests.m */; };
+		45E30B48240821F100A339F1 /* RCTAzureNotificationHubManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 45E30B45240821F000A339F1 /* RCTAzureNotificationHubManagerTests.m */; };
+		45E30B49240821F100A339F1 /* RCTAzureNotificationHubUtilTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 45E30B46240821F000A339F1 /* RCTAzureNotificationHubUtilTests.m */; };
+		45E30B4A240821F100A339F1 /* RCTAzureNotificationHandlerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 45E30B47240821F100A339F1 /* RCTAzureNotificationHandlerTests.m */; };
 		EC17D9CC59D177FAF51129C5 /* Pods_ReactNativeAzureNotificationHubSampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D66D2E73969F49ECF06FE6B3 /* Pods_ReactNativeAzureNotificationHubSampleTests.framework */; };
 /* End PBXBuildFile section */
 
@@ -41,7 +42,6 @@
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		00E356EE1AD99517003FC87E /* ReactNativeAzureNotificationHubSampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReactNativeAzureNotificationHubSampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		00E356F21AD99517003FC87E /* ReactNativeAzureNotificationHubSampleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReactNativeAzureNotificationHubSampleTests.m; sourceTree = "<group>"; };
 		0BE8B0F4BD8C7597B7E5811E /* Pods-ReactNativeAzureNotificationHubSampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativeAzureNotificationHubSampleTests.release.xcconfig"; path = "Target Support Files/Pods-ReactNativeAzureNotificationHubSampleTests/Pods-ReactNativeAzureNotificationHubSampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* ReactNativeAzureNotificationHubSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReactNativeAzureNotificationHubSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = ReactNativeAzureNotificationHubSample/AppDelegate.h; sourceTree = "<group>"; };
@@ -55,6 +55,9 @@
 		2D02E4901E0B4A5D006451C7 /* ReactNativeAzureNotificationHubSample-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ReactNativeAzureNotificationHubSample-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AAB39D4BDBE7F53EC74C4C4 /* libPods-ReactNativeAzureNotificationHubSample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ReactNativeAzureNotificationHubSample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B18387DF86E68D789995173 /* Pods-ReactNativeAzureNotificationHubSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativeAzureNotificationHubSample.release.xcconfig"; path = "Target Support Files/Pods-ReactNativeAzureNotificationHubSample/Pods-ReactNativeAzureNotificationHubSample.release.xcconfig"; sourceTree = "<group>"; };
+		45E30B45240821F000A339F1 /* RCTAzureNotificationHubManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTAzureNotificationHubManagerTests.m; sourceTree = "<group>"; };
+		45E30B46240821F000A339F1 /* RCTAzureNotificationHubUtilTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTAzureNotificationHubUtilTests.m; sourceTree = "<group>"; };
+		45E30B47240821F100A339F1 /* RCTAzureNotificationHandlerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTAzureNotificationHandlerTests.m; sourceTree = "<group>"; };
 		C492EEB6FD7BE2BA8DC1EA48 /* Pods-ReactNativeAzureNotificationHubSampleTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativeAzureNotificationHubSampleTests.debug.xcconfig"; path = "Target Support Files/Pods-ReactNativeAzureNotificationHubSampleTests/Pods-ReactNativeAzureNotificationHubSampleTests.debug.xcconfig"; sourceTree = "<group>"; };
 		D66D2E73969F49ECF06FE6B3 /* Pods_ReactNativeAzureNotificationHubSampleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ReactNativeAzureNotificationHubSampleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
@@ -98,7 +101,9 @@
 		00E356EF1AD99517003FC87E /* ReactNativeAzureNotificationHubSampleTests */ = {
 			isa = PBXGroup;
 			children = (
-				00E356F21AD99517003FC87E /* ReactNativeAzureNotificationHubSampleTests.m */,
+				45E30B47240821F100A339F1 /* RCTAzureNotificationHandlerTests.m */,
+				45E30B45240821F000A339F1 /* RCTAzureNotificationHubManagerTests.m */,
+				45E30B46240821F000A339F1 /* RCTAzureNotificationHubUtilTests.m */,
 				00E356F01AD99517003FC87E /* Supporting Files */,
 			);
 			path = ReactNativeAzureNotificationHubSampleTests;
@@ -145,7 +150,6 @@
 				C492EEB6FD7BE2BA8DC1EA48 /* Pods-ReactNativeAzureNotificationHubSampleTests.debug.xcconfig */,
 				0BE8B0F4BD8C7597B7E5811E /* Pods-ReactNativeAzureNotificationHubSampleTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -291,6 +295,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -479,7 +484,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00E356F31AD99517003FC87E /* ReactNativeAzureNotificationHubSampleTests.m in Sources */,
+				45E30B48240821F100A339F1 /* RCTAzureNotificationHubManagerTests.m in Sources */,
+				45E30B4A240821F100A339F1 /* RCTAzureNotificationHandlerTests.m in Sources */,
+				45E30B49240821F100A339F1 /* RCTAzureNotificationHubUtilTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -505,7 +512,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DCD954D1E0B4F2C00145EB5 /* ReactNativeAzureNotificationHubSampleTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

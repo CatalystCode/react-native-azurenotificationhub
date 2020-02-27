@@ -1,11 +1,11 @@
 /**
-* Copyright (c) 2015-present, Facebook, Inc.
-* All rights reserved.
-*
-* This source code is licensed under the BSD-style license found in the
-* LICENSE file in the root directory of this source tree. An additional grant
-* of patent rights can be found in the PATENTS file in the same directory.
-*/
+ * Copyright (c) 2015-present, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
 
 // Notification Hub events
 NSString *const RCTLocalNotificationReceived                    = @"localNotificationReceived";
@@ -25,6 +25,8 @@ NSString *const RCTTagsKey                                      = @"tags";
 NSString *const RCTUserInfoNotificationSettings                 = @"notificationSettings";
 NSString *const RCTUserInfoDeviceToken                          = @"deviceToken";
 NSString *const RCTUserInfoRemote                               = @"remote";
+NSString *const RCTUserInfoResolveBlock                         = @"resolveBlock";
+NSString *const RCTUserInfoRejectBlock                          = @"rejectBlock";
 NSString *const RCTUserInfoSuccess                              = @"success";
 NSString *const RCTUserInfoError                                = @"error";
 

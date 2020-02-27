@@ -6,14 +6,15 @@
  */
 
 #import <XCTest/XCTest.h>
+#import <RNAzureNotificationHub/RCTAzureNotificationHub.h>
 #import <RNAzureNotificationHub/RCTAzureNotificationHubManager.h>
 
 @import OCMockito;
 
-@interface ReactNativeAzureNotificationHubSampleTests : XCTestCase
+@interface RCTAzureNotificationHubManagerTests : XCTestCase
 @end
 
-@implementation ReactNativeAzureNotificationHubSampleTests
+@implementation RCTAzureNotificationHubManagerTests
 {
   RCTAzureNotificationHubManager *hubManager;
   NSMutableDictionary *config;
@@ -43,7 +44,7 @@
               resolver:resolver
               rejecter:rejecter];
 
-  XCTAssertEqualObjects(errorMsg, @"Connection string cannot be null.");
+  XCTAssertEqualObjects(errorMsg, RCTErrorMissingConnectionString);
 }
 
 - (void)testRegisterNoHubName
@@ -60,7 +61,7 @@
               resolver:resolver
               rejecter:rejecter];
 
-  XCTAssertEqualObjects(errorMsg, @"Hub name cannot be null.");
+  XCTAssertEqualObjects(errorMsg, RCTErrorMissingHubName);
 }
 
 - (void)testRegisterSuccessfully
