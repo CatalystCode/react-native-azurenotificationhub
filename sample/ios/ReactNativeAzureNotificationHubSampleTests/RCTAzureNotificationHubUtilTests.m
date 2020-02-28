@@ -23,7 +23,6 @@
     NSArray *objects = [NSArray arrayWithObjects:@"userInfoObject", nil];
     NSDictionary *info = [[NSDictionary alloc] initWithObjects:objects forKeys:keys];
     notification.userInfo = info;
-    notification.fireDate = [NSDate dateWithTimeIntervalSince1970:1000];
     notification.alertAction = @"alertAction";
     notification.alertBody = @"alertBody";
     notification.applicationIconBadgeNumber = 1;
@@ -31,7 +30,6 @@
     notification.soundName = @"soundName";
     NSDictionary *expectedNotification = @{
         @"userInfo": @{ @"userInfoKey": @"userInfoObject" },
-        @"fireDate": @"1969-12-31T19:16:40.000-05:00",
         @"alertAction": @"alertAction",
         @"alertBody": @"alertBody",
         @"applicationIconBadgeNumber": [NSNumber numberWithInt:1],
