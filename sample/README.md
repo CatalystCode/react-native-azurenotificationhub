@@ -1,21 +1,15 @@
 # How to use
-1. Clone project:
 
-    `git clone https://github.com/phongcao/react-native-azurenotificationhub-sample.git`
+Install npm modules:
 
-2. Install npm modules:
+`npm install`
 
-    `npm install`
-    
-3. Install `react-native-azurenotificationhub` module:
-
-    `npm install react-native-azurenotificationhub`
-    
-    For latest module:
-    
-    `git clone https://github.com/CatalystCode/react-native-azurenotificationhub.git` into `node_modules` folder
-
-## Android
+For Android
 
 * Update `google-services.json` file and your app's package name.
 * Import project with Android Studio to build and run.
+
+For iOS
+
+* Run `pod install` to install dependencies.
+* Open `ReactNativeAzureNotificationHubSample.xcworkspace` in XCode to build and run.
