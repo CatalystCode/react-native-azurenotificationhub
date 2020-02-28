@@ -46,4 +46,7 @@ extern NSString *const RCTErrorInvalidArguments;
 extern NSString *const RCTErrorMissingConnectionString;
 extern NSString *const RCTErrorMissingHubName;
 
+// Completion type used in Azure Notification Hub's native methods
+typedef void (^RCTNativeCompletion)(NSError *error);
+
 #endif /* RCTAzureNotificationHub_h */

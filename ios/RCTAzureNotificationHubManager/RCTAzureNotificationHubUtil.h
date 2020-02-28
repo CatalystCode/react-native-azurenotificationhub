@@ -25,6 +25,9 @@
 // Get notification types with permissions
 + (UIUserNotificationType)getNotificationTypesWithPermissions:(nullable NSDictionary *)permissions;
 
+// Run block on the main thread
++ (void)runOnMainThread:(dispatch_block_t)block;
+
 @end
 
 #endif /* RCTAzureNotificationHubUtil_h */

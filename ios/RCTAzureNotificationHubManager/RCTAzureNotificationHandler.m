@@ -61,10 +61,10 @@
 {
     NSError *error = notification.userInfo[RCTUserInfoError];
     NSDictionary *errorDetails = @{
-                                    @"message": error.localizedDescription,
-                                    @"code": @(error.code),
-                                    @"details": error.userInfo,
-                                  };
+        @"message": error.localizedDescription,
+        @"code": @(error.code),
+        @"details": error.userInfo,
+    };
     [_eventEmitter sendEventWithName:RCTRemoteNotificationRegisteredError
                                 body:errorDetails];
 }
@@ -81,10 +81,10 @@
 {
     NSError *error = notification.userInfo[RCTUserInfoError];
     NSDictionary *errorDetails = @{
-                                    @"message": error.localizedDescription,
-                                    @"code": @(error.code),
-                                    @"details": error.userInfo,
-                                  };
+        @"message": error.localizedDescription,
+        @"code": @(error.code),
+        @"details": error.userInfo,
+    };
     
     [_eventEmitter sendEventWithName:RCTAzureNotificationHubRegisteredError
                                 body:errorDetails];
@@ -98,14 +98,14 @@
     {
         return;
     }
-
+    
     UIUserNotificationSettings *notificationSettings = notification.userInfo[RCTUserInfoNotificationSettings];
     NSDictionary *notificationTypes = @{
-                                         RCTNotificationTypeAlert: @((notificationSettings.types & UIUserNotificationTypeAlert) > 0),
-                                         RCTNotificationTypeSound: @((notificationSettings.types & UIUserNotificationTypeSound) > 0),
-                                         RCTNotificationTypeBadge: @((notificationSettings.types & UIUserNotificationTypeBadge) > 0),
-                                       };
-
+        RCTNotificationTypeAlert: @((notificationSettings.types & UIUserNotificationTypeAlert) > 0),
+        RCTNotificationTypeSound: @((notificationSettings.types & UIUserNotificationTypeSound) > 0),
+        RCTNotificationTypeBadge: @((notificationSettings.types & UIUserNotificationTypeBadge) > 0),
+    };
+    
     resolve(notificationTypes);
 }
 

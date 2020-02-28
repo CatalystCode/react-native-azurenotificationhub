@@ -175,8 +175,8 @@ RCT_EXPORT_METHOD(getApplicationIconBadgeNumber:(RCTResponseSenderBlock)callback
 }
 
 RCT_EXPORT_METHOD(requestPermissions:(NSDictionary *)permissions
-                  resolver:(RCTPromiseResolveBlock)resolve
-                  rejecter:(RCTPromiseRejectBlock)reject)
+                            resolver:(RCTPromiseResolveBlock)resolve
+                            rejecter:(RCTPromiseRejectBlock)reject)
 {
     if (RCTRunningInAppExtension())
     {
@@ -197,8 +197,8 @@ RCT_EXPORT_METHOD(requestPermissions:(NSDictionary *)permissions
     UIApplication *app = RCTSharedApplication();
     if ([app respondsToSelector:@selector(registerUserNotificationSettings:)])
     {
-        UIUserNotificationSettings *notificationSettings =
-        [UIUserNotificationSettings settingsForTypes:(NSUInteger)types categories:nil];
+        UIUserNotificationSettings *notificationSettings = [UIUserNotificationSettings settingsForTypes:(NSUInteger)types
+                                                                                             categories:nil];
         [app registerUserNotificationSettings:notificationSettings];
     }
     else
@@ -270,7 +270,7 @@ RCT_EXPORT_METHOD(cancelLocalNotifications:(NSDictionary<NSString *, id> *)userI
 }
 
 RCT_EXPORT_METHOD(getInitialNotification:(RCTPromiseResolveBlock)resolve
-                  reject:(__unused RCTPromiseRejectBlock)reject)
+                                  reject:(__unused RCTPromiseRejectBlock)reject)
 {
     NSMutableDictionary<NSString *, id> *initialNotification =
     [self.bridge.launchOptions[UIApplicationLaunchOptionsRemoteNotificationKey] mutableCopy];
@@ -326,11 +326,11 @@ RCT_EXPORT_METHOD(register:(nonnull NSString *)deviceToken
                                                                              hubName:_hubName];
     
     // Register for native notifications
-    dispatch_async(dispatch_get_main_queue(), ^
+    [RCTAzureNotificationHubUtil runOnMainThread:^
     {
-       [hub registerNativeWithDeviceToken:deviceToken
-                                     tags:_tags
-                               completion:^(NSError* error)
+        [hub registerNativeWithDeviceToken:deviceToken
+                                      tags:_tags
+                                completion:^(NSError* error)
         {
             if (error != nil)
             {
@@ -345,7 +345,7 @@ RCT_EXPORT_METHOD(register:(nonnull NSString *)deviceToken
                                                                   userInfo:@{RCTUserInfoSuccess: @YES}];
             }
         }];
-    });
+    }];
 }
 
 RCT_EXPORT_METHOD(unregister:(RCTPromiseResolveBlock)resolve
@@ -362,9 +362,9 @@ RCT_EXPORT_METHOD(unregister:(RCTPromiseResolveBlock)resolve
                                                                              hubName:_hubName];
     
     // Unregister for native notifications
-    dispatch_async(dispatch_get_main_queue(), ^
+    [RCTAzureNotificationHubUtil runOnMainThread:^
     {
-       [hub unregisterNativeWithCompletion:^(NSError *error)
+        [hub unregisterNativeWithCompletion:^(NSError *error)
         {
             if (error != nil)
             {
@@ -373,7 +373,7 @@ RCT_EXPORT_METHOD(unregister:(RCTPromiseResolveBlock)resolve
                                                                   userInfo:@{RCTUserInfoError: error}];
             }
         }];
-    });
+    }];
 }
 
 @end

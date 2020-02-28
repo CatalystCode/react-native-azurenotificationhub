@@ -90,4 +90,10 @@
     return types;
 }
 
+// Run block on the main thread
++ (void)runOnMainThread:(dispatch_block_t)block
+{
+    dispatch_async(dispatch_get_main_queue(), block);
+}
+
 @end
