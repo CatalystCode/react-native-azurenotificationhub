@@ -19,6 +19,10 @@ steps:
     versionSpec: '10.15.3'
   displayName: 'Install Node'
 
+- script: gem install slather
+  displayName: 'Install slather'
+  workingDirectory: '../sample'
+
 - script: npm install
   displayName: 'Install dependencies'
   workingDirectory: '../sample'
@@ -26,6 +30,7 @@ steps:
 - script: |
     rm -R ./node_modules/react-native-azurenotificationhub/*
     cp -R ../s/* ./node_modules/react-native-azurenotificationhub/
+    cp ../s/.slather.yml .
   displayName: 'Copying react-native-azurenotificationhub'
   workingDirectory: '../sample'
 
@@ -71,7 +76,7 @@ steps:
     xcWorkspacePath: '../sample/ios/ReactNativeAzureNotificationHubSample.xcworkspace'
     xcodeVersion: '10'
     signingOption: 'nosign'
-    useXcpretty: 'false'
+    useXcpretty: 'true'
     
 - task: Xcode@5
   displayName: 'Running iOS unit tests'
@@ -83,8 +88,18 @@ steps:
     xcWorkspacePath: '../sample/ios/ReactNativeAzureNotificationHubSample.xcworkspace'
     xcodeVersion: '10'
     signingOption: 'nosign'
-    useXcpretty: 'false'
+    useXcpretty: 'true'
     destination: 'platform=iOS Simulator, name=iPhone 8'
     destinationPlatformOption: 'iOS'
     destinationTypeOption: 'simulators'
     destinationSimulators: 'iPhone 8'
+    publishJUnitResults: 'true'
+
+- script: slather
+  displayName: 'Running slather'
+  workingDirectory: '../sample'
+
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'Cobertura'
+    summaryFileLocation: '../sample/cobertura.xml'

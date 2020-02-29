@@ -1,0 +1,13 @@
+coverage_service: cobertura_xml
+xcodeproj: ios/ReactNativeAzureNotificationHubSample.xcodeproj
+workspace: ios/ReactNativeAzureNotificationHubSample.xcworkspace
+scheme: ReactNativeAzureNotificationHubSample
+output_directory: .
+ignore:
+  - node_modules/*
+  - ios/Pods/Folly/*
+  - ios/Pods/DoubleConversion/*
+  - ios/Pods/glog/*
+  - ios/Pods/WindowsAzureMessaging/*
+  - ios/Pods/boost-for-react-native/*
+  - ios/ReactNativeAzureNotificationHubSample/*
