@@ -21,12 +21,12 @@ const PushNotificationEmitter = new NativeEventEmitter(RCTAzureNotificationHubMa
 
 const _notifHandlers = new Map();
 
-const DEVICE_NOTIF_EVENT = 'remoteNotificationReceived';
-const NOTIF_REGISTER_EVENT = 'remoteNotificationsRegistered';
-const NOTIF_REGISTRATION_ERROR_EVENT = 'remoteNotificationRegistrationError';
-const NOTIF_REGISTER_AZURE_HUB_EVENT = 'azureNotificationHubRegistered';
-const NOTIF_AZURE_HUB_REGISTRATION_ERROR_EVENT = 'azureNotificationHubRegistrationError';
-const DEVICE_LOCAL_NOTIF_EVENT = 'localNotificationReceived';
+const DEVICE_LOCAL_NOTIF_EVENT                  = 'localNotificationReceived';
+const DEVICE_NOTIF_EVENT                        = 'remoteNotificationReceived';
+const NOTIF_REGISTER_EVENT                      = 'remoteNotificationRegistered';
+const NOTIF_REGISTRATION_ERROR_EVENT            = 'remoteNotificationRegisteredError';
+const NOTIF_REGISTER_AZURE_HUB_EVENT            = 'azureNotificationHubRegistered';
+const NOTIF_AZURE_HUB_REGISTRATION_ERROR_EVENT  = 'azureNotificationHubRegisteredError';
 
 /**
  * An event emitted by AzureNotificationHubIOS.

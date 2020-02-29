@@ -12,19 +12,55 @@
 @interface RCTAzureNotificationHubManager : RCTEventEmitter
 
 // Required to register for notifications, invoked from AppDelegate
-+ (void)didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings;
++ (void)didRegisterUserNotificationSettings:(nonnull UIUserNotificationSettings *)notificationSettings;
 
 // Required for the register event, invoked from AppDelegate
-+ (void)didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken;
++ (void)didRegisterForRemoteNotificationsWithDeviceToken:(nonnull NSData *)deviceToken;
 
 // Required for the notification event, invoked from AppDelegate
-+ (void)didReceiveRemoteNotification:(NSDictionary *)notification;
++ (void)didReceiveRemoteNotification:(nonnull NSDictionary *)notification;
 
 // Required for the localNotification event, invoked from AppDelegate
-+ (void)didReceiveLocalNotification:(UILocalNotification *)notification;
++ (void)didReceiveLocalNotification:(nonnull UILocalNotification *)notification;
 
 // Required for the registrationError event, invoked from AppDelegate
-+ (void)didFailToRegisterForRemoteNotificationsWithError:(NSError *)error;
++ (void)didFailToRegisterForRemoteNotificationsWithError:(nonnull NSError *)error;
+
+// Set application icon badge number
+- (void)setApplicationIconBadgeNumber:(NSInteger)number;
+
+// Get application icon badge number
+- (void)getApplicationIconBadgeNumber:(nonnull RCTResponseSenderBlock)callback;
+
+// Request notification permissions
+- (void)requestPermissions:(nonnull NSDictionary *)permissions
+                  resolver:(nonnull RCTPromiseResolveBlock)resolve
+                  rejecter:(nonnull RCTPromiseRejectBlock)reject;
+
+// Abandon notification permissions
+- (void)abandonPermissions;
+
+// Check notification permissions
+- (void)checkPermissions:(nonnull RCTResponseSenderBlock)callback;
+
+// Present local notification
+- (void)presentLocalNotification:(nonnull UILocalNotification *)notification;
+
+// Schedule local notification
+- (void)scheduleLocalNotification:(nonnull UILocalNotification *)notification;
+
+// Cancel all local notifications
+- (void)cancelAllLocalNotifications;
+
+// Cancel local notifications
+- (void)cancelLocalNotifications:(nonnull NSDictionary<NSString *, id> *)userInfo;
+
+// Get initial notification
+- (void)getInitialNotification:(nonnull RCTPromiseResolveBlock)resolve
+                        reject:(nonnull __unused RCTPromiseRejectBlock)reject;
+
+// Get scheduled local notifications
+- (void)getScheduledLocalNotifications:(nonnull RCTResponseSenderBlock)callback;
 
 // Register with Azure Notification Hub
 - (void)register:(nonnull NSString *)deviceToken

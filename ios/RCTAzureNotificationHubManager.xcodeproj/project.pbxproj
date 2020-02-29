@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		16D92203240700B100FB17C6 /* RCTAzureNotificationHub.m in Sources */ = {isa = PBXBuildFile; fileRef = 16D92202240700B100FB17C6 /* RCTAzureNotificationHub.m */; };
+		4513A3AF24078CC300A0A996 /* RCTAzureNotificationHubUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 4513A3AE24078CC300A0A996 /* RCTAzureNotificationHubUtil.m */; };
+		4519AACD240773E500A9CED7 /* RCTAzureNotificationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 4519AACB240773E500A9CED7 /* RCTAzureNotificationHandler.m */; };
 		458BD41D1D9EDE5E007E3F13 /* RCTAzureNotificationHubManager.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 458BD41C1D9EDE5E007E3F13 /* RCTAzureNotificationHubManager.h */; };
 		458BD41F1D9EDE5E007E3F13 /* RCTAzureNotificationHubManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 458BD41E1D9EDE5E007E3F13 /* RCTAzureNotificationHubManager.m */; };
 /* End PBXBuildFile section */
@@ -25,6 +28,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		16D92201240700B100FB17C6 /* RCTAzureNotificationHub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTAzureNotificationHub.h; sourceTree = "<group>"; };
+		16D92202240700B100FB17C6 /* RCTAzureNotificationHub.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTAzureNotificationHub.m; sourceTree = "<group>"; };
+		4513A3AD24078CC300A0A996 /* RCTAzureNotificationHubUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTAzureNotificationHubUtil.h; sourceTree = "<group>"; };
+		4513A3AE24078CC300A0A996 /* RCTAzureNotificationHubUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTAzureNotificationHubUtil.m; sourceTree = "<group>"; };
+		4519AACB240773E500A9CED7 /* RCTAzureNotificationHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTAzureNotificationHandler.m; sourceTree = "<group>"; };
+		4519AACC240773E500A9CED7 /* RCTAzureNotificationHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTAzureNotificationHandler.h; sourceTree = "<group>"; };
 		458BD4191D9EDE5E007E3F13 /* libRCTAzureNotificationHubManager.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRCTAzureNotificationHubManager.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		458BD41C1D9EDE5E007E3F13 /* RCTAzureNotificationHubManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RCTAzureNotificationHubManager.h; sourceTree = "<group>"; };
 		458BD41E1D9EDE5E007E3F13 /* RCTAzureNotificationHubManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RCTAzureNotificationHubManager.m; sourceTree = "<group>"; };
@@ -60,6 +69,12 @@
 		458BD41B1D9EDE5E007E3F13 /* RCTAzureNotificationHubManager */ = {
 			isa = PBXGroup;
 			children = (
+				4513A3AD24078CC300A0A996 /* RCTAzureNotificationHubUtil.h */,
+				4513A3AE24078CC300A0A996 /* RCTAzureNotificationHubUtil.m */,
+				4519AACC240773E500A9CED7 /* RCTAzureNotificationHandler.h */,
+				4519AACB240773E500A9CED7 /* RCTAzureNotificationHandler.m */,
+				16D92201240700B100FB17C6 /* RCTAzureNotificationHub.h */,
+				16D92202240700B100FB17C6 /* RCTAzureNotificationHub.m */,
 				458BD41C1D9EDE5E007E3F13 /* RCTAzureNotificationHubManager.h */,
 				458BD41E1D9EDE5E007E3F13 /* RCTAzureNotificationHubManager.m */,
 			);
@@ -105,6 +120,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 458BD4101D9EDE5E007E3F13;
@@ -122,6 +138,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4513A3AF24078CC300A0A996 /* RCTAzureNotificationHubUtil.m in Sources */,
+				4519AACD240773E500A9CED7 /* RCTAzureNotificationHandler.m in Sources */,
+				16D92203240700B100FB17C6 /* RCTAzureNotificationHub.m in Sources */,
 				458BD41F1D9EDE5E007E3F13 /* RCTAzureNotificationHubManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

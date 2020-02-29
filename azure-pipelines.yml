@@ -7,7 +7,7 @@ trigger:
     - refs/tag/*
 
 pool:
-  vmImage: 'macOS-10.13'
+  vmImage: 'macOS-10.14'
 
 steps:
 - script: |
@@ -56,6 +56,8 @@ steps:
 - script: |
     pod install
     sudo cp -R ../node_modules/react-native-azurenotificationhub/ios Pods/RNAzureNotificationHub
+    sudo chown -R $(id -u):$(id -g) Pods/RNAzureNotificationHub
+    pod update
   displayName: 'Install CocoaPods dependencies'
   workingDirectory: '../sample/ios'
 
@@ -77,7 +79,7 @@ steps:
     actions: 'test'
     scheme: 'ReactNativeAzureNotificationHubSample'
     sdk: 'iphonesimulator'
-    configuration: 'Release'
+    configuration: 'Debug'
     xcWorkspacePath: '../sample/ios/ReactNativeAzureNotificationHubSample.xcworkspace'
     xcodeVersion: '10'
     signingOption: 'nosign'
