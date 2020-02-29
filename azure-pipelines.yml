@@ -79,7 +79,7 @@ steps:
     actions: 'test'
     scheme: 'ReactNativeAzureNotificationHubSample'
     sdk: 'iphonesimulator'
-    configuration: 'Release'
+    configuration: 'Debug'
     xcWorkspacePath: '../sample/ios/ReactNativeAzureNotificationHubSample.xcworkspace'
     xcodeVersion: '10'
     signingOption: 'nosign'
