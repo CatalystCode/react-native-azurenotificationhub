@@ -118,6 +118,7 @@ static NSString *const RCTTestHubName = @"Hub Name";
                                          completion:OCMOCK_ANY]).andDo(registerNativeWithDeviceToken);
     
     id defaultCenterMock = OCMPartialMock([NSNotificationCenter defaultCenter]);
+
     [_hubManager register:RCTTestDeviceToken
                    config:_config
                  resolver:_resolver
@@ -153,6 +154,7 @@ static NSString *const RCTTestHubName = @"Hub Name";
                                          completion:OCMOCK_ANY]).andDo(registerNativeWithDeviceToken);
     
     id defaultCenterMock = OCMPartialMock([NSNotificationCenter defaultCenter]);
+
     [_hubManager register:RCTTestDeviceToken
                    config:_config
                  resolver:_resolver
@@ -229,6 +231,7 @@ static NSString *const RCTTestHubName = @"Hub Name";
     OCMStub([_hubMock unregisterNativeWithCompletion:OCMOCK_ANY]).andDo(unregisterNativeWithCompletion);
     id defaultCenterMock = OCMPartialMock([NSNotificationCenter defaultCenter]);
     OCMReject([defaultCenterMock postNotificationName:OCMOCK_ANY object:OCMOCK_ANY userInfo:OCMOCK_ANY]);
+
     [_hubManager register:RCTTestDeviceToken
                    config:_config
                  resolver:_resolver
@@ -450,12 +453,131 @@ static NSString *const RCTTestHubName = @"Hub Name";
     [notifications addObject:_notification];
     id sharedApplicationMock = OCMPartialMock([UIApplication sharedApplication]);
     OCMStub([sharedApplicationMock scheduledLocalNotifications]).andReturn(notifications);
-    RCTResponseSenderBlock callback = ^(NSArray *response)
+    __block NSMutableArray *scheduledNotifications = nil;
+    RCTResponseSenderBlock callback = ^(NSArray *result)
     {
-        XCTAssertEqualObjects(response[0][0], [RCTAzureNotificationHubUtil formatLocalNotification:_notification]);
+        scheduledNotifications = result;
     };
     
     [_hubManager getScheduledLocalNotifications:callback];
+
+    XCTAssertEqualObjects(scheduledNotifications[0][0], [RCTAzureNotificationHubUtil formatLocalNotification:_notification]);
+}
+
+- (void)testStartObserving
+{
+    id defaultCenterMock = OCMPartialMock([NSNotificationCenter defaultCenter]);
+
+    [_hubManager startObserving];
+
+    OCMVerify([defaultCenterMock addObserver:OCMOCK_ANY
+                                    selector:[OCMArg anySelector]
+                                        name:RCTLocalNotificationReceived
+                                      object:nil]);
+
+    OCMVerify([defaultCenterMock addObserver:OCMOCK_ANY
+                                    selector:[OCMArg anySelector]
+                                        name:RCTRemoteNotificationReceived
+                                      object:nil]);
+
+    OCMVerify([defaultCenterMock addObserver:OCMOCK_ANY
+                                    selector:[OCMArg anySelector]
+                                        name:RCTRemoteNotificationRegistered
+                                      object:nil]);
+
+    OCMVerify([defaultCenterMock addObserver:OCMOCK_ANY
+                                    selector:[OCMArg anySelector]
+                                        name:RCTRemoteNotificationRegisteredError
+                                      object:nil]);
+
+    OCMVerify([defaultCenterMock addObserver:OCMOCK_ANY
+                                    selector:[OCMArg anySelector]
+                                        name:RCTAzureNotificationHubRegistered
+                                      object:nil]);
+
+    OCMVerify([defaultCenterMock addObserver:OCMOCK_ANY
+                                    selector:[OCMArg anySelector]
+                                        name:RCTAzureNotificationHubRegisteredError
+                                      object:nil]);
+
+    OCMVerify([defaultCenterMock addObserver:OCMOCK_ANY
+                                    selector:[OCMArg anySelector]
+                                        name:RCTUserNotificationSettingsRegistered
+                                      object:nil]);
+}
+
+- (void)testStopObserving
+{
+    id defaultCenterMock = OCMPartialMock([NSNotificationCenter defaultCenter]);
+
+    [_hubManager stopObserving];
+
+    OCMVerify([defaultCenterMock removeObserver:OCMOCK_ANY]);
+}
+
+- (void)testSupportedEvents
+{
+    NSArray *expectedSupportedEvents = @[RCTLocalNotificationReceived,
+                                         RCTRemoteNotificationReceived,
+                                         RCTRemoteNotificationRegistered,
+                                         RCTRemoteNotificationRegisteredError,
+                                         RCTAzureNotificationHubRegistered,
+                                         RCTAzureNotificationHubRegisteredError];
+
+    NSArray *supportedEvents = [_hubManager supportedEvents];
+
+    XCTAssertEqualObjects(supportedEvents, expectedSupportedEvents);
+}
+
+- (void)testDidRegisterForRemoteNotificationsWithDeviceToken
+{
+    id defaultCenterMock = OCMPartialMock([NSNotificationCenter defaultCenter]);
+    NSData *deviceToken = [@"Device Token" dataUsingEncoding:NSASCIIStringEncoding];
+    NSString *hexString = [RCTAzureNotificationHubUtil convertDeviceTokenToString:deviceToken];
+
+    [RCTAzureNotificationHubManager didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
+
+    OCMVerify([defaultCenterMock postNotificationName:RCTRemoteNotificationRegistered
+                                               object:OCMOCK_ANY
+                                             userInfo:@{RCTUserInfoDeviceToken: [hexString copy]}]);
+}
+
+- (void)testDidFailToRegisterForRemoteNotificationsWithError
+{
+    id defaultCenterMock = OCMPartialMock([NSNotificationCenter defaultCenter]);
+    NSError *error = [NSError errorWithDomain:@"Mock Error" code:0 userInfo:nil];
+
+    [RCTAzureNotificationHubManager didFailToRegisterForRemoteNotificationsWithError:error];
+
+    OCMVerify([defaultCenterMock postNotificationName:RCTRemoteNotificationRegisteredError
+                                               object:OCMOCK_ANY
+                                             userInfo:@{RCTUserInfoError: error}]);
+}
+
+- (void)testDidReceiveRemoteNotification
+{
+    id defaultCenterMock = OCMPartialMock([NSNotificationCenter defaultCenter]);
+    NSDictionary *notification = [[NSDictionary alloc] initWithObjectsAndKeys:@"key", @"value", nil];
+
+    [RCTAzureNotificationHubManager didReceiveRemoteNotification:notification];
+
+    OCMVerify([defaultCenterMock postNotificationName:RCTRemoteNotificationReceived
+                                               object:OCMOCK_ANY
+                                             userInfo:notification]);
+}
+
+- (void)testDidReceiveLocalNotification
+{
+    id defaultCenterMock = OCMPartialMock([NSNotificationCenter defaultCenter]);
+    UILocalNotification *notification = [[UILocalNotification alloc] init];
+    NSDictionary *info = [[NSDictionary alloc] initWithObjectsAndKeys:@"Key", @"Value", nil];
+    [notification setUserInfo:info];
+
+    [RCTAzureNotificationHubManager didReceiveLocalNotification:notification];
+
+    OCMVerify([defaultCenterMock postNotificationName:RCTLocalNotificationReceived
+                                               object:OCMOCK_ANY
+                                             userInfo:[RCTAzureNotificationHubUtil formatLocalNotification:notification]]);
 }
 
 @end
