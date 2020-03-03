@@ -58,6 +58,7 @@ public class ReactNativeFirebaseMessagingService extends FirebaseMessagingServic
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
+        NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
         Log.d(TAG, "Remote message from: " + remoteMessage.getFrom());
 
         if (notificationChannelID == null) {
@@ -65,7 +66,13 @@ public class ReactNativeFirebaseMessagingService extends FirebaseMessagingServic
         }
 
         Bundle bundle = remoteMessage.toIntent().getExtras();
-        ReactNativeNotificationsHandler.sendNotification(this, bundle, notificationChannelID);
+        if (notificationHubUtil.getAppIsForeground()) {
+            bundle.putBoolean("foreground", true);
+            bundle.putBoolean("userInteraction", false);
+            bundle.putBoolean("coldstart", false);
+        } else {
+            ReactNativeNotificationsHandler.sendNotification(this, bundle, notificationChannelID);
+        }
         ReactNativeNotificationsHandler.sendBroadcast(this, bundle, 0);
     }
 }
