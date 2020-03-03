@@ -25,6 +25,8 @@ public class NotificationHubUtil {
     private static final String KEY_FOR_PREFS_CHANNELENABLELIGHTS = "AzureNotificationHub_channelEnableLights";
     private static final String KEY_FOR_PREFS_CHANNELENABLEVIBRATION = "AzureNotificationHub_channelEnableVibration";
 
+    private boolean mIsForeground;
+
     public static NotificationHubUtil getInstance() {
         if (sharedNotificationHubUtilInstance == null) {
             sharedNotificationHubUtilInstance = new NotificationHubUtil();
@@ -128,6 +130,14 @@ public class NotificationHubUtil {
 
     public boolean hasChannelEnableVibration(Context context) {
         return hasKey(context, KEY_FOR_PREFS_CHANNELENABLEVIBRATION);
+    }
+
+    public void setAppIsForeground(boolean isForeground) {
+        mIsForeground = isForeground;
+    }
+
+    public boolean getAppIsForeground() {
+        return mIsForeground;
     }
 
     public NotificationHub createNotificationHub(String hubName, String connectionString, ReactContext reactContext) {

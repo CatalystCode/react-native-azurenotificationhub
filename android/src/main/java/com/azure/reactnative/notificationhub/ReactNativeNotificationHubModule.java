@@ -49,7 +49,6 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
 
     private ReactApplicationContext mReactContext;
     private LocalBroadcastReceiver mLocalBroadcastReceiver;
-    private boolean mIsForeground;
 
     public ReactNativeNotificationHubModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -65,6 +64,16 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
     @Override
     public String getName() {
         return AZURE_NOTIFICATION_HUB_NAME;
+    }
+
+    public void setIsForeground(boolean isForeground) {
+        NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
+        notificationHubUtil.setAppIsForeground(isForeground);
+    }
+
+    public boolean getIsForeground() {
+        NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
+        return notificationHubUtil.getAppIsForeground();
     }
 
     @ReactMethod
@@ -168,7 +177,8 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
 
     @Override
     public void onHostResume() {
-        mIsForeground = true;
+        setIsForeground(true);
+
         Activity activity = getCurrentActivity();
         if (activity != null) {
             Intent intent = activity.getIntent();
@@ -188,7 +198,7 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
 
     @Override
     public void onHostPause() {
-        mIsForeground = false;
+        setIsForeground(false);
     }
 
     @Override
@@ -213,7 +223,7 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
     public class LocalBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (mIsForeground) {
+            if (getIsForeground()) {
                 String event = intent.getStringExtra("event");
                 String data = intent.getStringExtra("data");
                 mReactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
