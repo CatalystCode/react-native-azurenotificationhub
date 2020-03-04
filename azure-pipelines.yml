@@ -23,6 +23,10 @@ steps:
   displayName: 'Install slather'
   workingDirectory: '../sample'
 
+- script: dotnet tool install -g dotnet-reportgenerator-globaltool
+  displayName: 'Install ReportGenerator'
+  workingDirectory: '../sample'
+
 - script: npm install
   displayName: 'Install dependencies'
   workingDirectory: '../sample'
@@ -55,8 +59,22 @@ steps:
   inputs:
     workingDirectory: '../sample/android'
     gradleWrapperFile: '../sample/android/gradlew'
+    testResultsFiles: '../sample/android/app/build/test-results/testDebugUnitTest/TEST-com.reactnativeazurenotificationhubsample.ReactNativeNotificationHubModuleTest.xml'
+    publishJUnitResults: 'true'
     tasks: 'test'
-  continueOnError: false  
+  continueOnError: false
+
+- task: Gradle@2
+  displayName: 'Generate Android code coverage'
+  inputs:
+    workingDirectory: '../sample/android'
+    gradleWrapperFile: '../sample/android/gradlew'
+    tasks: 'clean createOfflineTestCoverageReport jacocoTestReport'
+  continueOnError: false
+
+- script: python ./cover2cover.py ./jacocoXml.xml>jacoco.xml
+  displayName: 'Convert Jacoco report to Cobertura'
+  workingDirectory: '../sample'
 
 - script: |
     pod install
@@ -98,6 +116,10 @@ steps:
 - script: slather
   displayName: 'Running slather'
   workingDirectory: '../sample'
+
+- script: reportgenerator "-reports:*.xml" "-reporttypes:cobertura" "-targetdir:."
+  displayName: 'Merge Android and iOS reports'
+  workingDirectory: '../sample'  
 
 - task: PublishCodeCoverageResults@1
   inputs:
