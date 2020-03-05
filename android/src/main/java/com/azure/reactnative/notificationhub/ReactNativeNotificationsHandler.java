@@ -10,7 +10,6 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,12 +23,60 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Set;
-
 public final class ReactNativeNotificationsHandler {
     public static final String TAG = "ReactNativeNotification";
 
     public static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
+
+    // Remote notification payload
+    public static final String KEY_REMOTE_NOTIFICATION_MESSAGE = "message";
+    public static final String KEY_REMOTE_NOTIFICATION_ID = "google.message_id";
+    public static final String KEY_REMOTE_NOTIFICATION_TITLE = "title";
+    public static final String KEY_REMOTE_NOTIFICATION_PRIORITY = "google.original_priority";
+    public static final String KEY_REMOTE_NOTIFICATION_TICKER = "ticker";
+    public static final String KEY_REMOTE_NOTIFICATION_AUTO_CANCEL = "autoCancel";
+    public static final String KEY_REMOTE_NOTIFICATION_GROUP = "group";
+    public static final String KEY_REMOTE_NOTIFICATION_LARGE_ICON = "largeIcon";
+    public static final String KEY_REMOTE_NOTIFICATION_SUB_TEXT = "subText";
+    public static final String KEY_REMOTE_NOTIFICATION_NUMBER = "number";
+    public static final String KEY_REMOTE_NOTIFICATION_SMALL_ICON = "smallIcon";
+    public static final String KEY_REMOTE_NOTIFICATION_BIG_TEXT = "bigText";
+    public static final String KEY_REMOTE_NOTIFICATION_PLAY_SOUND = "playSound";
+    public static final String KEY_REMOTE_NOTIFICATION_SOUND_NAME = "soundName";
+    public static final String KEY_REMOTE_NOTIFICATION_ONGOING = "ongoing";
+    public static final String KEY_REMOTE_NOTIFICATION_COLOR = "color";
+    public static final String KEY_REMOTE_NOTIFICATION_VIBRATE = "vibrate";
+    public static final String KEY_REMOTE_NOTIFICATION_VIBRATION = "vibration";
+    public static final String KEY_REMOTE_NOTIFICATION_FOREGROUND = "foreground";
+    public static final String KEY_REMOTE_NOTIFICATION_ACTIONS = "actions";
+    public static final String KEY_REMOTE_NOTIFICATION_ACTION = "action";
+    public static final String KEY_REMOTE_NOTIFICATION_TAG = "tag";
+    public static final String KEY_REMOTE_NOTIFICATION_USER_INTERACTION = "userInteraction";
+    public static final String KEY_REMOTE_NOTIFICATION_COLDSTART = "coldstart";
+
+    // Remote notification payload's priority
+    public static final String REMOTE_NOTIFICATION_PRIORITY_MAX = "max";
+    public static final String REMOTE_NOTIFICATION_PRIORITY_HIGH = "high";
+    public static final String REMOTE_NOTIFICATION_PRIORITY_LOW = "low";
+    public static final String REMOTE_NOTIFICATION_PRIORITY_MIN = "min";
+    public static final String REMOTE_NOTIFICATION_PRIORITY_NORMAL = "normal";
+
+    // Intent payload
+    public static final String KEY_INTENT_NOTIFICATION = "notification";
+
+    // Resources
+    public static final String RESOURCE_DEF_TYPE_MIPMAP = "mipmap";
+    public static final String RESOURCE_DEF_TYPE_RAW = "raw";
+    public static final String RESOURCE_NAME_NOTIFICATION = "ic_notification";
+    public static final String RESOURCE_NAME_LAUNCHER = "ic_launcher";
+
+    // Errors
+    public static final String ERROR_NO_ACTIVITY_CLASS = "No activity class found for the notification";
+    public static final String ERROR_NO_MESSAGE = "No message specified for the notification";
+    public static final String ERROR_NO_NOTIF_ID = "No notification ID specified for the notification";
+    public static final String ERROR_COVERT_ACTIONS = "Exception while converting actions to JSON object.";
+    public static final String ERROR_GET_ACTIONS_ARRAY = "Exception while getting action from actionsArray.";
+    public static final String ERROR_SEND_PUSH_NOTIFICATION = "failed to send push notification";
 
     private static final long DEFAULT_VIBRATION = 300L;
 
@@ -54,162 +101,93 @@ public final class ReactNativeNotificationsHandler {
 
     public static void sendNotification(Context context, Bundle bundle, String notificationChannelID) {
         try {
-            Class intentClass = getMainActivityClass(context);
+            final NotificationHubUtil hubUtil = NotificationHubUtil.getInstance();
+            Class intentClass = hubUtil.getMainActivityClass(context);
             if (intentClass == null) {
-                Log.e(TAG, "No activity class found for the notification");
+                Log.e(TAG, ERROR_NO_ACTIVITY_CLASS);
                 return;
             }
 
-            if (bundle.getString("message") == null) {
-                Log.e(TAG, "No message specified for the notification");
+            if (bundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE) == null) {
+                Log.e(TAG, ERROR_NO_MESSAGE);
                 return;
             }
 
-            String notificationIdString = bundle.getString("google.message_id");
+            String notificationIdString = bundle.getString(KEY_REMOTE_NOTIFICATION_ID);
             if (notificationIdString == null) {
-                Log.e(TAG, "No notification ID specified for the notification");
+                Log.e(TAG, ERROR_NO_NOTIF_ID);
                 return;
             }
 
             Resources res = context.getResources();
             String packageName = context.getPackageName();
 
-            String title = bundle.getString("title");
+            String title = bundle.getString(KEY_REMOTE_NOTIFICATION_TITLE);
             if (title == null) {
                 ApplicationInfo appInfo = context.getApplicationInfo();
                 title = context.getPackageManager().getApplicationLabel(appInfo).toString();
             }
 
-            int priority = NotificationCompat.PRIORITY_DEFAULT;
-            final String priorityString = bundle.getString("google.original_priority");
-            if (priorityString != null) {
-                switch (priorityString.toLowerCase()) {
-                    case "max":
-                        priority = NotificationCompat.PRIORITY_MAX;
-                        break;
-                    case "high":
-                        priority = NotificationCompat.PRIORITY_HIGH;
-                        break;
-                    case "low":
-                        priority = NotificationCompat.PRIORITY_LOW;
-                        break;
-                    case "min":
-                        priority = NotificationCompat.PRIORITY_MIN;
-                        break;
-                    case "normal":
-                        priority = NotificationCompat.PRIORITY_DEFAULT;
-                        break;
-                }
-            }
-
-            NotificationCompat.Builder notification = new NotificationCompat.Builder(context, notificationChannelID)
+            int priority = hubUtil.getNotificationCompatPriority(bundle.getString(KEY_REMOTE_NOTIFICATION_PRIORITY));
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, notificationChannelID)
                     .setContentTitle(title)
-                    .setTicker(bundle.getString("ticker"))
+                    .setTicker(bundle.getString(KEY_REMOTE_NOTIFICATION_TICKER))
                     .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
                     .setPriority(priority)
-                    .setAutoCancel(bundle.getBoolean("autoCancel", true));
+                    .setAutoCancel(bundle.getBoolean(KEY_REMOTE_NOTIFICATION_AUTO_CANCEL, true));
 
-            String group = bundle.getString("group");
+            String group = bundle.getString(KEY_REMOTE_NOTIFICATION_GROUP);
             if (group != null) {
-                notification.setGroup(group);
+                notificationBuilder.setGroup(group);
             }
 
-            notification.setContentText(bundle.getString("message"));
+            notificationBuilder.setContentText(bundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE));
 
-            String largeIcon = bundle.getString("largeIcon");
-
-            String subText = bundle.getString("subText");
-
+            String subText = bundle.getString(KEY_REMOTE_NOTIFICATION_SUB_TEXT);
             if (subText != null) {
-                notification.setSubText(subText);
+                notificationBuilder.setSubText(subText);
             }
 
-            String numberString = bundle.getString("number");
+            String numberString = bundle.getString(KEY_REMOTE_NOTIFICATION_NUMBER);
             if (numberString != null) {
-                notification.setNumber(Integer.parseInt(numberString));
+                notificationBuilder.setNumber(Integer.parseInt(numberString));
             }
 
-            int smallIconResId;
-            int largeIconResId;
+            int smallIconResId = hubUtil.getSmallIcon(bundle, res, packageName);
+            notificationBuilder.setSmallIcon(smallIconResId);
 
-            String smallIcon = bundle.getString("smallIcon");
-
-            if (smallIcon != null) {
-                smallIconResId = res.getIdentifier(smallIcon, "mipmap", packageName);
-            } else {
-                smallIconResId = res.getIdentifier("ic_notification", "mipmap", packageName);
-            }
-
-            if (smallIconResId == 0) {
-                smallIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
-
-                if (smallIconResId == 0) {
-                    smallIconResId = android.R.drawable.ic_dialog_info;
-                }
-            }
-
-            if (largeIcon != null) {
-                largeIconResId = res.getIdentifier(largeIcon, "mipmap", packageName);
-            } else {
-                largeIconResId = res.getIdentifier("ic_launcher", "mipmap", packageName);
-            }
-
+            String largeIcon = bundle.getString(KEY_REMOTE_NOTIFICATION_LARGE_ICON);
+            int largeIconResId = hubUtil.getLargeIcon(bundle, largeIcon, res, packageName);
             Bitmap largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
-
             if (largeIconResId != 0 && (largeIcon != null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
-                notification.setLargeIcon(largeIconBitmap);
+                notificationBuilder.setLargeIcon(largeIconBitmap);
             }
 
-            notification.setSmallIcon(smallIconResId);
-            String bigText = bundle.getString("bigText");
-
+            String bigText = bundle.getString(KEY_REMOTE_NOTIFICATION_BIG_TEXT);
             if (bigText == null) {
-                bigText = bundle.getString("message");
+                bigText = bundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE);
             }
 
-            notification.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
+            notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
 
-            Intent intent = new Intent(context, intentClass);
-            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            bundle.putBoolean("foreground", true);
-            bundle.putBoolean("userInteraction", false);
-            bundle.putBoolean("coldstart", false);
-            intent.putExtra("notification", bundle);
+            // Create notification intent
+            Intent intent = hubUtil.createNotificationIntent(context, bundle, intentClass);
 
-            if (!bundle.containsKey("playSound") || bundle.getBoolean("playSound")) {
-                Uri soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                String soundName = bundle.getString("soundName");
-                if (soundName != null) {
-                    if (!"default".equalsIgnoreCase(soundName)) {
-
-                        // sound name can be full filename, or just the resource name.
-                        // So the strings 'my_sound.mp3' AND 'my_sound' are accepted
-                        // The reason is to make the iOS and android javascript interfaces compatible
-
-                        int resId;
-                        if (context.getResources().getIdentifier(soundName, "raw", context.getPackageName()) != 0) {
-                            resId = context.getResources().getIdentifier(soundName, "raw", context.getPackageName());
-                        } else {
-                            soundName = soundName.substring(0, soundName.lastIndexOf('.'));
-                            resId = context.getResources().getIdentifier(soundName, "raw", context.getPackageName());
-                        }
-
-                        soundUri = Uri.parse("android.resource://" + context.getPackageName() + "/" + resId);
-                    }
-                }
-                notification.setSound(soundUri);
+            if (!bundle.containsKey(KEY_REMOTE_NOTIFICATION_PLAY_SOUND) || bundle.getBoolean(KEY_REMOTE_NOTIFICATION_PLAY_SOUND)) {
+                Uri soundUri = hubUtil.getSoundUri(context, bundle);
+                notificationBuilder.setSound(soundUri);
             }
 
-            if (bundle.containsKey("ongoing") || bundle.getBoolean("ongoing")) {
-                notification.setOngoing(bundle.getBoolean("ongoing"));
+            if (bundle.containsKey(KEY_REMOTE_NOTIFICATION_ONGOING) || bundle.getBoolean(KEY_REMOTE_NOTIFICATION_ONGOING)) {
+                notificationBuilder.setOngoing(bundle.getBoolean(KEY_REMOTE_NOTIFICATION_ONGOING));
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                notification.setCategory(NotificationCompat.CATEGORY_CALL);
+                notificationBuilder.setCategory(NotificationCompat.CATEGORY_CALL);
 
-                String color = bundle.getString("color");
+                String color = bundle.getString(KEY_REMOTE_NOTIFICATION_COLOR);
                 if (color != null) {
-                    notification.setColor(Color.parseColor(color));
+                    notificationBuilder.setColor(Color.parseColor(color));
                 }
             }
 
@@ -218,70 +196,30 @@ public final class ReactNativeNotificationsHandler {
             PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationID, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
-            notification.setContentIntent(pendingIntent);
+            notificationBuilder.setContentIntent(pendingIntent);
 
-            if (!bundle.containsKey("vibrate") || bundle.getBoolean("vibrate")) {
-                long vibration = bundle.containsKey("vibration") ? (long) bundle.getDouble("vibration") : DEFAULT_VIBRATION;
+            if (!bundle.containsKey(KEY_REMOTE_NOTIFICATION_VIBRATE) || bundle.getBoolean(KEY_REMOTE_NOTIFICATION_VIBRATE)) {
+                long vibration = bundle.containsKey(KEY_REMOTE_NOTIFICATION_VIBRATION) ?
+                        (long) bundle.getDouble(KEY_REMOTE_NOTIFICATION_VIBRATION) : DEFAULT_VIBRATION;
                 if (vibration == 0)
                     vibration = DEFAULT_VIBRATION;
-                notification.setVibrate(new long[]{0, vibration});
+                notificationBuilder.setVibrate(new long[]{0, vibration});
             }
 
-            JSONArray actionsArray = null;
-            try {
-                actionsArray = bundle.getString("actions") != null ? new JSONArray(bundle.getString("actions")) : null;
-            } catch (JSONException e) {
-                Log.e(TAG, "Exception while converting actions to JSON object.", e);
-            }
+            // Process notification's actions
+            hubUtil.processNotificationActions(context, bundle, notificationBuilder, notificationID);
 
-            if (actionsArray != null) {
-                // No icon for now. The icon value of 0 shows no icon.
-                int icon = 0;
-
-                // Add button for each actions.
-                for (int i = 0; i < actionsArray.length(); i++) {
-                    String action;
-                    try {
-                        action = actionsArray.getString(i);
-                    } catch (JSONException e) {
-                        Log.e(TAG, "Exception while getting action from actionsArray.", e);
-                        continue;
-                    }
-
-                    Intent actionIntent = new Intent();
-                    actionIntent.setAction(context.getPackageName() + "." + action);
-                    // Add "action" for later identifying which button gets pressed.
-                    bundle.putString("action", action);
-                    actionIntent.putExtra("notification", bundle);
-                    PendingIntent pendingActionIntent = PendingIntent.getBroadcast(context, notificationID, actionIntent,
-                            PendingIntent.FLAG_UPDATE_CURRENT);
-                    notification.addAction(icon, action, pendingActionIntent);
-                }
-            }
-
-            Notification info = notification.build();
+            Notification notification = notificationBuilder.build();
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(
                     Context.NOTIFICATION_SERVICE);
-            if (bundle.containsKey("tag")) {
-                String tag = bundle.getString("tag");
-                notificationManager.notify(tag, notificationID, info);
+            if (bundle.containsKey(KEY_REMOTE_NOTIFICATION_TAG)) {
+                String tag = bundle.getString(KEY_REMOTE_NOTIFICATION_TAG);
+                notificationManager.notify(tag, notificationID, notification);
             } else {
-                notificationManager.notify(notificationID, info);
+                notificationManager.notify(notificationID, notification);
             }
         } catch (Exception e) {
-            Log.e(TAG, "failed to send push notification", e);
-        }
-    }
-
-    private static Class getMainActivityClass(Context context) {
-        String packageName = context.getPackageName();
-        Intent launchIntent = context.getPackageManager().getLaunchIntentForPackage(packageName);
-        String className = launchIntent.getComponent().getClassName();
-        try {
-            return Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
+            Log.e(TAG, ERROR_SEND_PUSH_NOTIFICATION, e);
         }
     }
 }

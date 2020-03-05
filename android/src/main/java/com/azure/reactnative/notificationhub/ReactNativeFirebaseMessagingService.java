@@ -11,6 +11,10 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_COLDSTART;
+import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_FOREGROUND;
+import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_USER_INTERACTION;
+
 public class ReactNativeFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "ReactNativeFMS";
@@ -67,9 +71,9 @@ public class ReactNativeFirebaseMessagingService extends FirebaseMessagingServic
 
         Bundle bundle = remoteMessage.toIntent().getExtras();
         if (notificationHubUtil.getAppIsForeground()) {
-            bundle.putBoolean("foreground", true);
-            bundle.putBoolean("userInteraction", false);
-            bundle.putBoolean("coldstart", false);
+            bundle.putBoolean(KEY_REMOTE_NOTIFICATION_FOREGROUND, true);
+            bundle.putBoolean(KEY_REMOTE_NOTIFICATION_USER_INTERACTION, false);
+            bundle.putBoolean(KEY_REMOTE_NOTIFICATION_COLDSTART, false);
         } else {
             ReactNativeNotificationsHandler.sendNotification(this, bundle, notificationChannelID);
         }
