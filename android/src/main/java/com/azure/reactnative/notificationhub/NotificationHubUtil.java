@@ -1,14 +1,21 @@
 package com.azure.reactnative.notificationhub;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.facebook.react.bridge.ReactContext;
 import com.microsoft.windowsazure.messaging.NotificationHub;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class NotificationHubUtil {
     private static NotificationHubUtil sharedNotificationHubUtilInstance = null;
@@ -24,6 +31,8 @@ public class NotificationHubUtil {
     private static final String KEY_FOR_PREFS_CHANNELSHOWBADGE = "AzureNotificationHub_channelShowBadge";
     private static final String KEY_FOR_PREFS_CHANNELENABLELIGHTS = "AzureNotificationHub_channelEnableLights";
     private static final String KEY_FOR_PREFS_CHANNELENABLEVIBRATION = "AzureNotificationHub_channelEnableVibration";
+
+    private final ExecutorService mPool = Executors.newFixedThreadPool(1);
 
     private boolean mIsForeground;
 
@@ -143,6 +152,31 @@ public class NotificationHubUtil {
     public NotificationHub createNotificationHub(String hubName, String connectionString, ReactContext reactContext) {
         NotificationHub hub = new NotificationHub(hubName, connectionString, reactContext);
         return hub;
+    }
+
+    public JSONObject convertBundleToJSON(Bundle bundle) {
+        JSONObject json = new JSONObject();
+        Set<String> keys = bundle.keySet();
+        for (String key : keys) {
+            try {
+                json.put(key, bundle.get(key));
+            } catch (JSONException e) {
+            }
+        }
+
+        return json;
+    }
+
+    public Intent createBroadcastIntent(String action, JSONObject json) {
+        Intent intent = new Intent(action);
+        intent.putExtra("event", ReactNativeNotificationHubModule.DEVICE_NOTIF_EVENT);
+        intent.putExtra("data", json.toString());
+
+        return intent;
+    }
+
+    public void runInWorkerThread(Runnable runnable) {
+        mPool.execute(runnable);
     }
 
     private String getPref(Context context, String key) {

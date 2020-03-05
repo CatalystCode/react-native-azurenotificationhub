@@ -19,7 +19,7 @@ public class ReactNativeRegistrationIntentService extends IntentService {
 
     public static final String TAG = "ReactNativeRegistration";
 
-    private final ExecutorService pool = Executors.newFixedThreadPool(1);
+    private final ExecutorService mPool = Executors.newFixedThreadPool(1);
 
     public ReactNativeRegistrationIntentService() {
         super(TAG);
@@ -43,7 +43,7 @@ public class ReactNativeRegistrationIntentService extends IntentService {
         }
 
         FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(
-                pool, new OnSuccessListener<InstanceIdResult>() {
+                mPool, new OnSuccessListener<InstanceIdResult>() {
                     @Override
                     public void onSuccess(InstanceIdResult instanceIdResult) {
                         try {

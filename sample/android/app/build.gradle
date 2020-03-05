@@ -135,6 +135,7 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
     splits {
         abi {
             reset()
@@ -143,6 +144,7 @@ android {
             include "armeabi-v7a", "x86", "arm64-v8a", "x86_64"
         }
     }
+
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -151,6 +153,7 @@ android {
             keyPassword 'android'
         }
     }
+
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
@@ -163,6 +166,7 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+
     // applicationVariants are e.g. debug, release
     applicationVariants.all { variant ->
         variant.outputs.each { output ->
@@ -186,8 +190,9 @@ dependencies {
     implementation "com.google.firebase:firebase-messaging:17.6.0"
     implementation "com.google.firebase:firebase-core:16.0.8"
     implementation "com.microsoft.azure:notification-hubs-android-sdk:0.6@aar"
-    testImplementation "org.powermock:powermock-api-mockito:1.6.2"
-    testImplementation "org.powermock:powermock-module-junit4:1.6.2"
+    testImplementation "org.powermock:powermock-core:2.0.2"
+    testImplementation "org.powermock:powermock-api-mockito2:2.0.2"
+    testImplementation "org.powermock:powermock-module-junit4:2.0.2"
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";

@@ -37,28 +37,19 @@ public final class ReactNativeNotificationsHandler {
     }
 
     public static void sendBroadcast(final Context context, final Bundle bundle, final long delay) {
-        (new Thread() {
+        final NotificationHubUtil hubUtil = NotificationHubUtil.getInstance();
+        hubUtil.runInWorkerThread(new Runnable() {
             public void run() {
                 try {
                     Thread.currentThread().sleep(delay);
-                    JSONObject json = new JSONObject();
-                    Set<String> keys = bundle.keySet();
-                    for (String key : keys) {
-                        try {
-                            json.put(key, bundle.get(key));
-                        } catch (JSONException e) {
-                        }
-                    }
-
-                    Intent event = new Intent(TAG);
-                    event.putExtra("event", ReactNativeNotificationHubModule.DEVICE_NOTIF_EVENT);
-                    event.putExtra("data", json.toString());
+                    JSONObject json = hubUtil.convertBundleToJSON(bundle);
+                    Intent event = hubUtil.createBroadcastIntent(TAG, json);
                     LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
                     localBroadcastManager.sendBroadcast(event);
                 } catch (Exception e) {
                 }
             }
-        }).start();
+        });
     }
 
     public static void sendNotification(Context context, Bundle bundle, String notificationChannelID) {
