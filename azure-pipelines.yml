@@ -59,7 +59,7 @@ steps:
   inputs:
     workingDirectory: '../sample/android'
     gradleWrapperFile: '../sample/android/gradlew'
-    testResultsFiles: '../sample/android/app/build/test-results/testDebugUnitTest/TEST-com.reactnativeazurenotificationhubsample.ReactNativeNotificationHubModuleTest.xml'
+    testResultsFiles: '../sample/android/app/build/test-results/testDebugUnitTest/*.xml'
     publishJUnitResults: 'true'
     tasks: 'test'
   continueOnError: false

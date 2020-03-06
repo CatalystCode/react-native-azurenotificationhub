@@ -26,6 +26,11 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.UiThreadUtil;
 
+import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_INTENT_NOTIFICATION;
+import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_COLDSTART;
+import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_FOREGROUND;
+import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_USER_INTERACTION;
+
 public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule implements
         ActivityEventListener, LifecycleEventListener {
     public static final String AZURE_NOTIFICATION_HUB_NAME = "AzureNotificationHub";
@@ -183,12 +188,12 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
         if (activity != null) {
             Intent intent = activity.getIntent();
             if (intent != null) {
-                Bundle bundle = intent.getBundleExtra("notification");
+                Bundle bundle = intent.getBundleExtra(KEY_INTENT_NOTIFICATION);
                 if (bundle != null) {
-                    intent.removeExtra("notification");
-                    bundle.putBoolean("foreground", false);
-                    bundle.putBoolean("userInteraction", true);
-                    bundle.putBoolean("coldstart", true);
+                    intent.removeExtra(KEY_INTENT_NOTIFICATION);
+                    bundle.putBoolean(KEY_REMOTE_NOTIFICATION_FOREGROUND, false);
+                    bundle.putBoolean(KEY_REMOTE_NOTIFICATION_USER_INTERACTION, true);
+                    bundle.putBoolean(KEY_REMOTE_NOTIFICATION_COLDSTART, true);
                     ReactNativeNotificationsHandler.sendBroadcast(
                             mReactContext, bundle, NOTIFICATION_DELAY_ON_START);
                 }
@@ -207,10 +212,10 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
 
     @Override
     public void onNewIntent(Intent intent) {
-        Bundle bundle = intent.getBundleExtra("notification");
+        Bundle bundle = intent.getBundleExtra(KEY_INTENT_NOTIFICATION);
         if (bundle != null) {
-            bundle.putBoolean("foreground", false);
-            bundle.putBoolean("userInteraction", true);
+            bundle.putBoolean(KEY_REMOTE_NOTIFICATION_FOREGROUND, false);
+            bundle.putBoolean(KEY_REMOTE_NOTIFICATION_USER_INTERACTION, true);
             ReactNativeNotificationsHandler.sendBroadcast(
                     mReactContext, bundle, NOTIFICATION_DELAY_ON_START);
         }
