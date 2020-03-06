@@ -46,6 +46,8 @@ import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHand
 import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.RESOURCE_NAME_NOTIFICATION;
 
 public class NotificationHubUtil {
+    public static final String TAG = "NotificationHubUtil";
+
     private static NotificationHubUtil sharedNotificationHubUtilInstance = null;
 
     private static final String SHARED_PREFS_NAME = "com.azure.reactnative.notificationhub.NotificationHubUtil";
@@ -316,13 +318,12 @@ public class NotificationHubUtil {
     public void processNotificationActions(Context context, Bundle bundle,
                                            NotificationCompat.Builder notification,
                                            int notificationID) {
-        final String tag = ReactNativeNotificationsHandler.TAG;
         JSONArray actionsArray = null;
         try {
             actionsArray = bundle.getString(KEY_REMOTE_NOTIFICATION_ACTIONS) != null ?
                     new JSONArray(bundle.getString(KEY_REMOTE_NOTIFICATION_ACTIONS)) : null;
         } catch (JSONException e) {
-            Log.e(tag, ERROR_COVERT_ACTIONS, e);
+            Log.e(TAG, ERROR_COVERT_ACTIONS, e);
         }
 
         if (actionsArray != null) {
@@ -335,7 +336,7 @@ public class NotificationHubUtil {
                 try {
                     action = actionsArray.getString(i);
                 } catch (JSONException e) {
-                    Log.e(tag, ERROR_GET_ACTIONS_ARRAY, e);
+                    Log.e(TAG, ERROR_GET_ACTIONS_ARRAY, e);
                     continue;
                 }
 
@@ -349,6 +350,23 @@ public class NotificationHubUtil {
                 notification.addAction(icon, action, pendingActionIntent);
             }
         }
+    }
+
+    public NotificationCompat.Builder initNotificationCompatBuilder(Context context,
+                                                                    String notificationChannelID,
+                                                                    String title,
+                                                                    CharSequence ticker,
+                                                                    int visibility,
+                                                                    int priority,
+                                                                    boolean autoCancel) {
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, notificationChannelID)
+                .setContentTitle(title)
+                .setTicker(ticker)
+                .setVisibility(visibility)
+                .setPriority(priority)
+                .setAutoCancel(autoCancel);
+
+        return notificationBuilder;
     }
 
     private String getPref(Context context, String key) {

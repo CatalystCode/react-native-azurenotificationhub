@@ -19,8 +19,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.util.Log;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public final class ReactNativeNotificationsHandler {
@@ -129,12 +127,14 @@ public final class ReactNativeNotificationsHandler {
             }
 
             int priority = hubUtil.getNotificationCompatPriority(bundle.getString(KEY_REMOTE_NOTIFICATION_PRIORITY));
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, notificationChannelID)
-                    .setContentTitle(title)
-                    .setTicker(bundle.getString(KEY_REMOTE_NOTIFICATION_TICKER))
-                    .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
-                    .setPriority(priority)
-                    .setAutoCancel(bundle.getBoolean(KEY_REMOTE_NOTIFICATION_AUTO_CANCEL, true));
+            NotificationCompat.Builder notificationBuilder = hubUtil.initNotificationCompatBuilder(
+                    context,
+                    notificationChannelID,
+                    title,
+                    bundle.getString(KEY_REMOTE_NOTIFICATION_TICKER),
+                    NotificationCompat.VISIBILITY_PRIVATE,
+                    priority,
+                    bundle.getBoolean(KEY_REMOTE_NOTIFICATION_AUTO_CANCEL, true));
 
             String group = bundle.getString(KEY_REMOTE_NOTIFICATION_GROUP);
             if (group != null) {
