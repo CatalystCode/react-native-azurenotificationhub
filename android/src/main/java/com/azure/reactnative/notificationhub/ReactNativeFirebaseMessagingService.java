@@ -24,7 +24,7 @@ public class ReactNativeFirebaseMessagingService extends FirebaseMessagingServic
     public static void createNotificationChannel(Context context) {
         if (notificationChannelID == null) {
             NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
-            NotificationChannelBuilder builder = new NotificationChannelBuilder();
+            NotificationChannelBuilder builder = NotificationChannelBuilder.Factory.create();
             if (notificationHubUtil.hasChannelImportance(context)) {
                 builder.setImportance(notificationHubUtil.getChannelImportance(context));
             }
@@ -48,6 +48,18 @@ public class ReactNativeFirebaseMessagingService extends FirebaseMessagingServic
                         Context.NOTIFICATION_SERVICE);
                 notificationManager.createNotificationChannel(channel);
                 notificationChannelID = channel.getId();
+            }
+        }
+    }
+
+    public static void deleteNotificationChannel(Context context) {
+        if (notificationChannelID != null) {
+            final String channelToDeleteID = notificationChannelID;
+            notificationChannelID = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationManager notificationManager = (NotificationManager) context.getSystemService(
+                        Context.NOTIFICATION_SERVICE);
+                notificationManager.deleteNotificationChannel(channelToDeleteID);
             }
         }
     }

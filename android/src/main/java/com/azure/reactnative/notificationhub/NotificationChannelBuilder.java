@@ -12,7 +12,13 @@ public class NotificationChannelBuilder {
     private boolean mEnableLights = true;
     private boolean mEnableVibration = true;
 
-    public NotificationChannelBuilder() {
+    public static class Factory {
+        public static NotificationChannelBuilder create() {
+            return new NotificationChannelBuilder();
+        }
+    }
+
+    private NotificationChannelBuilder() {
     }
 
     public NotificationChannel build() {

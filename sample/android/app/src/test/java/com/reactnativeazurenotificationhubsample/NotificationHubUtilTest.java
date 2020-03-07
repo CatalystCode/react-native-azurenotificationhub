@@ -36,8 +36,6 @@ import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHand
 import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.RESOURCE_DEF_TYPE_RAW;
 import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.RESOURCE_NAME_LAUNCHER;
 import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.RESOURCE_NAME_NOTIFICATION;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
@@ -48,13 +46,10 @@ import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 import com.azure.reactnative.notificationhub.NotificationHubUtil;
 import com.azure.reactnative.notificationhub.ReactNativeNotificationHubModule;
