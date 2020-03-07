@@ -95,7 +95,9 @@ def convert_method(j_method, j_lines):
 def convert_class(j_class, j_package):
     c_class = ET.Element('class')
     c_class.set('name',     j_class.attrib['name'].replace('/', '.'))
-    c_class.set('filename', guess_filename(j_class.attrib['name']))
+	
+	# Append absolute path so that Azure Pipelines can display code coverage properly
+    c_class.set('filename', os.path.dirname(os.path.abspath(__file__)) + '/node_modules/react-native-azurenotificationhub/android/src/main/java/' + guess_filename(j_class.attrib['name']))
 
     all_j_lines = list(find_lines(j_package, c_class.attrib['filename']))
 

@@ -25,6 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.ERROR_ACTIVITY_CLASS_NOT_FOUND;
 import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.ERROR_COVERT_ACTIONS;
 import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.ERROR_GET_ACTIONS_ARRAY;
 import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_INTENT_NOTIFICATION;
@@ -50,21 +51,35 @@ public class NotificationHubUtil {
 
     private static NotificationHubUtil sharedNotificationHubUtilInstance = null;
 
-    private static final String SHARED_PREFS_NAME = "com.azure.reactnative.notificationhub.NotificationHubUtil";
-    private static final String KEY_FOR_PREFS_REGISTRATIONID = "AzureNotificationHub_registrationID";
-    private static final String KEY_FOR_PREFS_CONNECTIONSTRING = "AzureNotificationHub_connectionString";
-    private static final String KEY_FOR_PREFS_HUBNAME = "AzureNotificationHub_hubName";
-    private static final String KEY_FOR_PREFS_FCMTOKEN = "AzureNotificationHub_FCMToken";
-    private static final String KEY_FOR_PREFS_TAGS = "AzureNotificationHub_Tags";
-    private static final String KEY_FOR_PREFS_SENDERID = "AzureNotificationHub_senderID";
-    private static final String KEY_FOR_PREFS_CHANNELIMPORTANCE = "AzureNotificationHub_channelImportance";
-    private static final String KEY_FOR_PREFS_CHANNELSHOWBADGE = "AzureNotificationHub_channelShowBadge";
-    private static final String KEY_FOR_PREFS_CHANNELENABLELIGHTS = "AzureNotificationHub_channelEnableLights";
-    private static final String KEY_FOR_PREFS_CHANNELENABLEVIBRATION = "AzureNotificationHub_channelEnableVibration";
+    public static final String SHARED_PREFS_NAME = "com.azure.reactnative.notificationhub.NotificationHubUtil";
+    public static final String KEY_FOR_PREFS_REGISTRATIONID = "AzureNotificationHub_registrationID";
+    public static final String KEY_FOR_PREFS_CONNECTIONSTRING = "AzureNotificationHub_connectionString";
+    public static final String KEY_FOR_PREFS_HUBNAME = "AzureNotificationHub_hubName";
+    public static final String KEY_FOR_PREFS_FCMTOKEN = "AzureNotificationHub_FCMToken";
+    public static final String KEY_FOR_PREFS_TAGS = "AzureNotificationHub_Tags";
+    public static final String KEY_FOR_PREFS_SENDERID = "AzureNotificationHub_senderID";
+    public static final String KEY_FOR_PREFS_CHANNELIMPORTANCE = "AzureNotificationHub_channelImportance";
+    public static final String KEY_FOR_PREFS_CHANNELSHOWBADGE = "AzureNotificationHub_channelShowBadge";
+    public static final String KEY_FOR_PREFS_CHANNELENABLELIGHTS = "AzureNotificationHub_channelEnableLights";
+    public static final String KEY_FOR_PREFS_CHANNELENABLEVIBRATION = "AzureNotificationHub_channelEnableVibration";
 
     private final ExecutorService mPool = Executors.newFixedThreadPool(1);
 
     private boolean mIsForeground;
+
+    public static class IntentFactory {
+        public static Intent createIntent() {
+            return new Intent();
+        }
+
+        public static Intent createIntent(String action) {
+            return new Intent(action);
+        }
+
+        public static Intent createIntent(Context context, Class intentClass) {
+            return new Intent(context, intentClass);
+        }
+    }
 
     public static NotificationHubUtil getInstance() {
         if (sharedNotificationHubUtilInstance == null) {
@@ -202,7 +217,7 @@ public class NotificationHubUtil {
     }
 
     public Intent createBroadcastIntent(String action, JSONObject json) {
-        Intent intent = new Intent(action);
+        Intent intent = IntentFactory.createIntent(action);
         intent.putExtra("event", ReactNativeNotificationHubModule.DEVICE_NOTIF_EVENT);
         intent.putExtra("data", json.toString());
 
@@ -216,7 +231,7 @@ public class NotificationHubUtil {
         try {
             return Class.forName(className);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            Log.e(TAG, ERROR_ACTIVITY_CLASS_NOT_FOUND, e);
             return null;
         }
     }
@@ -289,10 +304,8 @@ public class NotificationHubUtil {
                 // So the strings 'my_sound.mp3' AND 'my_sound' are accepted
                 // The reason is to make the iOS and android javascript interfaces compatible
 
-                int resId;
-                if (context.getResources().getIdentifier(soundName, RESOURCE_DEF_TYPE_RAW, context.getPackageName()) != 0) {
-                    resId = context.getResources().getIdentifier(soundName, RESOURCE_DEF_TYPE_RAW, context.getPackageName());
-                } else {
+                int resId = context.getResources().getIdentifier(soundName, RESOURCE_DEF_TYPE_RAW, context.getPackageName());
+                if (resId == 0) {
                     soundName = soundName.substring(0, soundName.lastIndexOf('.'));
                     resId = context.getResources().getIdentifier(soundName, RESOURCE_DEF_TYPE_RAW, context.getPackageName());
                 }
@@ -305,7 +318,7 @@ public class NotificationHubUtil {
     }
 
     public Intent createNotificationIntent(Context context, Bundle bundle, Class intentClass) {
-        Intent intent = new Intent(context, intentClass);
+        Intent intent = IntentFactory.createIntent(context, intentClass);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         bundle.putBoolean(KEY_REMOTE_NOTIFICATION_FOREGROUND, true);
         bundle.putBoolean(KEY_REMOTE_NOTIFICATION_USER_INTERACTION, false);
@@ -340,7 +353,7 @@ public class NotificationHubUtil {
                     continue;
                 }
 
-                Intent actionIntent = new Intent();
+                Intent actionIntent = IntentFactory.createIntent();
                 actionIntent.setAction(context.getPackageName() + "." + action);
                 // Add "action" for later identifying which button gets pressed.
                 bundle.putString(KEY_REMOTE_NOTIFICATION_ACTION, action);

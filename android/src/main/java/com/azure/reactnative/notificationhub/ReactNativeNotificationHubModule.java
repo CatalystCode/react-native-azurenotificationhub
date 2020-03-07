@@ -153,7 +153,8 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
             return;
         }
 
-        Intent intent = new Intent(reactContext, ReactNativeRegistrationIntentService.class);
+        Intent intent = NotificationHubUtil.IntentFactory.createIntent(
+                reactContext, ReactNativeRegistrationIntentService.class);
         reactContext.startService(intent);
     }
 

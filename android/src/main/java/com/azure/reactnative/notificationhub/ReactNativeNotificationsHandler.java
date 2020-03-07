@@ -75,6 +75,7 @@ public final class ReactNativeNotificationsHandler {
     public static final String ERROR_COVERT_ACTIONS = "Exception while converting actions to JSON object.";
     public static final String ERROR_GET_ACTIONS_ARRAY = "Exception while getting action from actionsArray.";
     public static final String ERROR_SEND_PUSH_NOTIFICATION = "failed to send push notification";
+    public static final String ERROR_ACTIVITY_CLASS_NOT_FOUND = "Activity class not found";
 
     private static final long DEFAULT_VIBRATION = 300L;
 
@@ -178,7 +179,7 @@ public final class ReactNativeNotificationsHandler {
                 notificationBuilder.setSound(soundUri);
             }
 
-            if (bundle.containsKey(KEY_REMOTE_NOTIFICATION_ONGOING) || bundle.getBoolean(KEY_REMOTE_NOTIFICATION_ONGOING)) {
+            if (bundle.containsKey(KEY_REMOTE_NOTIFICATION_ONGOING)) {
                 notificationBuilder.setOngoing(bundle.getBoolean(KEY_REMOTE_NOTIFICATION_ONGOING));
             }
 
