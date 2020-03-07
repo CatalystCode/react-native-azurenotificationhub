@@ -56,7 +56,7 @@ public class ReactNativeFirebaseMessagingService extends FirebaseMessagingServic
     public void onNewToken(String token) {
         Log.i(TAG, "Refreshing FCM Registration Token");
 
-        Intent intent = new Intent(this, ReactNativeRegistrationIntentService.class);
+        Intent intent = NotificationHubUtil.IntentFactory.createIntent(this, ReactNativeRegistrationIntentService.class);
         startService(intent);
     }
 

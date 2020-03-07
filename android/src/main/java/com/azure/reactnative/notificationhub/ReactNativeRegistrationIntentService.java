@@ -28,7 +28,7 @@ public class ReactNativeRegistrationIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         final LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-        final Intent event = new Intent(TAG);
+        final Intent event = NotificationHubUtil.IntentFactory.createIntent(TAG);
         final NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
         final String connectionString = notificationHubUtil.getConnectionString(this);
         final String hubName = notificationHubUtil.getHubName(this);

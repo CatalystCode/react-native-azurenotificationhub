@@ -84,6 +84,13 @@ public class ReactNativeNotificationHubModuleTest {
 
     @Before
     public void setUp() {
+        // Reset mocks
+        reset(mPromise);
+        reset(mConfig);
+        reset(mTags);
+        reset(mNotificationHubUtil);
+        reset(mReactApplicationContext);
+
         // Prepare mock objects
         PowerMockito.mockStatic(LocalBroadcastManager.class);
         when(LocalBroadcastManager.getInstance(mReactApplicationContext)).thenReturn(mLocalBroadcastManager);
@@ -92,13 +99,6 @@ public class ReactNativeNotificationHubModuleTest {
         PowerMockito.mockStatic(ReactNativeNotificationsHandler.class);
         PowerMockito.mockStatic(GoogleApiAvailability.class);
         when(GoogleApiAvailability.getInstance()).thenReturn(mGoogleApiAvailability);
-
-        // Reset mocks
-        reset(mPromise);
-        reset(mConfig);
-        reset(mTags);
-        reset(mNotificationHubUtil);
-        reset(mReactApplicationContext);
 
         mHubModule = new ReactNativeNotificationHubModule(mReactApplicationContext);
     }
