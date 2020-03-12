@@ -36,6 +36,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import com.azure.reactnative.notificationhub.NotificationHubUtil;
 import com.azure.reactnative.notificationhub.ReactNativeNotificationHubModule;
 import com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler;
+import com.azure.reactnative.notificationhub.ReactNativeRegistrationIntentService;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
@@ -53,6 +54,7 @@ import com.microsoft.windowsazure.messaging.NotificationHub;
         LocalBroadcastManager.class,
         NotificationHubUtil.class,
         ReactNativeNotificationsHandler.class,
+        ReactNativeRegistrationIntentService.class,
         GoogleApiAvailability.class
 })
 public class ReactNativeNotificationHubModuleTest {
@@ -97,6 +99,7 @@ public class ReactNativeNotificationHubModuleTest {
         PowerMockito.mockStatic(NotificationHubUtil.class);
         when(NotificationHubUtil.getInstance()).thenReturn(mNotificationHubUtil);
         PowerMockito.mockStatic(ReactNativeNotificationsHandler.class);
+        PowerMockito.mockStatic(ReactNativeRegistrationIntentService.class);
         PowerMockito.mockStatic(GoogleApiAvailability.class);
         when(GoogleApiAvailability.getInstance()).thenReturn(mGoogleApiAvailability);
 
@@ -262,7 +265,9 @@ public class ReactNativeNotificationHubModuleTest {
         verify(mNotificationHubUtil, times(1)).setTags(
                 any(ReactContext.class), eq(tags));
         verify(mPromise, times(0)).reject(anyString(), anyString());
-        verify(mReactApplicationContext, times(1)).startService(any(Intent.class));
+
+        PowerMockito.verifyStatic(ReactNativeRegistrationIntentService.class);
+        ReactNativeRegistrationIntentService.enqueueWork(eq(mReactApplicationContext), any(Intent.class));
     }
 
     @Test
