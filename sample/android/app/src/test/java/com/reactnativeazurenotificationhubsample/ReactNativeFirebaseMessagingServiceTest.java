@@ -47,6 +47,7 @@ import static org.powermock.api.support.membermodification.MemberMatcher.methods
 @PrepareForTest({
         NotificationHubUtil.class,
         ReactNativeNotificationsHandler.class,
+        ReactNativeRegistrationIntentService.class,
         NotificationChannelBuilder.Factory.class,
         NotificationHubUtil.IntentFactory.class,
         Build.VERSION.class,
@@ -76,6 +77,7 @@ public class ReactNativeFirebaseMessagingServiceTest {
         PowerMockito.mockStatic(NotificationHubUtil.class);
         when(NotificationHubUtil.getInstance()).thenReturn(mHubUtil);
         PowerMockito.mockStatic(ReactNativeNotificationsHandler.class);
+        PowerMockito.mockStatic(ReactNativeRegistrationIntentService.class);
         PowerMockito.mockStatic(NotificationChannelBuilder.Factory.class);
         PowerMockito.mockStatic(NotificationHubUtil.IntentFactory.class);
         PowerMockito.suppress(methodsDeclaredIn(FirebaseMessagingService.class));

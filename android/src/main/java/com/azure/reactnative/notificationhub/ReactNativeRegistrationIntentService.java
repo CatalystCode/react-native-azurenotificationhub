@@ -1,8 +1,9 @@
 package com.azure.reactnative.notificationhub;
 
-import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 
+import androidx.core.app.JobIntentService;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.util.Log;
@@ -15,18 +16,23 @@ import com.microsoft.windowsazure.messaging.NotificationHub;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ReactNativeRegistrationIntentService extends IntentService {
+public class ReactNativeRegistrationIntentService extends JobIntentService {
 
     public static final String TAG = "ReactNativeRegistration";
 
+    private static final int JOB_ID = 1000;
+
     private final ExecutorService mPool = Executors.newFixedThreadPool(1);
 
-    public ReactNativeRegistrationIntentService() {
-        super(TAG);
+    /**
+     * Convenience method for enqueuing work in to this service.
+     */
+    public static void enqueueWork(Context context, Intent work) {
+        enqueueWork(context, ReactNativeRegistrationIntentService.class, JOB_ID, work);
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
+    protected void onHandleWork(Intent intent) {
         final LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         final Intent event = NotificationHubUtil.IntentFactory.createIntent(TAG);
         final NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();

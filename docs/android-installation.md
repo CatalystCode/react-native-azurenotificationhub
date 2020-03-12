@@ -110,7 +110,8 @@ In `android/app/src/main/AndroidManifest.xml`
 
         <service
             android:name="com.azure.reactnative.notificationhub.ReactNativeRegistrationIntentService"
-            android:exported="false" />
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <service
             android:name="com.azure.reactnative.notificationhub.ReactNativeFirebaseMessagingService"
