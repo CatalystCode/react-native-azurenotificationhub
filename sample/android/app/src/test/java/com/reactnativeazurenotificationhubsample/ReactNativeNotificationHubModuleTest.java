@@ -12,10 +12,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_INTENT_NOTIFICATION;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_COLDSTART;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_FOREGROUND;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_USER_INTERACTION;
+import static com.azure.reactnative.notificationhub.Constants.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
@@ -117,7 +114,7 @@ public class ReactNativeNotificationHubModuleTest {
 
     @Test
     public void testGetName() {
-        Assert.assertEquals(mHubModule.getName(), ReactNativeNotificationHubModule.AZURE_NOTIFICATION_HUB_NAME);
+        Assert.assertEquals(mHubModule.getName(), AZURE_NOTIFICATION_HUB_NAME);
     }
 
     @Test
@@ -143,8 +140,8 @@ public class ReactNativeNotificationHubModuleTest {
         mHubModule.register(mConfig, mPromise);
 
         verify(mPromise, times(1)).reject(
-                ReactNativeNotificationHubModule.ERROR_INVALID_ARGUMENTS,
-                ReactNativeNotificationHubModule.ERROR_INVALID_CONNECTION_STRING);
+                ERROR_INVALID_ARGUMENTS,
+                ERROR_INVALID_CONNECTION_STRING);
     }
 
     @Test
@@ -155,8 +152,8 @@ public class ReactNativeNotificationHubModuleTest {
         mHubModule.register(mConfig, mPromise);
 
         verify(mPromise, times(1)).reject(
-                ReactNativeNotificationHubModule.ERROR_INVALID_ARGUMENTS,
-                ReactNativeNotificationHubModule.ERROR_INVALID_HUBNAME);
+                ERROR_INVALID_ARGUMENTS,
+                ERROR_INVALID_HUBNAME);
     }
 
     @Test
@@ -168,8 +165,8 @@ public class ReactNativeNotificationHubModuleTest {
         mHubModule.register(mConfig, mPromise);
 
         verify(mPromise, times(1)).reject(
-                ReactNativeNotificationHubModule.ERROR_INVALID_ARGUMENTS,
-                ReactNativeNotificationHubModule.ERROR_INVALID_SENDER_ID);
+                ERROR_INVALID_ARGUMENTS,
+                ERROR_INVALID_SENDER_ID);
     }
 
     @Test
@@ -289,8 +286,8 @@ public class ReactNativeNotificationHubModuleTest {
         mHubModule.register(mConfig, mPromise);
 
         verify(mPromise, times(1)).reject(
-                ReactNativeNotificationHubModule.ERROR_PLAY_SERVICES,
-                ReactNativeNotificationHubModule.ERROR_PLAY_SERVICES_UNSUPPORTED);
+                ERROR_PLAY_SERVICES,
+                ERROR_PLAY_SERVICES_UNSUPPORTED);
     }
 
     @Test
@@ -320,8 +317,8 @@ public class ReactNativeNotificationHubModuleTest {
         mHubModule.unregister(mPromise);
 
         verify(mPromise, times(1)).reject(
-                ReactNativeNotificationHubModule.ERROR_NOT_REGISTERED,
-                ReactNativeNotificationHubModule.ERROR_NOT_REGISTERED_DESC);
+                ERROR_NOT_REGISTERED,
+                ERROR_NOT_REGISTERED_DESC);
     }
 
     @Test
@@ -338,7 +335,7 @@ public class ReactNativeNotificationHubModuleTest {
         mHubModule.unregister(mPromise);
 
         verify(mPromise, times(1)).reject(
-                ReactNativeNotificationHubModule.ERROR_NOTIFICATION_HUB,
+                ERROR_NOTIFICATION_HUB,
                 unhandledException);
     }
 

@@ -22,20 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.azure.reactnative.notificationhub.NotificationHubUtil.*;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.ERROR_COVERT_ACTIONS;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.ERROR_GET_ACTIONS_ARRAY;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_INTENT_NOTIFICATION;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_ACTION;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_ACTIONS;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_COLDSTART;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_FOREGROUND;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_SMALL_ICON;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_SOUND_NAME;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_USER_INTERACTION;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.RESOURCE_DEF_TYPE_MIPMAP;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.RESOURCE_DEF_TYPE_RAW;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.RESOURCE_NAME_LAUNCHER;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.RESOURCE_NAME_NOTIFICATION;
+import static com.azure.reactnative.notificationhub.Constants.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
@@ -52,7 +39,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.azure.reactnative.notificationhub.NotificationHubUtil;
-import com.azure.reactnative.notificationhub.ReactNativeNotificationHubModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 
 import java.util.Arrays;
@@ -372,7 +358,7 @@ public class NotificationHubUtilTest {
         PowerMockito.verifyStatic(IntentFactory.class);
         IntentFactory.createIntent(action);
         verify(intent, times(1)).putExtra(
-                "event", ReactNativeNotificationHubModule.DEVICE_NOTIF_EVENT);
+                "event", DEVICE_NOTIF_EVENT);
         verify(intent, times(1)).putExtra("data", jsonString);
     }
 

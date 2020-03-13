@@ -11,9 +11,7 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_COLDSTART;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_FOREGROUND;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_USER_INTERACTION;
+import static com.azure.reactnative.notificationhub.Constants.*;
 
 public class ReactNativeFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -41,7 +39,7 @@ public class ReactNativeFirebaseMessagingService extends FirebaseMessagingServic
                 builder.enableVibration(notificationHubUtil.getChannelEnableVibration(context));
             }
 
-            notificationChannelID = ReactNativeNotificationsHandler.NOTIFICATION_CHANNEL_ID;
+            notificationChannelID = NOTIFICATION_CHANNEL_ID;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 NotificationChannel channel = builder.build();
                 NotificationManager notificationManager = (NotificationManager) context.getSystemService(

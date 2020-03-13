@@ -4,7 +4,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 
 public class NotificationChannelBuilder {
-    private String mID = ReactNativeNotificationsHandler.NOTIFICATION_CHANNEL_ID;
+    private String mID = Constants.NOTIFICATION_CHANNEL_ID;
     private CharSequence mName = "rn-push-notification-channel-name";
     private String mDesc = "rn-push-notification-channel-description";
     private int mImportance = NotificationManager.IMPORTANCE_DEFAULT;

@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.*;
+import static com.azure.reactnative.notificationhub.Constants.*;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;

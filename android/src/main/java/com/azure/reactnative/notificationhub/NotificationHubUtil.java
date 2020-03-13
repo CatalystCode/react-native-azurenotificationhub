@@ -25,43 +25,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.ERROR_ACTIVITY_CLASS_NOT_FOUND;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.ERROR_COVERT_ACTIONS;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.ERROR_GET_ACTIONS_ARRAY;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_INTENT_NOTIFICATION;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_ACTION;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_ACTIONS;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_COLDSTART;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_FOREGROUND;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_SMALL_ICON;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_SOUND_NAME;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_USER_INTERACTION;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.REMOTE_NOTIFICATION_PRIORITY_HIGH;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.REMOTE_NOTIFICATION_PRIORITY_LOW;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.REMOTE_NOTIFICATION_PRIORITY_MAX;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.REMOTE_NOTIFICATION_PRIORITY_MIN;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.REMOTE_NOTIFICATION_PRIORITY_NORMAL;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.RESOURCE_DEF_TYPE_MIPMAP;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.RESOURCE_DEF_TYPE_RAW;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.RESOURCE_NAME_LAUNCHER;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.RESOURCE_NAME_NOTIFICATION;
+import static com.azure.reactnative.notificationhub.Constants.*;
 
 public class NotificationHubUtil {
     public static final String TAG = "NotificationHubUtil";
 
     private static NotificationHubUtil sharedNotificationHubUtilInstance = null;
-
-    public static final String SHARED_PREFS_NAME = "com.azure.reactnative.notificationhub.NotificationHubUtil";
-    public static final String KEY_FOR_PREFS_REGISTRATIONID = "AzureNotificationHub_registrationID";
-    public static final String KEY_FOR_PREFS_CONNECTIONSTRING = "AzureNotificationHub_connectionString";
-    public static final String KEY_FOR_PREFS_HUBNAME = "AzureNotificationHub_hubName";
-    public static final String KEY_FOR_PREFS_FCMTOKEN = "AzureNotificationHub_FCMToken";
-    public static final String KEY_FOR_PREFS_TAGS = "AzureNotificationHub_Tags";
-    public static final String KEY_FOR_PREFS_SENDERID = "AzureNotificationHub_senderID";
-    public static final String KEY_FOR_PREFS_CHANNELIMPORTANCE = "AzureNotificationHub_channelImportance";
-    public static final String KEY_FOR_PREFS_CHANNELSHOWBADGE = "AzureNotificationHub_channelShowBadge";
-    public static final String KEY_FOR_PREFS_CHANNELENABLELIGHTS = "AzureNotificationHub_channelEnableLights";
-    public static final String KEY_FOR_PREFS_CHANNELENABLEVIBRATION = "AzureNotificationHub_channelEnableVibration";
 
     private final ExecutorService mPool = Executors.newFixedThreadPool(1);
 
@@ -218,7 +187,7 @@ public class NotificationHubUtil {
 
     public Intent createBroadcastIntent(String action, JSONObject json) {
         Intent intent = IntentFactory.createIntent(action);
-        intent.putExtra("event", ReactNativeNotificationHubModule.DEVICE_NOTIF_EVENT);
+        intent.putExtra("event", DEVICE_NOTIF_EVENT);
         intent.putExtra("data", json.toString());
 
         return intent;
