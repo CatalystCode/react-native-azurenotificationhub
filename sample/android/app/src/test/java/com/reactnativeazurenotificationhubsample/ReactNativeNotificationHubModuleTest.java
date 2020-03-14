@@ -173,6 +173,22 @@ public class ReactNativeNotificationHubModuleTest {
     }
 
     @Test
+    public void testRegisterHasChannelName() {
+        final String channelName = "Channel Name";
+
+        when(mConfig.getString("connectionString")).thenReturn("connectionString");
+        when(mConfig.getString("hubName")).thenReturn("hubName");
+        when(mConfig.getString("senderID")).thenReturn("senderID");
+        when(mConfig.hasKey(KEY_REGISTRATION_CHANNELNAME)).thenReturn(true);
+        when(mConfig.getString(KEY_REGISTRATION_CHANNELNAME)).thenReturn(channelName);
+
+        mHubModule.register(mConfig, mPromise);
+
+        verify(mNotificationHubUtil, times(1)).setChannelName(
+                any(ReactContext.class), eq(channelName));
+    }
+
+    @Test
     public void testRegisterHasChannelImportance() {
         final int channelImportance = 1;
 

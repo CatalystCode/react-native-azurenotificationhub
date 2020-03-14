@@ -189,6 +189,7 @@ const connectionString = '...';       // The Notification Hub connection string
 const hubName = '...';                // The Notification Hub name
 const senderID = '...';               // The Sender ID from the Cloud Messaging tab of the Firebase console
 const tags = [ ... ];                 // The set of tags to subscribe to
+const channelName = '...';            // The channel's name
 const channelImportance = 3;          // The channel's importance (NotificationManager.IMPORTANCE_DEFAULT = 3)
                                       // Notes:
                                       //   1. Setting this value to 4 enables heads-up notification on Android 8
@@ -213,6 +214,7 @@ export default class App extends Component {
       hubName,
       senderID,
       tags,
+      channelName,
       channelImportance,
       channelShowBadge,
       channelEnableLights,

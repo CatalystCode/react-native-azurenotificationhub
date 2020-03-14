@@ -97,23 +97,28 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
         notificationHubUtil.setSenderID(reactContext, senderID);
         notificationHubUtil.setTags(reactContext, tags);
 
-        if (config.hasKey("channelImportance")) {
-            int channelImportance = config.getInt("channelImportance");
+        if (config.hasKey(KEY_REGISTRATION_CHANNELNAME)) {
+            String channelName = config.getString(KEY_REGISTRATION_CHANNELNAME);
+            notificationHubUtil.setChannelName(reactContext, channelName);
+        }
+
+        if (config.hasKey(KEY_REGISTRATION_CHANNELIMPORTANCE)) {
+            int channelImportance = config.getInt(KEY_REGISTRATION_CHANNELIMPORTANCE);
             notificationHubUtil.setChannelImportance(reactContext, channelImportance);
         }
 
-        if (config.hasKey("channelShowBadge")) {
-            boolean channelShowBadge = config.getBoolean("channelShowBadge");
+        if (config.hasKey(KEY_REGISTRATION_CHANNELSHOWBADGE)) {
+            boolean channelShowBadge = config.getBoolean(KEY_REGISTRATION_CHANNELSHOWBADGE);
             notificationHubUtil.setChannelShowBadge(reactContext, channelShowBadge);
         }
 
-        if (config.hasKey("channelEnableLights")) {
-            boolean channelEnableLights = config.getBoolean("channelEnableLights");
+        if (config.hasKey(KEY_REGISTRATION_CHANNELENABLELIGHTS)) {
+            boolean channelEnableLights = config.getBoolean(KEY_REGISTRATION_CHANNELENABLELIGHTS);
             notificationHubUtil.setChannelEnableLights(reactContext, channelEnableLights);
         }
 
-        if (config.hasKey("channelEnableVibration")) {
-            boolean channelEnableVibration = config.getBoolean("channelEnableVibration");
+        if (config.hasKey(KEY_REGISTRATION_CHANNELENABLEVIBRATION)) {
+            boolean channelEnableVibration = config.getBoolean(KEY_REGISTRATION_CHANNELENABLEVIBRATION);
             notificationHubUtil.setChannelEnableVibration(reactContext, channelEnableVibration);
         }
 

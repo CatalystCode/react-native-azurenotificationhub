@@ -30,6 +30,7 @@ import static com.azure.reactnative.notificationhub.ReactNativeConstants.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
@@ -99,6 +100,7 @@ public class ReactNativeFirebaseMessagingServiceTest {
 
         ReactNativeNotificationChannelBuilder builder = PowerMockito.mock(ReactNativeNotificationChannelBuilder.class);
         when(ReactNativeNotificationChannelBuilder.Factory.create()).thenReturn(builder);
+        when(mHubUtil.hasChannelName(mReactApplicationContext)).thenReturn(false);
         when(mHubUtil.hasChannelImportance(mReactApplicationContext)).thenReturn(false);
         when(mHubUtil.hasChannelShowBadge(mReactApplicationContext)).thenReturn(false);
         when(mHubUtil.hasChannelEnableLights(mReactApplicationContext)).thenReturn(false);
@@ -107,6 +109,7 @@ public class ReactNativeFirebaseMessagingServiceTest {
 
         ReactNativeFirebaseMessagingService.createNotificationChannel(mReactApplicationContext);
 
+        verify(builder, times(0)).setName(anyString());
         verify(builder, times(0)).setImportance(anyInt());
         verify(builder, times(0)).setShowBadge(anyBoolean());
         verify(builder, times(0)).enableLights(anyBoolean());
@@ -118,6 +121,7 @@ public class ReactNativeFirebaseMessagingServiceTest {
 
     @Test
     public void testCreateNotificationChannel() {
+        final String channelName = "Channel Name";
         final int channelImportance = 1;
         final boolean channelShowBadge = true;
         final boolean channelEnableLights = true;
@@ -129,6 +133,8 @@ public class ReactNativeFirebaseMessagingServiceTest {
         NotificationChannel channel = PowerMockito.mock(NotificationChannel.class);
         when(channel.getId()).thenReturn(NOTIFICATION_CHANNEL_ID);
         when(builder.build()).thenReturn(channel);
+        when(mHubUtil.hasChannelName(mReactApplicationContext)).thenReturn(true);
+        when(mHubUtil.getChannelName(mReactApplicationContext)).thenReturn(channelName);
         when(mHubUtil.hasChannelImportance(mReactApplicationContext)).thenReturn(true);
         when(mHubUtil.getChannelImportance(mReactApplicationContext)).thenReturn(channelImportance);
         when(mHubUtil.hasChannelShowBadge(mReactApplicationContext)).thenReturn(true);
@@ -141,6 +147,8 @@ public class ReactNativeFirebaseMessagingServiceTest {
 
         ReactNativeFirebaseMessagingService.createNotificationChannel(mReactApplicationContext);
 
+        verify(mHubUtil, times(1)).hasChannelName(mReactApplicationContext);
+        verify(builder, times(1)).setName(channelName);
         verify(mHubUtil, times(1)).hasChannelImportance(mReactApplicationContext);
         verify(builder, times(1)).setImportance(channelImportance);
         verify(mHubUtil, times(1)).hasChannelShowBadge(mReactApplicationContext);

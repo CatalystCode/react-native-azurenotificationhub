@@ -23,6 +23,11 @@ public class ReactNativeFirebaseMessagingService extends FirebaseMessagingServic
         if (notificationChannelID == null) {
             ReactNativeNotificationHubUtil notificationHubUtil = ReactNativeNotificationHubUtil.getInstance();
             ReactNativeNotificationChannelBuilder builder = ReactNativeNotificationChannelBuilder.Factory.create();
+
+            if (notificationHubUtil.hasChannelName(context)) {
+                builder.setName(notificationHubUtil.getChannelName(context));
+            }
+
             if (notificationHubUtil.hasChannelImportance(context)) {
                 builder.setImportance(notificationHubUtil.getChannelImportance(context));
             }

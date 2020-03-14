@@ -10,6 +10,13 @@ public final class ReactNativeConstants {
     public static final String EVENT_AZURE_NOTIFICATION_HUB_REGISTERED = "azureNotificationHubRegistered";
     public static final String EVENT_AZURE_NOTIFICATION_HUB_REGISTERED_ERROR = "azureNotificationHubRegisteredError";
 
+    // Registration's keys
+    public static final String KEY_REGISTRATION_CHANNELNAME = "channelName";
+    public static final String KEY_REGISTRATION_CHANNELIMPORTANCE = "channelImportance";
+    public static final String KEY_REGISTRATION_CHANNELSHOWBADGE = "channelShowBadge";
+    public static final String KEY_REGISTRATION_CHANNELENABLELIGHTS = "channelEnableLights";
+    public static final String KEY_REGISTRATION_CHANNELENABLEVIBRATION = "channelEnableVibration";
+
     // Shared prefs used in NotificationHubUtil
     public static final String SHARED_PREFS_NAME = "com.azure.reactnative.notificationhub.NotificationHubUtil";
     public static final String KEY_FOR_PREFS_REGISTRATIONID = "AzureNotificationHub_registrationID";
@@ -18,6 +25,7 @@ public final class ReactNativeConstants {
     public static final String KEY_FOR_PREFS_FCMTOKEN = "AzureNotificationHub_FCMToken";
     public static final String KEY_FOR_PREFS_TAGS = "AzureNotificationHub_Tags";
     public static final String KEY_FOR_PREFS_SENDERID = "AzureNotificationHub_senderID";
+    public static final String KEY_FOR_PREFS_CHANNELNAME = "AzureNotificationHub_channelName";
     public static final String KEY_FOR_PREFS_CHANNELIMPORTANCE = "AzureNotificationHub_channelImportance";
     public static final String KEY_FOR_PREFS_CHANNELSHOWBADGE = "AzureNotificationHub_channelShowBadge";
     public static final String KEY_FOR_PREFS_CHANNELENABLELIGHTS = "AzureNotificationHub_channelEnableLights";
