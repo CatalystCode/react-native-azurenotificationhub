@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.*;
+import static com.azure.reactnative.notificationhub.ReactNativeConstants.*;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -40,7 +41,8 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
-import com.azure.reactnative.notificationhub.NotificationHubUtil;
+import com.azure.reactnative.notificationhub.ReactNativeNotificationHubUtil;
+import com.azure.reactnative.notificationhub.ReactNativeUtil;
 import com.facebook.react.bridge.ReactApplicationContext;
 
 /**
@@ -49,7 +51,8 @@ import com.facebook.react.bridge.ReactApplicationContext;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({
         LocalBroadcastManager.class,
-        NotificationHubUtil.class,
+        ReactNativeNotificationHubUtil.class,
+        ReactNativeUtil.class,
         BitmapFactory.class,
         Build.VERSION.class,
         Color.class,
@@ -67,7 +70,7 @@ public class ReactNativeNotificationsHandlerTest {
     ReactApplicationContext mReactApplicationContext;
 
     @Mock
-    NotificationHubUtil mNotificationHubUtil;
+    ReactNativeNotificationHubUtil mNotificationHubUtil;
 
     @Mock
     LocalBroadcastManager mLocalBroadcastManager;
@@ -93,17 +96,18 @@ public class ReactNativeNotificationsHandlerTest {
         // Prepare mock objects
         PowerMockito.mockStatic(LocalBroadcastManager.class);
         when(LocalBroadcastManager.getInstance(mReactApplicationContext)).thenReturn(mLocalBroadcastManager);
-        PowerMockito.mockStatic(NotificationHubUtil.class);
-        when(NotificationHubUtil.getInstance()).thenReturn(mNotificationHubUtil);
+        PowerMockito.mockStatic(ReactNativeNotificationHubUtil.class);
+        when(ReactNativeNotificationHubUtil.getInstance()).thenReturn(mNotificationHubUtil);
+        PowerMockito.mockStatic(ReactNativeUtil.class);
         PowerMockito.mockStatic(BitmapFactory.class);
         PowerMockito.mockStatic(Color.class);
         PowerMockito.mockStatic(PendingIntent.class);
         PowerMockito.mockStatic(Log.class);
 
         mIntentClass = Class.forName("com.reactnativeazurenotificationhubsample.MainActivity");
-        when(mNotificationHubUtil.getMainActivityClass(mReactApplicationContext)).thenReturn(mIntentClass);
+        when(ReactNativeUtil.getMainActivityClass(mReactApplicationContext)).thenReturn(mIntentClass);
         mNotificationBuilder = PowerMockito.mock(NotificationCompat.Builder.class);
-        when(mNotificationHubUtil.initNotificationCompatBuilder(
+        when(ReactNativeUtil.initNotificationCompatBuilder(
                 any(), any(), any(), any(), anyInt(), anyInt(), anyBoolean())).thenReturn(mNotificationBuilder);
         mNotification = PowerMockito.mock(Notification.class);
         when(mNotificationBuilder.build()).thenReturn(mNotification);
@@ -113,27 +117,29 @@ public class ReactNativeNotificationsHandlerTest {
     public void testSendBroadcast() throws Exception {
         final int delay = 1000;
         JSONObject json = PowerMockito.mock(JSONObject.class);
-        when(mNotificationHubUtil.convertBundleToJSON(mBundle)).thenReturn(json);
+        when(ReactNativeUtil.convertBundleToJSON(mBundle)).thenReturn(json);
 
         Intent intent = PowerMockito.mock(Intent.class);
-        when(mNotificationHubUtil.createBroadcastIntent(TAG, json)).thenReturn(intent);
+        when(ReactNativeUtil.createBroadcastIntent(TAG, json)).thenReturn(intent);
 
         ArgumentCaptor<Runnable> workerTask = ArgumentCaptor.forClass(Runnable.class);
-        Mockito.doNothing().when(mNotificationHubUtil).runInWorkerThread(workerTask.capture());
+        PowerMockito.doNothing().when(
+                ReactNativeUtil.class, "runInWorkerThread", workerTask.capture());
 
         sendBroadcast(mReactApplicationContext, mBundle, delay);
         workerTask.getValue().run();
 
-        verify(mNotificationHubUtil, times(1)).runInWorkerThread(any(Runnable.class));
-        verify(mNotificationHubUtil, times(1)).convertBundleToJSON(mBundle);
-        verify(mNotificationHubUtil, times(1)).createBroadcastIntent(TAG, json);
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.runInWorkerThread(any(Runnable.class));
+        ReactNativeUtil.convertBundleToJSON(mBundle);
+        ReactNativeUtil.createBroadcastIntent(TAG, json);
         verify(mLocalBroadcastManager, times(1)).sendBroadcast(intent);
     }
 
     @Test
     public void testSendNotificationNoActivityClass() {
         Class intentClass = null;
-        when(mNotificationHubUtil.getMainActivityClass(mReactApplicationContext)).thenReturn(intentClass);
+        when(ReactNativeUtil.getMainActivityClass(mReactApplicationContext)).thenReturn(intentClass);
         Bundle bundle = PowerMockito.mock(Bundle.class);
 
         sendNotification(mReactApplicationContext, bundle, CHANNEL_ID);
@@ -175,7 +181,8 @@ public class ReactNativeNotificationsHandlerTest {
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
 
-        verify(mNotificationHubUtil, times(1)).initNotificationCompatBuilder(
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.initNotificationCompatBuilder(
                 any(), any(), eq(NOTIFICATION_TITLE), any(), anyInt(), anyInt(), anyBoolean());
     }
 
@@ -187,7 +194,8 @@ public class ReactNativeNotificationsHandlerTest {
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
 
-        verify(mNotificationHubUtil, times(1)).initNotificationCompatBuilder(
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.initNotificationCompatBuilder(
                 any(), any(), eq(NOTIFICATION_TITLE), any(), anyInt(), anyInt(), anyBoolean());
         verify(mNotificationBuilder, times(0)).setGroup(any());
         verify(mNotificationBuilder, times(0)).setSubText(any());
@@ -204,7 +212,8 @@ public class ReactNativeNotificationsHandlerTest {
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
 
-        verify(mNotificationHubUtil, times(1)).getNotificationCompatPriority(null);
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.getNotificationCompatPriority(null);
     }
 
     @Test
@@ -216,7 +225,8 @@ public class ReactNativeNotificationsHandlerTest {
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
 
-        verify(mNotificationHubUtil, times(1)).getNotificationCompatPriority(NOTIFICATION_PRIORITY);
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.getNotificationCompatPriority(NOTIFICATION_PRIORITY);
     }
 
     @Test
@@ -280,7 +290,8 @@ public class ReactNativeNotificationsHandlerTest {
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
 
-        verify(mNotificationHubUtil, times(1)).getSmallIcon(any(), any(), any());
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.getSmallIcon(any(), any(), any());
         verify(mNotificationBuilder, times(1)).setSmallIcon(anyInt());
     }
 
@@ -292,8 +303,8 @@ public class ReactNativeNotificationsHandlerTest {
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
 
-        verify(mNotificationHubUtil, times(1)).getLargeIcon(
-                any(), eq(null), any(), any());
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.getLargeIcon(any(), eq(null), any(), any());
         verify(mNotificationBuilder, times(0)).setLargeIcon(any());
     }
 
@@ -306,12 +317,12 @@ public class ReactNativeNotificationsHandlerTest {
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_LARGE_ICON)).thenReturn(largeIcon);
-        when(mNotificationHubUtil.getLargeIcon(any(), any(), any(), any())).thenReturn(largeIconResID);
+        when(ReactNativeUtil.getLargeIcon(any(), any(), any(), any())).thenReturn(largeIconResID);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
 
-        verify(mNotificationHubUtil, times(1)).getLargeIcon(
-                any(), eq(largeIcon), any(), any());
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.getLargeIcon(any(), eq(largeIcon), any(), any());
         verify(mNotificationBuilder, times(1)).setLargeIcon(any());
     }
 
@@ -352,8 +363,8 @@ public class ReactNativeNotificationsHandlerTest {
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
 
-        verify(mNotificationHubUtil, times(1)).createNotificationIntent(
-                any(), any(), any());
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.createNotificationIntent(any(), any(), any());
     }
 
     @Test
@@ -365,11 +376,12 @@ public class ReactNativeNotificationsHandlerTest {
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.getBoolean(KEY_REMOTE_NOTIFICATION_PLAY_SOUND)).thenReturn(true);
         Uri soundUri = PowerMockito.mock(Uri.class);
-        when(mNotificationHubUtil.getSoundUri(any(), any())).thenReturn(soundUri);
+        when(ReactNativeUtil.getSoundUri(any(), any())).thenReturn(soundUri);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
 
-        verify(mNotificationHubUtil, times(1)).getSoundUri(any(), any());
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.getSoundUri(any(), any());
         verify(mNotificationBuilder, times(1)).setSound(soundUri);
     }
 
@@ -383,7 +395,8 @@ public class ReactNativeNotificationsHandlerTest {
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
 
-        verify(mNotificationHubUtil, times(0)).getSoundUri(any(), any());
+        PowerMockito.verifyStatic(ReactNativeUtil.class, times(0));
+        ReactNativeUtil.getSoundUri(any(), any());
     }
 
     @Test
@@ -463,8 +476,8 @@ public class ReactNativeNotificationsHandlerTest {
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
 
-        verify(mNotificationHubUtil, times(1)).processNotificationActions(
-                any(), any(), any(), anyInt());
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.processNotificationActions(any(), any(), any(), anyInt());
     }
 
     @Test
@@ -478,8 +491,8 @@ public class ReactNativeNotificationsHandlerTest {
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
 
-        verify(mNotificationHubUtil, times(1)).processNotificationActions(
-                any(), any(), any(), anyInt());
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.processNotificationActions(any(), any(), any(), anyInt());
         verify(notificationManager, times(1)).notify(anyInt(), eq(mNotification));
     }
 
@@ -498,8 +511,8 @@ public class ReactNativeNotificationsHandlerTest {
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
 
-        verify(mNotificationHubUtil, times(1)).processNotificationActions(
-                any(), any(), any(), anyInt());
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.processNotificationActions(any(), any(), any(), anyInt());
         verify(notificationManager, times(1)).notify(eq(tags), anyInt(), eq(mNotification));
     }
 }

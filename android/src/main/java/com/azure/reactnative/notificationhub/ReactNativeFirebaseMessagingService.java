@@ -11,9 +11,7 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_COLDSTART;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_FOREGROUND;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_USER_INTERACTION;
+import static com.azure.reactnative.notificationhub.ReactNativeConstants.*;
 
 public class ReactNativeFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -23,8 +21,8 @@ public class ReactNativeFirebaseMessagingService extends FirebaseMessagingServic
 
     public static void createNotificationChannel(Context context) {
         if (notificationChannelID == null) {
-            NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
-            NotificationChannelBuilder builder = NotificationChannelBuilder.Factory.create();
+            ReactNativeNotificationHubUtil notificationHubUtil = ReactNativeNotificationHubUtil.getInstance();
+            ReactNativeNotificationChannelBuilder builder = ReactNativeNotificationChannelBuilder.Factory.create();
             if (notificationHubUtil.hasChannelImportance(context)) {
                 builder.setImportance(notificationHubUtil.getChannelImportance(context));
             }
@@ -41,7 +39,7 @@ public class ReactNativeFirebaseMessagingService extends FirebaseMessagingServic
                 builder.enableVibration(notificationHubUtil.getChannelEnableVibration(context));
             }
 
-            notificationChannelID = ReactNativeNotificationsHandler.NOTIFICATION_CHANNEL_ID;
+            notificationChannelID = NOTIFICATION_CHANNEL_ID;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 NotificationChannel channel = builder.build();
                 NotificationManager notificationManager = (NotificationManager) context.getSystemService(
@@ -68,13 +66,13 @@ public class ReactNativeFirebaseMessagingService extends FirebaseMessagingServic
     public void onNewToken(String token) {
         Log.i(TAG, "Refreshing FCM Registration Token");
 
-        Intent intent = NotificationHubUtil.IntentFactory.createIntent(this, ReactNativeRegistrationIntentService.class);
+        Intent intent = ReactNativeNotificationHubUtil.IntentFactory.createIntent(this, ReactNativeRegistrationIntentService.class);
         ReactNativeRegistrationIntentService.enqueueWork(this, intent);
     }
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
+        ReactNativeNotificationHubUtil notificationHubUtil = ReactNativeNotificationHubUtil.getInstance();
         Log.d(TAG, "Remote message from: " + remoteMessage.getFrom());
 
         if (notificationChannelID == null) {

@@ -8,8 +8,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.azure.reactnative.notificationhub.NotificationChannelBuilder;
-import com.azure.reactnative.notificationhub.NotificationHubUtil;
+import com.azure.reactnative.notificationhub.ReactNativeNotificationChannelBuilder;
+import com.azure.reactnative.notificationhub.ReactNativeNotificationHubUtil;
 import com.azure.reactnative.notificationhub.ReactNativeFirebaseMessagingService;
 import com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler;
 import com.azure.reactnative.notificationhub.ReactNativeRegistrationIntentService;
@@ -26,9 +26,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_COLDSTART;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_FOREGROUND;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_USER_INTERACTION;
+import static com.azure.reactnative.notificationhub.ReactNativeConstants.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -45,11 +43,11 @@ import static org.powermock.api.support.membermodification.MemberMatcher.methods
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({
-        NotificationHubUtil.class,
+        ReactNativeNotificationHubUtil.class,
         ReactNativeNotificationsHandler.class,
         ReactNativeRegistrationIntentService.class,
-        NotificationChannelBuilder.Factory.class,
-        NotificationHubUtil.IntentFactory.class,
+        ReactNativeNotificationChannelBuilder.Factory.class,
+        ReactNativeNotificationHubUtil.IntentFactory.class,
         Build.VERSION.class,
         FirebaseMessagingService.class,
         RemoteMessage.class,
@@ -60,7 +58,7 @@ public class ReactNativeFirebaseMessagingServiceTest {
     ReactApplicationContext mReactApplicationContext;
 
     @Mock
-    NotificationHubUtil mHubUtil;
+    ReactNativeNotificationHubUtil mHubUtil;
 
     @Mock
     NotificationManager mNotificationManager;
@@ -74,12 +72,12 @@ public class ReactNativeFirebaseMessagingServiceTest {
         reset(mReactApplicationContext);
 
         // Prepare mock objects
-        PowerMockito.mockStatic(NotificationHubUtil.class);
-        when(NotificationHubUtil.getInstance()).thenReturn(mHubUtil);
+        PowerMockito.mockStatic(ReactNativeNotificationHubUtil.class);
+        when(ReactNativeNotificationHubUtil.getInstance()).thenReturn(mHubUtil);
         PowerMockito.mockStatic(ReactNativeNotificationsHandler.class);
         PowerMockito.mockStatic(ReactNativeRegistrationIntentService.class);
-        PowerMockito.mockStatic(NotificationChannelBuilder.Factory.class);
-        PowerMockito.mockStatic(NotificationHubUtil.IntentFactory.class);
+        PowerMockito.mockStatic(ReactNativeNotificationChannelBuilder.Factory.class);
+        PowerMockito.mockStatic(ReactNativeNotificationHubUtil.IntentFactory.class);
         PowerMockito.suppress(methodsDeclaredIn(FirebaseMessagingService.class));
         PowerMockito.mockStatic(Log.class);
         when(mReactApplicationContext.getSystemService(Context.NOTIFICATION_SERVICE)).thenReturn(
@@ -99,8 +97,8 @@ public class ReactNativeFirebaseMessagingServiceTest {
     public void testCreateNotificationChannelBelowVersionO() {
         final int sdkVersion = Build.VERSION_CODES.LOLLIPOP;
 
-        NotificationChannelBuilder builder = PowerMockito.mock(NotificationChannelBuilder.class);
-        when(NotificationChannelBuilder.Factory.create()).thenReturn(builder);
+        ReactNativeNotificationChannelBuilder builder = PowerMockito.mock(ReactNativeNotificationChannelBuilder.class);
+        when(ReactNativeNotificationChannelBuilder.Factory.create()).thenReturn(builder);
         when(mHubUtil.hasChannelImportance(mReactApplicationContext)).thenReturn(false);
         when(mHubUtil.hasChannelShowBadge(mReactApplicationContext)).thenReturn(false);
         when(mHubUtil.hasChannelEnableLights(mReactApplicationContext)).thenReturn(false);
@@ -126,10 +124,10 @@ public class ReactNativeFirebaseMessagingServiceTest {
         final boolean channelEnableVibration = true;
         final int sdkVersion = Build.VERSION_CODES.O;
 
-        NotificationChannelBuilder builder = PowerMockito.mock(NotificationChannelBuilder.class);
-        when(NotificationChannelBuilder.Factory.create()).thenReturn(builder);
+        ReactNativeNotificationChannelBuilder builder = PowerMockito.mock(ReactNativeNotificationChannelBuilder.class);
+        when(ReactNativeNotificationChannelBuilder.Factory.create()).thenReturn(builder);
         NotificationChannel channel = PowerMockito.mock(NotificationChannel.class);
-        when(channel.getId()).thenReturn(ReactNativeNotificationsHandler.NOTIFICATION_CHANNEL_ID);
+        when(channel.getId()).thenReturn(NOTIFICATION_CHANNEL_ID);
         when(builder.build()).thenReturn(channel);
         when(mHubUtil.hasChannelImportance(mReactApplicationContext)).thenReturn(true);
         when(mHubUtil.getChannelImportance(mReactApplicationContext)).thenReturn(channelImportance);
@@ -163,17 +161,17 @@ public class ReactNativeFirebaseMessagingServiceTest {
         Whitebox.setInternalState(Build.VERSION.class, "SDK_INT", sdkVersion);
 
         // Prepare channel
-        NotificationChannelBuilder builder = PowerMockito.mock(NotificationChannelBuilder.class);
-        when(NotificationChannelBuilder.Factory.create()).thenReturn(builder);
+        ReactNativeNotificationChannelBuilder builder = PowerMockito.mock(ReactNativeNotificationChannelBuilder.class);
+        when(ReactNativeNotificationChannelBuilder.Factory.create()).thenReturn(builder);
         NotificationChannel channel = PowerMockito.mock(NotificationChannel.class);
-        when(channel.getId()).thenReturn(ReactNativeNotificationsHandler.NOTIFICATION_CHANNEL_ID);
+        when(channel.getId()).thenReturn(NOTIFICATION_CHANNEL_ID);
         when(builder.build()).thenReturn(channel);
         ReactNativeFirebaseMessagingService.createNotificationChannel(mReactApplicationContext);
 
         ReactNativeFirebaseMessagingService.deleteNotificationChannel(mReactApplicationContext);
 
         verify(mNotificationManager, times(1)).deleteNotificationChannel(
-                ReactNativeNotificationsHandler.NOTIFICATION_CHANNEL_ID);
+                NOTIFICATION_CHANNEL_ID);
     }
 
     @Test
@@ -182,8 +180,8 @@ public class ReactNativeFirebaseMessagingServiceTest {
 
         mMessagingService.onNewToken(token);
 
-        verifyStatic(NotificationHubUtil.IntentFactory.class);
-        NotificationHubUtil.IntentFactory.createIntent(
+        verifyStatic(ReactNativeNotificationHubUtil.IntentFactory.class);
+        ReactNativeNotificationHubUtil.IntentFactory.createIntent(
                 any(), eq(ReactNativeRegistrationIntentService.class));
     }
 
@@ -197,10 +195,10 @@ public class ReactNativeFirebaseMessagingServiceTest {
         when(mHubUtil.getAppIsForeground()).thenReturn(true);
 
         // Prepare channel
-        NotificationChannelBuilder builder = PowerMockito.mock(NotificationChannelBuilder.class);
-        when(NotificationChannelBuilder.Factory.create()).thenReturn(builder);
+        ReactNativeNotificationChannelBuilder builder = PowerMockito.mock(ReactNativeNotificationChannelBuilder.class);
+        when(ReactNativeNotificationChannelBuilder.Factory.create()).thenReturn(builder);
         NotificationChannel channel = PowerMockito.mock(NotificationChannel.class);
-        when(channel.getId()).thenReturn(ReactNativeNotificationsHandler.NOTIFICATION_CHANNEL_ID);
+        when(channel.getId()).thenReturn(NOTIFICATION_CHANNEL_ID);
         when(builder.build()).thenReturn(channel);
         ReactNativeFirebaseMessagingService.createNotificationChannel(mReactApplicationContext);
 
@@ -226,10 +224,10 @@ public class ReactNativeFirebaseMessagingServiceTest {
         when(mHubUtil.getAppIsForeground()).thenReturn(false);
 
         // Prepare channel
-        NotificationChannelBuilder builder = PowerMockito.mock(NotificationChannelBuilder.class);
-        when(NotificationChannelBuilder.Factory.create()).thenReturn(builder);
+        ReactNativeNotificationChannelBuilder builder = PowerMockito.mock(ReactNativeNotificationChannelBuilder.class);
+        when(ReactNativeNotificationChannelBuilder.Factory.create()).thenReturn(builder);
         NotificationChannel channel = PowerMockito.mock(NotificationChannel.class);
-        when(channel.getId()).thenReturn(ReactNativeNotificationsHandler.NOTIFICATION_CHANNEL_ID);
+        when(channel.getId()).thenReturn(NOTIFICATION_CHANNEL_ID);
         when(builder.build()).thenReturn(channel);
         ReactNativeFirebaseMessagingService.createNotificationChannel(mReactApplicationContext);
 

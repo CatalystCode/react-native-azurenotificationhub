@@ -34,8 +34,8 @@ public class ReactNativeRegistrationIntentService extends JobIntentService {
     @Override
     protected void onHandleWork(Intent intent) {
         final LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
-        final Intent event = NotificationHubUtil.IntentFactory.createIntent(TAG);
-        final NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
+        final Intent event = ReactNativeNotificationHubUtil.IntentFactory.createIntent(TAG);
+        final ReactNativeNotificationHubUtil notificationHubUtil = ReactNativeNotificationHubUtil.getInstance();
         final String connectionString = notificationHubUtil.getConnectionString(this);
         final String hubName = notificationHubUtil.getHubName(this);
         final String storedToken = notificationHubUtil.getFCMToken(this);
@@ -61,7 +61,7 @@ public class ReactNativeRegistrationIntentService extends JobIntentService {
                             // sent to your server. If it is not stored, send the token to your server.
                             // Also check if the token has been compromised and needs refreshing.
                             if (regID == null || storedToken != token) {
-                                NotificationHub hub = new NotificationHub(hubName, connectionString,
+                                NotificationHub hub = ReactNativeUtil.createNotificationHub(hubName, connectionString,
                                         ReactNativeRegistrationIntentService.this);
                                 Log.d(TAG, "NH Registration refreshing with token : " + token);
 
@@ -71,7 +71,7 @@ public class ReactNativeRegistrationIntentService extends JobIntentService {
                                 notificationHubUtil.setRegistrationID(ReactNativeRegistrationIntentService.this, regID);
                                 notificationHubUtil.setFCMToken(ReactNativeRegistrationIntentService.this, token);
 
-                                event.putExtra("event", ReactNativeNotificationHubModule.NOTIF_REGISTER_AZURE_HUB_EVENT);
+                                event.putExtra("event", ReactNativeConstants.NOTIF_REGISTER_AZURE_HUB_EVENT);
                                 event.putExtra("data", regID);
                                 localBroadcastManager.sendBroadcast(event);
 
@@ -82,7 +82,7 @@ public class ReactNativeRegistrationIntentService extends JobIntentService {
                         } catch (Exception e) {
                             Log.e(TAG, "Failed to complete token refresh", e);
 
-                            event.putExtra("event", ReactNativeNotificationHubModule.NOTIF_AZURE_HUB_REGISTRATION_ERROR_EVENT);
+                            event.putExtra("event", ReactNativeConstants.NOTIF_AZURE_HUB_REGISTRATION_ERROR_EVENT);
                             event.putExtra("data", e.getMessage());
                             localBroadcastManager.sendBroadcast(event);
                         }

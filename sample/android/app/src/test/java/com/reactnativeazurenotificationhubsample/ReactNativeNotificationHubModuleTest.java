@@ -12,10 +12,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_INTENT_NOTIFICATION;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_COLDSTART;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_FOREGROUND;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_USER_INTERACTION;
+import static com.azure.reactnative.notificationhub.ReactNativeConstants.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
@@ -33,10 +30,11 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.azure.reactnative.notificationhub.NotificationHubUtil;
+import com.azure.reactnative.notificationhub.ReactNativeNotificationHubUtil;
 import com.azure.reactnative.notificationhub.ReactNativeNotificationHubModule;
 import com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler;
 import com.azure.reactnative.notificationhub.ReactNativeRegistrationIntentService;
+import com.azure.reactnative.notificationhub.ReactNativeUtil;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
@@ -52,7 +50,8 @@ import com.microsoft.windowsazure.messaging.NotificationHub;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({
         LocalBroadcastManager.class,
-        NotificationHubUtil.class,
+        ReactNativeNotificationHubUtil.class,
+        ReactNativeUtil.class,
         ReactNativeNotificationsHandler.class,
         ReactNativeRegistrationIntentService.class,
         GoogleApiAvailability.class
@@ -77,7 +76,7 @@ public class ReactNativeNotificationHubModuleTest {
     ReadableArray mTags;
 
     @Mock
-    NotificationHubUtil mNotificationHubUtil;
+    ReactNativeNotificationHubUtil mNotificationHubUtil;
 
     @Mock
     NotificationHub mNotificationHub;
@@ -96,8 +95,9 @@ public class ReactNativeNotificationHubModuleTest {
         // Prepare mock objects
         PowerMockito.mockStatic(LocalBroadcastManager.class);
         when(LocalBroadcastManager.getInstance(mReactApplicationContext)).thenReturn(mLocalBroadcastManager);
-        PowerMockito.mockStatic(NotificationHubUtil.class);
-        when(NotificationHubUtil.getInstance()).thenReturn(mNotificationHubUtil);
+        PowerMockito.mockStatic(ReactNativeNotificationHubUtil.class);
+        when(ReactNativeNotificationHubUtil.getInstance()).thenReturn(mNotificationHubUtil);
+        PowerMockito.mockStatic(ReactNativeUtil.class);
         PowerMockito.mockStatic(ReactNativeNotificationsHandler.class);
         PowerMockito.mockStatic(ReactNativeRegistrationIntentService.class);
         PowerMockito.mockStatic(GoogleApiAvailability.class);
@@ -117,7 +117,7 @@ public class ReactNativeNotificationHubModuleTest {
 
     @Test
     public void testGetName() {
-        Assert.assertEquals(mHubModule.getName(), ReactNativeNotificationHubModule.AZURE_NOTIFICATION_HUB_NAME);
+        Assert.assertEquals(mHubModule.getName(), AZURE_NOTIFICATION_HUB_NAME);
     }
 
     @Test
@@ -143,8 +143,8 @@ public class ReactNativeNotificationHubModuleTest {
         mHubModule.register(mConfig, mPromise);
 
         verify(mPromise, times(1)).reject(
-                ReactNativeNotificationHubModule.ERROR_INVALID_ARGUMENTS,
-                ReactNativeNotificationHubModule.ERROR_INVALID_CONNECTION_STRING);
+                ERROR_INVALID_ARGUMENTS,
+                ERROR_INVALID_CONNECTION_STRING);
     }
 
     @Test
@@ -155,8 +155,8 @@ public class ReactNativeNotificationHubModuleTest {
         mHubModule.register(mConfig, mPromise);
 
         verify(mPromise, times(1)).reject(
-                ReactNativeNotificationHubModule.ERROR_INVALID_ARGUMENTS,
-                ReactNativeNotificationHubModule.ERROR_INVALID_HUBNAME);
+                ERROR_INVALID_ARGUMENTS,
+                ERROR_INVALID_HUBNAME);
     }
 
     @Test
@@ -168,8 +168,8 @@ public class ReactNativeNotificationHubModuleTest {
         mHubModule.register(mConfig, mPromise);
 
         verify(mPromise, times(1)).reject(
-                ReactNativeNotificationHubModule.ERROR_INVALID_ARGUMENTS,
-                ReactNativeNotificationHubModule.ERROR_INVALID_SENDER_ID);
+                ERROR_INVALID_ARGUMENTS,
+                ERROR_INVALID_SENDER_ID);
     }
 
     @Test
@@ -289,8 +289,8 @@ public class ReactNativeNotificationHubModuleTest {
         mHubModule.register(mConfig, mPromise);
 
         verify(mPromise, times(1)).reject(
-                ReactNativeNotificationHubModule.ERROR_PLAY_SERVICES,
-                ReactNativeNotificationHubModule.ERROR_PLAY_SERVICES_UNSUPPORTED);
+                ERROR_PLAY_SERVICES,
+                ERROR_PLAY_SERVICES_UNSUPPORTED);
     }
 
     @Test
@@ -298,7 +298,7 @@ public class ReactNativeNotificationHubModuleTest {
         when(mNotificationHubUtil.getConnectionString(any(ReactContext.class))).thenReturn("connectionString");
         when(mNotificationHubUtil.getHubName(any(ReactContext.class))).thenReturn("hubName");
         when(mNotificationHubUtil.getRegistrationID(any(ReactContext.class))).thenReturn("registrationId");
-        when(mNotificationHubUtil.createNotificationHub(
+        when(ReactNativeUtil.createNotificationHub(
                 anyString(), anyString(), any(ReactContext.class))).thenReturn(mNotificationHub);
 
         mHubModule.unregister(mPromise);
@@ -314,14 +314,14 @@ public class ReactNativeNotificationHubModuleTest {
         when(mNotificationHubUtil.getConnectionString(any(ReactContext.class))).thenReturn("connectionString");
         when(mNotificationHubUtil.getHubName(any(ReactContext.class))).thenReturn("hubName");
         when(mNotificationHubUtil.getRegistrationID(any(ReactContext.class))).thenReturn(null);
-        when(mNotificationHubUtil.createNotificationHub(
+        when(ReactNativeUtil.createNotificationHub(
                 anyString(), anyString(), any(ReactContext.class))).thenReturn(mNotificationHub);
 
         mHubModule.unregister(mPromise);
 
         verify(mPromise, times(1)).reject(
-                ReactNativeNotificationHubModule.ERROR_NOT_REGISTERED,
-                ReactNativeNotificationHubModule.ERROR_NOT_REGISTERED_DESC);
+                ERROR_NOT_REGISTERED,
+                ERROR_NOT_REGISTERED_DESC);
     }
 
     @Test
@@ -331,14 +331,14 @@ public class ReactNativeNotificationHubModuleTest {
         when(mNotificationHubUtil.getConnectionString(any(ReactContext.class))).thenReturn("connectionString");
         when(mNotificationHubUtil.getHubName(any(ReactContext.class))).thenReturn("hubName");
         when(mNotificationHubUtil.getRegistrationID(any(ReactContext.class))).thenReturn("registrationId");
-        when(mNotificationHubUtil.createNotificationHub(
+        when(ReactNativeUtil.createNotificationHub(
                 anyString(), anyString(), any(ReactContext.class))).thenReturn(mNotificationHub);
         doThrow(unhandledException).when(mNotificationHub).unregister();
 
         mHubModule.unregister(mPromise);
 
         verify(mPromise, times(1)).reject(
-                ReactNativeNotificationHubModule.ERROR_NOTIFICATION_HUB,
+                ERROR_NOTIFICATION_HUB,
                 unhandledException);
     }
 

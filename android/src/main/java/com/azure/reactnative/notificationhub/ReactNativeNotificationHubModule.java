@@ -26,29 +26,10 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.UiThreadUtil;
 
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_INTENT_NOTIFICATION;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_COLDSTART;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_FOREGROUND;
-import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.KEY_REMOTE_NOTIFICATION_USER_INTERACTION;
+import static com.azure.reactnative.notificationhub.ReactNativeConstants.*;
 
 public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule implements
         ActivityEventListener, LifecycleEventListener {
-    public static final String AZURE_NOTIFICATION_HUB_NAME = "AzureNotificationHub";
-    public static final String NOTIF_REGISTER_AZURE_HUB_EVENT = "azureNotificationHubRegistered";
-    public static final String NOTIF_AZURE_HUB_REGISTRATION_ERROR_EVENT = "azureNotificationHubRegistrationError";
-    public static final String DEVICE_NOTIF_EVENT = "remoteNotificationReceived";
-
-    public static final String ERROR_INVALID_ARGUMENTS = "E_INVALID_ARGUMENTS";
-    public static final String ERROR_INVALID_CONNECTION_STRING = "Connection string cannot be null.";
-    public static final String ERROR_INVALID_HUBNAME = "Hub name cannot be null.";
-    public static final String ERROR_INVALID_SENDER_ID = "Sender ID cannot be null.";
-    public static final String ERROR_PLAY_SERVICES = "E_PLAY_SERVICES";
-    public static final String ERROR_PLAY_SERVICES_DISABLED = "User must enable Google Play Services.";
-    public static final String ERROR_PLAY_SERVICES_UNSUPPORTED = "This device is not supported by Google Play Services.";
-    public static final String ERROR_NOTIFICATION_HUB = "E_NOTIFICATION_HUB";
-    public static final String ERROR_NOT_REGISTERED = "E_NOT_REGISTERED";
-    public static final String ERROR_NOT_REGISTERED_DESC = "No registration to Azure Notification Hub.";
-
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final int NOTIFICATION_DELAY_ON_START = 3000;
 
@@ -72,18 +53,18 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
     }
 
     public void setIsForeground(boolean isForeground) {
-        NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
+        ReactNativeNotificationHubUtil notificationHubUtil = ReactNativeNotificationHubUtil.getInstance();
         notificationHubUtil.setAppIsForeground(isForeground);
     }
 
     public boolean getIsForeground() {
-        NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
+        ReactNativeNotificationHubUtil notificationHubUtil = ReactNativeNotificationHubUtil.getInstance();
         return notificationHubUtil.getAppIsForeground();
     }
 
     @ReactMethod
     public void register(ReadableMap config, Promise promise) {
-        NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
+        ReactNativeNotificationHubUtil notificationHubUtil = ReactNativeNotificationHubUtil.getInstance();
         String connectionString = config.getString("connectionString");
         if (connectionString == null) {
             promise.reject(ERROR_INVALID_ARGUMENTS, ERROR_INVALID_CONNECTION_STRING);
@@ -153,14 +134,14 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
             return;
         }
 
-        Intent intent = NotificationHubUtil.IntentFactory.createIntent(
+        Intent intent = ReactNativeNotificationHubUtil.IntentFactory.createIntent(
                 reactContext, ReactNativeRegistrationIntentService.class);
         ReactNativeRegistrationIntentService.enqueueWork(reactContext, intent);
     }
 
     @ReactMethod
     public void unregister(Promise promise) {
-        NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
+        ReactNativeNotificationHubUtil notificationHubUtil = ReactNativeNotificationHubUtil.getInstance();
 
         ReactContext reactContext = getReactApplicationContext();
         String connectionString = notificationHubUtil.getConnectionString(reactContext);
@@ -172,7 +153,7 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
             return;
         }
 
-        NotificationHub hub = notificationHubUtil.createNotificationHub(hubName, connectionString, reactContext);
+        NotificationHub hub = ReactNativeUtil.createNotificationHub(hubName, connectionString, reactContext);
         try {
             hub.unregister();
             notificationHubUtil.setRegistrationID(reactContext, null);
