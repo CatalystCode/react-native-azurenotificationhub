@@ -64,27 +64,27 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
     @ReactMethod
     public void register(ReadableMap config, Promise promise) {
         ReactNativeNotificationHubUtil notificationHubUtil = ReactNativeNotificationHubUtil.getInstance();
-        String connectionString = config.getString("connectionString");
+        String connectionString = config.getString(KEY_REGISTRATION_CONNECTIONSTRING);
         if (connectionString == null) {
             promise.reject(ERROR_INVALID_ARGUMENTS, ERROR_INVALID_CONNECTION_STRING);
             return;
         }
 
-        String hubName = config.getString("hubName");
+        String hubName = config.getString(KEY_REGISTRATION_HUBNAME);
         if (hubName == null) {
             promise.reject(ERROR_INVALID_ARGUMENTS, ERROR_INVALID_HUBNAME);
             return;
         }
 
-        String senderID = config.getString("senderID");
+        String senderID = config.getString(KEY_REGISTRATION_SENDERID);
         if (senderID == null) {
             promise.reject(ERROR_INVALID_ARGUMENTS, ERROR_INVALID_SENDER_ID);
             return;
         }
 
         String[] tags = null;
-        if (config.hasKey("tags") && !config.isNull("tags")) {
-            ReadableArray tagsJson = config.getArray("tags");
+        if (config.hasKey(KEY_REGISTRATION_TAGS) && !config.isNull(KEY_REGISTRATION_TAGS)) {
+            ReadableArray tagsJson = config.getArray(KEY_REGISTRATION_TAGS);
             tags = new String[tagsJson.size()];
             for (int i = 0; i < tagsJson.size(); ++i) {
                 tags[i] = tagsJson.getString(i);

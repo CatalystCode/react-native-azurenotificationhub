@@ -138,7 +138,7 @@ public class ReactNativeNotificationHubModuleTest {
 
     @Test
     public void testRegisterMissingConnectionString() {
-        when(mConfig.getString("connectionString")).thenReturn(null);
+        when(mConfig.getString(KEY_REGISTRATION_CONNECTIONSTRING)).thenReturn(null);
 
         mHubModule.register(mConfig, mPromise);
 
@@ -149,8 +149,8 @@ public class ReactNativeNotificationHubModuleTest {
 
     @Test
     public void testRegisterMissingHubName() {
-        when(mConfig.getString("connectionString")).thenReturn("connectionString");
-        when(mConfig.getString("hubName")).thenReturn(null);
+        when(mConfig.getString(KEY_REGISTRATION_CONNECTIONSTRING)).thenReturn(KEY_REGISTRATION_CONNECTIONSTRING);
+        when(mConfig.getString(KEY_REGISTRATION_HUBNAME)).thenReturn(null);
 
         mHubModule.register(mConfig, mPromise);
 
@@ -161,9 +161,9 @@ public class ReactNativeNotificationHubModuleTest {
 
     @Test
     public void testRegisterMissingSenderID() {
-        when(mConfig.getString("connectionString")).thenReturn("connectionString");
-        when(mConfig.getString("hubName")).thenReturn("hubName");
-        when(mConfig.getString("senderID")).thenReturn(null);
+        when(mConfig.getString(KEY_REGISTRATION_CONNECTIONSTRING)).thenReturn(KEY_REGISTRATION_CONNECTIONSTRING);
+        when(mConfig.getString(KEY_REGISTRATION_HUBNAME)).thenReturn(KEY_REGISTRATION_HUBNAME);
+        when(mConfig.getString(KEY_REGISTRATION_SENDERID)).thenReturn(null);
 
         mHubModule.register(mConfig, mPromise);
 
@@ -176,9 +176,9 @@ public class ReactNativeNotificationHubModuleTest {
     public void testRegisterHasChannelName() {
         final String channelName = "Channel Name";
 
-        when(mConfig.getString("connectionString")).thenReturn("connectionString");
-        when(mConfig.getString("hubName")).thenReturn("hubName");
-        when(mConfig.getString("senderID")).thenReturn("senderID");
+        when(mConfig.getString(KEY_REGISTRATION_CONNECTIONSTRING)).thenReturn(KEY_REGISTRATION_CONNECTIONSTRING);
+        when(mConfig.getString(KEY_REGISTRATION_HUBNAME)).thenReturn(KEY_REGISTRATION_HUBNAME);
+        when(mConfig.getString(KEY_REGISTRATION_SENDERID)).thenReturn(KEY_REGISTRATION_SENDERID);
         when(mConfig.hasKey(KEY_REGISTRATION_CHANNELNAME)).thenReturn(true);
         when(mConfig.getString(KEY_REGISTRATION_CHANNELNAME)).thenReturn(channelName);
 
@@ -192,9 +192,9 @@ public class ReactNativeNotificationHubModuleTest {
     public void testRegisterHasChannelImportance() {
         final int channelImportance = 1;
 
-        when(mConfig.getString("connectionString")).thenReturn("connectionString");
-        when(mConfig.getString("hubName")).thenReturn("hubName");
-        when(mConfig.getString("senderID")).thenReturn("senderID");
+        when(mConfig.getString(KEY_REGISTRATION_CONNECTIONSTRING)).thenReturn(KEY_REGISTRATION_CONNECTIONSTRING);
+        when(mConfig.getString(KEY_REGISTRATION_HUBNAME)).thenReturn(KEY_REGISTRATION_HUBNAME);
+        when(mConfig.getString(KEY_REGISTRATION_SENDERID)).thenReturn(KEY_REGISTRATION_SENDERID);
         when(mConfig.hasKey("channelImportance")).thenReturn(true);
         when(mConfig.getInt("channelImportance")).thenReturn(channelImportance);
 
@@ -208,9 +208,9 @@ public class ReactNativeNotificationHubModuleTest {
     public void testRegisterHasChannelShowBadge() {
         final boolean channelShowBadge = true;
 
-        when(mConfig.getString("connectionString")).thenReturn("connectionString");
-        when(mConfig.getString("hubName")).thenReturn("hubName");
-        when(mConfig.getString("senderID")).thenReturn("senderID");
+        when(mConfig.getString(KEY_REGISTRATION_CONNECTIONSTRING)).thenReturn(KEY_REGISTRATION_CONNECTIONSTRING);
+        when(mConfig.getString(KEY_REGISTRATION_HUBNAME)).thenReturn(KEY_REGISTRATION_HUBNAME);
+        when(mConfig.getString(KEY_REGISTRATION_SENDERID)).thenReturn(KEY_REGISTRATION_SENDERID);
         when(mConfig.hasKey("channelShowBadge")).thenReturn(true);
         when(mConfig.getBoolean("channelShowBadge")).thenReturn(channelShowBadge);
 
@@ -224,9 +224,9 @@ public class ReactNativeNotificationHubModuleTest {
     public void testRegisterHasChannelEnableLights() {
         final boolean channelEnableLights = true;
 
-        when(mConfig.getString("connectionString")).thenReturn("connectionString");
-        when(mConfig.getString("hubName")).thenReturn("hubName");
-        when(mConfig.getString("senderID")).thenReturn("senderID");
+        when(mConfig.getString(KEY_REGISTRATION_CONNECTIONSTRING)).thenReturn(KEY_REGISTRATION_CONNECTIONSTRING);
+        when(mConfig.getString(KEY_REGISTRATION_HUBNAME)).thenReturn(KEY_REGISTRATION_HUBNAME);
+        when(mConfig.getString(KEY_REGISTRATION_SENDERID)).thenReturn(KEY_REGISTRATION_SENDERID);
         when(mConfig.hasKey("channelEnableLights")).thenReturn(true);
         when(mConfig.getBoolean("channelEnableLights")).thenReturn(channelEnableLights);
 
@@ -240,9 +240,9 @@ public class ReactNativeNotificationHubModuleTest {
     public void testRegisterHasChannelEnableVibration() {
         final boolean channelEnableVibration = true;
 
-        when(mConfig.getString("connectionString")).thenReturn("connectionString");
-        when(mConfig.getString("hubName")).thenReturn("hubName");
-        when(mConfig.getString("senderID")).thenReturn("senderID");
+        when(mConfig.getString(KEY_REGISTRATION_CONNECTIONSTRING)).thenReturn(KEY_REGISTRATION_CONNECTIONSTRING);
+        when(mConfig.getString(KEY_REGISTRATION_HUBNAME)).thenReturn(KEY_REGISTRATION_HUBNAME);
+        when(mConfig.getString(KEY_REGISTRATION_SENDERID)).thenReturn(KEY_REGISTRATION_SENDERID);
         when(mConfig.hasKey("channelEnableVibration")).thenReturn(true);
         when(mConfig.getBoolean("channelEnableVibration")).thenReturn(channelEnableVibration);
 
@@ -254,17 +254,17 @@ public class ReactNativeNotificationHubModuleTest {
 
     @Test
     public void testRegisterSuccessfully() {
-        final String connectionString = "connectionString";
-        final String hubName = "hubName";
-        final String senderID = "senderID";
-        final String[] tags = {"tags"};
+        final String connectionString = "Connection String";
+        final String hubName = "Hub Name";
+        final String senderID = "Sender ID";
+        final String[] tags = { "Tag" };
 
-        when(mConfig.getString("connectionString")).thenReturn(connectionString);
-        when(mConfig.getString("hubName")).thenReturn(hubName);
-        when(mConfig.getString("senderID")).thenReturn(senderID);
-        when(mConfig.hasKey("tags")).thenReturn(true);
-        when(mConfig.isNull("tags")).thenReturn(false);
-        when(mConfig.getArray("tags")).thenReturn(mTags);
+        when(mConfig.getString(KEY_REGISTRATION_CONNECTIONSTRING)).thenReturn(connectionString);
+        when(mConfig.getString(KEY_REGISTRATION_HUBNAME)).thenReturn(hubName);
+        when(mConfig.getString(KEY_REGISTRATION_SENDERID)).thenReturn(senderID);
+        when(mConfig.hasKey(KEY_REGISTRATION_TAGS)).thenReturn(true);
+        when(mConfig.isNull(KEY_REGISTRATION_TAGS)).thenReturn(false);
+        when(mConfig.getArray(KEY_REGISTRATION_TAGS)).thenReturn(mTags);
         when(mTags.size()).thenReturn(1);
         when(mTags.getString(0)).thenReturn(tags[0]);
         when(mGoogleApiAvailability.isGooglePlayServicesAvailable(any())).thenReturn(
@@ -288,14 +288,14 @@ public class ReactNativeNotificationHubModuleTest {
 
     @Test
     public void testRegisterFailed() {
-        final String[] tags = {"tags"};
+        final String[] tags = { "Tag" };
 
-        when(mConfig.getString("connectionString")).thenReturn("connectionString");
-        when(mConfig.getString("hubName")).thenReturn("hubName");
-        when(mConfig.getString("senderID")).thenReturn("senderID");
-        when(mConfig.hasKey("tags")).thenReturn(true);
-        when(mConfig.isNull("tags")).thenReturn(false);
-        when(mConfig.getArray("tags")).thenReturn(mTags);
+        when(mConfig.getString(KEY_REGISTRATION_CONNECTIONSTRING)).thenReturn(KEY_REGISTRATION_CONNECTIONSTRING);
+        when(mConfig.getString(KEY_REGISTRATION_HUBNAME)).thenReturn(KEY_REGISTRATION_HUBNAME);
+        when(mConfig.getString(KEY_REGISTRATION_SENDERID)).thenReturn(KEY_REGISTRATION_SENDERID);
+        when(mConfig.hasKey(KEY_REGISTRATION_TAGS)).thenReturn(true);
+        when(mConfig.isNull(KEY_REGISTRATION_TAGS)).thenReturn(false);
+        when(mConfig.getArray(KEY_REGISTRATION_TAGS)).thenReturn(mTags);
         when(mTags.size()).thenReturn(1);
         when(mTags.getString(0)).thenReturn(tags[0]);
         when(mGoogleApiAvailability.isGooglePlayServicesAvailable(any())).thenReturn(
@@ -311,8 +311,8 @@ public class ReactNativeNotificationHubModuleTest {
 
     @Test
     public void testUnregisterSuccessfully() throws Exception {
-        when(mNotificationHubUtil.getConnectionString(any(ReactContext.class))).thenReturn("connectionString");
-        when(mNotificationHubUtil.getHubName(any(ReactContext.class))).thenReturn("hubName");
+        when(mNotificationHubUtil.getConnectionString(any(ReactContext.class))).thenReturn(KEY_REGISTRATION_CONNECTIONSTRING);
+        when(mNotificationHubUtil.getHubName(any(ReactContext.class))).thenReturn(KEY_REGISTRATION_HUBNAME);
         when(mNotificationHubUtil.getRegistrationID(any(ReactContext.class))).thenReturn("registrationId");
         when(ReactNativeUtil.createNotificationHub(
                 anyString(), anyString(), any(ReactContext.class))).thenReturn(mNotificationHub);
@@ -327,8 +327,8 @@ public class ReactNativeNotificationHubModuleTest {
 
     @Test
     public void testUnregisterNoRegistration() throws Exception {
-        when(mNotificationHubUtil.getConnectionString(any(ReactContext.class))).thenReturn("connectionString");
-        when(mNotificationHubUtil.getHubName(any(ReactContext.class))).thenReturn("hubName");
+        when(mNotificationHubUtil.getConnectionString(any(ReactContext.class))).thenReturn(KEY_REGISTRATION_CONNECTIONSTRING);
+        when(mNotificationHubUtil.getHubName(any(ReactContext.class))).thenReturn(KEY_REGISTRATION_HUBNAME);
         when(mNotificationHubUtil.getRegistrationID(any(ReactContext.class))).thenReturn(null);
         when(ReactNativeUtil.createNotificationHub(
                 anyString(), anyString(), any(ReactContext.class))).thenReturn(mNotificationHub);
@@ -344,8 +344,8 @@ public class ReactNativeNotificationHubModuleTest {
     public void testUnregisterThrowException() throws Exception {
         final Exception unhandledException = new Exception("Unhandled exception");
 
-        when(mNotificationHubUtil.getConnectionString(any(ReactContext.class))).thenReturn("connectionString");
-        when(mNotificationHubUtil.getHubName(any(ReactContext.class))).thenReturn("hubName");
+        when(mNotificationHubUtil.getConnectionString(any(ReactContext.class))).thenReturn(KEY_REGISTRATION_CONNECTIONSTRING);
+        when(mNotificationHubUtil.getHubName(any(ReactContext.class))).thenReturn(KEY_REGISTRATION_HUBNAME);
         when(mNotificationHubUtil.getRegistrationID(any(ReactContext.class))).thenReturn("registrationId");
         when(ReactNativeUtil.createNotificationHub(
                 anyString(), anyString(), any(ReactContext.class))).thenReturn(mNotificationHub);

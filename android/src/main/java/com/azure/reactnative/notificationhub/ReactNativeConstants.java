@@ -11,6 +11,10 @@ public final class ReactNativeConstants {
     public static final String EVENT_AZURE_NOTIFICATION_HUB_REGISTERED_ERROR = "azureNotificationHubRegisteredError";
 
     // Registration's keys
+    public static final String KEY_REGISTRATION_CONNECTIONSTRING = "connectionString";
+    public static final String KEY_REGISTRATION_HUBNAME = "hubName";
+    public static final String KEY_REGISTRATION_SENDERID = "senderID";
+    public static final String KEY_REGISTRATION_TAGS = "tags";
     public static final String KEY_REGISTRATION_CHANNELNAME = "channelName";
     public static final String KEY_REGISTRATION_CHANNELIMPORTANCE = "channelImportance";
     public static final String KEY_REGISTRATION_CHANNELSHOWBADGE = "channelShowBadge";
