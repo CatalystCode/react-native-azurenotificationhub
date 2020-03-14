@@ -19,8 +19,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.util.Log;
 
-import org.json.JSONObject;
-
 import static com.azure.reactnative.notificationhub.ReactNativeConstants.*;
 
 public final class ReactNativeNotificationsHandler {
@@ -28,7 +26,17 @@ public final class ReactNativeNotificationsHandler {
 
     private static final long DEFAULT_VIBRATION = 300L;
 
-    private ReactNativeNotificationsHandler() {
+    public static void sendBroadcast(final Context context, final Intent intent, final long delay) {
+        ReactNativeUtil.runInWorkerThread(new Runnable() {
+            public void run() {
+                try {
+                    Thread.currentThread().sleep(delay);
+                    LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
+                    localBroadcastManager.sendBroadcast(intent);
+                } catch (Exception e) {
+                }
+            }
+        });
     }
 
     public static void sendBroadcast(final Context context, final Bundle bundle, final long delay) {
@@ -36,10 +44,9 @@ public final class ReactNativeNotificationsHandler {
             public void run() {
                 try {
                     Thread.currentThread().sleep(delay);
-                    JSONObject json = ReactNativeUtil.convertBundleToJSON(bundle);
-                    Intent event = ReactNativeUtil.createBroadcastIntent(TAG, json);
+                    Intent intent = ReactNativeUtil.createBroadcastIntent(TAG, bundle);
                     LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
-                    localBroadcastManager.sendBroadcast(event);
+                    localBroadcastManager.sendBroadcast(intent);
                 } catch (Exception e) {
                 }
             }
@@ -170,5 +177,8 @@ public final class ReactNativeNotificationsHandler {
         } catch (Exception e) {
             Log.e(TAG, ERROR_SEND_PUSH_NOTIFICATION, e);
         }
+    }
+
+    private ReactNativeNotificationsHandler() {
     }
 }

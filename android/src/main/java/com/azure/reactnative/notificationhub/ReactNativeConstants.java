@@ -3,10 +3,12 @@ package com.azure.reactnative.notificationhub;
 public final class ReactNativeConstants {
     // Notification
     public static final String AZURE_NOTIFICATION_HUB_NAME = "AzureNotificationHub";
-    public static final String NOTIF_REGISTER_AZURE_HUB_EVENT = "azureNotificationHubRegistered";
-    public static final String NOTIF_AZURE_HUB_REGISTRATION_ERROR_EVENT = "azureNotificationHubRegistrationError";
-    public static final String DEVICE_NOTIF_EVENT = "remoteNotificationReceived";
     public static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
+
+    // Notification hub events
+    public static final String EVENT_REMOTE_NOTIFICATION_RECEIVED = "remoteNotificationReceived";
+    public static final String EVENT_AZURE_NOTIFICATION_HUB_REGISTERED = "azureNotificationHubRegistered";
+    public static final String EVENT_AZURE_NOTIFICATION_HUB_REGISTERED_ERROR = "azureNotificationHubRegisteredError";
 
     // Shared prefs used in NotificationHubUtil
     public static final String SHARED_PREFS_NAME = "com.azure.reactnative.notificationhub.NotificationHubUtil";
@@ -54,8 +56,13 @@ public final class ReactNativeConstants {
     public static final String REMOTE_NOTIFICATION_PRIORITY_MIN = "min";
     public static final String REMOTE_NOTIFICATION_PRIORITY_NORMAL = "normal";
 
-    // Intent payload
+    // Intent
     public static final String KEY_INTENT_NOTIFICATION = "notification";
+    public static final String KEY_INTENT_EVENT_NAME = "eventName";
+    public static final String KEY_INTENT_EVENT_TYPE = "eventType";
+    public static final String KEY_INTENT_EVENT_STRING_DATA = "eventStringData";
+    public static final String INTENT_EVENT_TYPE_STRING = "eventTypeString";
+    public static final String INTENT_EVENT_TYPE_BUNDLE = "eventTypeBundle";
 
     // Resources
     public static final String RESOURCE_DEF_TYPE_MIPMAP = "mipmap";

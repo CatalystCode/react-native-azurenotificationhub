@@ -17,7 +17,6 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,7 +34,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -114,13 +112,28 @@ public class ReactNativeNotificationsHandlerTest {
     }
 
     @Test
-    public void testSendBroadcast() throws Exception {
+    public void testSendBroadcastIntent() throws Exception {
         final int delay = 1000;
-        JSONObject json = PowerMockito.mock(JSONObject.class);
-        when(ReactNativeUtil.convertBundleToJSON(mBundle)).thenReturn(json);
 
         Intent intent = PowerMockito.mock(Intent.class);
-        when(ReactNativeUtil.createBroadcastIntent(TAG, json)).thenReturn(intent);
+        ArgumentCaptor<Runnable> workerTask = ArgumentCaptor.forClass(Runnable.class);
+        PowerMockito.doNothing().when(
+                ReactNativeUtil.class, "runInWorkerThread", workerTask.capture());
+
+        sendBroadcast(mReactApplicationContext, intent, delay);
+        workerTask.getValue().run();
+
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.runInWorkerThread(any(Runnable.class));
+        verify(mLocalBroadcastManager, times(1)).sendBroadcast(intent);
+    }
+
+    @Test
+    public void testSendBroadcastBundle() throws Exception {
+        final int delay = 1000;
+
+        Intent intent = PowerMockito.mock(Intent.class);
+        when(ReactNativeUtil.createBroadcastIntent(TAG, mBundle)).thenReturn(intent);
 
         ArgumentCaptor<Runnable> workerTask = ArgumentCaptor.forClass(Runnable.class);
         PowerMockito.doNothing().when(
@@ -131,8 +144,8 @@ public class ReactNativeNotificationsHandlerTest {
 
         PowerMockito.verifyStatic(ReactNativeUtil.class);
         ReactNativeUtil.runInWorkerThread(any(Runnable.class));
-        ReactNativeUtil.convertBundleToJSON(mBundle);
-        ReactNativeUtil.createBroadcastIntent(TAG, json);
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.createBroadcastIntent(TAG, mBundle);
         verify(mLocalBroadcastManager, times(1)).sendBroadcast(intent);
     }
 

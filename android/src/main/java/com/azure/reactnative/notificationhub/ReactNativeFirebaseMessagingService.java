@@ -87,6 +87,7 @@ public class ReactNativeFirebaseMessagingService extends FirebaseMessagingServic
         } else {
             ReactNativeNotificationsHandler.sendNotification(this, bundle, notificationChannelID);
         }
+
         ReactNativeNotificationsHandler.sendBroadcast(this, bundle, 0);
     }
 }

@@ -9,15 +9,20 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.microsoft.windowsazure.messaging.NotificationHub;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.invoke.WrongMethodTypeException;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -51,12 +56,76 @@ public final class ReactNativeUtil {
         return json;
     }
 
-    public static Intent createBroadcastIntent(String action, JSONObject json) {
+    public static WritableMap convertBundleToMap(Bundle bundle) {
+        WritableMap map = Arguments.createMap();
+        if (bundle == null) {
+            return map;
+        }
+
+        for (String key : bundle.keySet()) {
+            try {
+                Object o = bundle.get(key);
+
+                // TODO: Handle char and all array types
+                if (o == null) {
+                    map.putNull(key);
+                } else if (o instanceof Bundle) {
+                    map.putMap(key, convertBundleToMap((Bundle) o));
+                } else if (o instanceof String) {
+                    map.putString(key, (String) o);
+                } else if (o instanceof Float) {
+                    map.putDouble(key, ((Float) o).doubleValue());
+                } else if (o instanceof Double) {
+                    map.putDouble(key, (Double) o);
+                } else if (o instanceof Integer) {
+                    map.putInt(key, (Integer) o);
+                } else if (o instanceof Long) {
+                    map.putInt(key, ((Long) o).intValue());
+                } else if (o instanceof Short) {
+                    map.putInt(key, ((Short) o).intValue());
+                } else if (o instanceof Byte) {
+                    map.putInt(key, ((Byte) o).intValue());
+                } else {
+                    map.putNull(key);
+                }
+            } catch (ClassCastException e) {
+                // TODO: Warn
+            }
+        }
+
+        return map;
+    }
+
+    public static Intent createBroadcastIntent(String action, Bundle bundle) {
         Intent intent = ReactNativeNotificationHubUtil.IntentFactory.createIntent(action);
-        intent.putExtra("event", DEVICE_NOTIF_EVENT);
-        intent.putExtra("data", json.toString());
+        intent.putExtra(KEY_INTENT_EVENT_NAME, EVENT_REMOTE_NOTIFICATION_RECEIVED);
+        intent.putExtra(KEY_INTENT_EVENT_TYPE, INTENT_EVENT_TYPE_BUNDLE);
+        intent.putExtras(bundle);
 
         return intent;
+    }
+
+    public static void emitEvent(ReactContext reactContext,
+                                 String eventName,
+                                 @Nullable Object params) {
+        if (reactContext.hasActiveCatalystInstance()) {
+            reactContext
+                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                    .emit(eventName, params);
+        }
+    }
+
+    public static void emitIntent(ReactContext reactContext,
+                                  Intent intent) {
+        String eventName = intent.getStringExtra(KEY_INTENT_EVENT_NAME);
+        String eventType = intent.getStringExtra(KEY_INTENT_EVENT_TYPE);
+        if (eventType.equals(INTENT_EVENT_TYPE_BUNDLE)) {
+            WritableMap map = convertBundleToMap(intent.getExtras());
+            emitEvent(reactContext, eventName, map);
+        } else {
+            String data = intent.getStringExtra(KEY_INTENT_EVENT_STRING_DATA);
+            emitEvent(reactContext, eventName, data);
+        }
     }
 
     public static Class getMainActivityClass(Context context) {

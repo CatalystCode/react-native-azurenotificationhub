@@ -11,7 +11,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.LifecycleEventListener;
-import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
@@ -211,10 +210,7 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
         @Override
         public void onReceive(Context context, Intent intent) {
             if (getIsForeground()) {
-                String event = intent.getStringExtra("event");
-                String data = intent.getStringExtra("data");
-                mReactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                        .emit(event, data);
+                ReactNativeUtil.emitIntent(mReactContext, intent);
             }
         }
     }
