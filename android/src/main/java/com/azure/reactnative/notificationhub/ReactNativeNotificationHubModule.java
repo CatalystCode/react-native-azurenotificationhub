@@ -153,7 +153,7 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
             return;
         }
 
-        NotificationHub hub = notificationHubUtil.createNotificationHub(hubName, connectionString, reactContext);
+        NotificationHub hub = ReactNativeUtil.createNotificationHub(hubName, connectionString, reactContext);
         try {
             hub.unregister();
             notificationHubUtil.setRegistrationID(reactContext, null);

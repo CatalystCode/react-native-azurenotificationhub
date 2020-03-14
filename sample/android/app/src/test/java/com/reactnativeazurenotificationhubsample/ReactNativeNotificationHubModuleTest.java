@@ -34,6 +34,7 @@ import com.azure.reactnative.notificationhub.ReactNativeNotificationHubUtil;
 import com.azure.reactnative.notificationhub.ReactNativeNotificationHubModule;
 import com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler;
 import com.azure.reactnative.notificationhub.ReactNativeRegistrationIntentService;
+import com.azure.reactnative.notificationhub.ReactNativeUtil;
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
@@ -50,6 +51,7 @@ import com.microsoft.windowsazure.messaging.NotificationHub;
 @PrepareForTest({
         LocalBroadcastManager.class,
         ReactNativeNotificationHubUtil.class,
+        ReactNativeUtil.class,
         ReactNativeNotificationsHandler.class,
         ReactNativeRegistrationIntentService.class,
         GoogleApiAvailability.class
@@ -95,6 +97,7 @@ public class ReactNativeNotificationHubModuleTest {
         when(LocalBroadcastManager.getInstance(mReactApplicationContext)).thenReturn(mLocalBroadcastManager);
         PowerMockito.mockStatic(ReactNativeNotificationHubUtil.class);
         when(ReactNativeNotificationHubUtil.getInstance()).thenReturn(mNotificationHubUtil);
+        PowerMockito.mockStatic(ReactNativeUtil.class);
         PowerMockito.mockStatic(ReactNativeNotificationsHandler.class);
         PowerMockito.mockStatic(ReactNativeRegistrationIntentService.class);
         PowerMockito.mockStatic(GoogleApiAvailability.class);
@@ -295,7 +298,7 @@ public class ReactNativeNotificationHubModuleTest {
         when(mNotificationHubUtil.getConnectionString(any(ReactContext.class))).thenReturn("connectionString");
         when(mNotificationHubUtil.getHubName(any(ReactContext.class))).thenReturn("hubName");
         when(mNotificationHubUtil.getRegistrationID(any(ReactContext.class))).thenReturn("registrationId");
-        when(mNotificationHubUtil.createNotificationHub(
+        when(ReactNativeUtil.createNotificationHub(
                 anyString(), anyString(), any(ReactContext.class))).thenReturn(mNotificationHub);
 
         mHubModule.unregister(mPromise);
@@ -311,7 +314,7 @@ public class ReactNativeNotificationHubModuleTest {
         when(mNotificationHubUtil.getConnectionString(any(ReactContext.class))).thenReturn("connectionString");
         when(mNotificationHubUtil.getHubName(any(ReactContext.class))).thenReturn("hubName");
         when(mNotificationHubUtil.getRegistrationID(any(ReactContext.class))).thenReturn(null);
-        when(mNotificationHubUtil.createNotificationHub(
+        when(ReactNativeUtil.createNotificationHub(
                 anyString(), anyString(), any(ReactContext.class))).thenReturn(mNotificationHub);
 
         mHubModule.unregister(mPromise);
@@ -328,7 +331,7 @@ public class ReactNativeNotificationHubModuleTest {
         when(mNotificationHubUtil.getConnectionString(any(ReactContext.class))).thenReturn("connectionString");
         when(mNotificationHubUtil.getHubName(any(ReactContext.class))).thenReturn("hubName");
         when(mNotificationHubUtil.getRegistrationID(any(ReactContext.class))).thenReturn("registrationId");
-        when(mNotificationHubUtil.createNotificationHub(
+        when(ReactNativeUtil.createNotificationHub(
                 anyString(), anyString(), any(ReactContext.class))).thenReturn(mNotificationHub);
         doThrow(unhandledException).when(mNotificationHub).unregister();
 

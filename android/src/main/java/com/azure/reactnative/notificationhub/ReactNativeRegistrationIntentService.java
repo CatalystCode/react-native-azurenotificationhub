@@ -61,7 +61,7 @@ public class ReactNativeRegistrationIntentService extends JobIntentService {
                             // sent to your server. If it is not stored, send the token to your server.
                             // Also check if the token has been compromised and needs refreshing.
                             if (regID == null || storedToken != token) {
-                                NotificationHub hub = new NotificationHub(hubName, connectionString,
+                                NotificationHub hub = ReactNativeUtil.createNotificationHub(hubName, connectionString,
                                         ReactNativeRegistrationIntentService.this);
                                 Log.d(TAG, "NH Registration refreshing with token : " + token);
 

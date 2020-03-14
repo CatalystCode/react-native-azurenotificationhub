@@ -32,13 +32,12 @@ public final class ReactNativeNotificationsHandler {
     }
 
     public static void sendBroadcast(final Context context, final Bundle bundle, final long delay) {
-        final ReactNativeNotificationHubUtil hubUtil = ReactNativeNotificationHubUtil.getInstance();
-        hubUtil.runInWorkerThread(new Runnable() {
+        ReactNativeUtil.runInWorkerThread(new Runnable() {
             public void run() {
                 try {
                     Thread.currentThread().sleep(delay);
-                    JSONObject json = hubUtil.convertBundleToJSON(bundle);
-                    Intent event = hubUtil.createBroadcastIntent(TAG, json);
+                    JSONObject json = ReactNativeUtil.convertBundleToJSON(bundle);
+                    Intent event = ReactNativeUtil.createBroadcastIntent(TAG, json);
                     LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
                     localBroadcastManager.sendBroadcast(event);
                 } catch (Exception e) {
@@ -49,8 +48,7 @@ public final class ReactNativeNotificationsHandler {
 
     public static void sendNotification(Context context, Bundle bundle, String notificationChannelID) {
         try {
-            final ReactNativeNotificationHubUtil hubUtil = ReactNativeNotificationHubUtil.getInstance();
-            Class intentClass = hubUtil.getMainActivityClass(context);
+            Class intentClass = ReactNativeUtil.getMainActivityClass(context);
             if (intentClass == null) {
                 Log.e(TAG, ERROR_NO_ACTIVITY_CLASS);
                 return;
@@ -76,8 +74,9 @@ public final class ReactNativeNotificationsHandler {
                 title = context.getPackageManager().getApplicationLabel(appInfo).toString();
             }
 
-            int priority = hubUtil.getNotificationCompatPriority(bundle.getString(KEY_REMOTE_NOTIFICATION_PRIORITY));
-            NotificationCompat.Builder notificationBuilder = hubUtil.initNotificationCompatBuilder(
+            int priority = ReactNativeUtil.getNotificationCompatPriority(
+                    bundle.getString(KEY_REMOTE_NOTIFICATION_PRIORITY));
+            NotificationCompat.Builder notificationBuilder = ReactNativeUtil.initNotificationCompatBuilder(
                     context,
                     notificationChannelID,
                     title,
@@ -103,11 +102,11 @@ public final class ReactNativeNotificationsHandler {
                 notificationBuilder.setNumber(Integer.parseInt(numberString));
             }
 
-            int smallIconResId = hubUtil.getSmallIcon(bundle, res, packageName);
+            int smallIconResId = ReactNativeUtil.getSmallIcon(bundle, res, packageName);
             notificationBuilder.setSmallIcon(smallIconResId);
 
             String largeIcon = bundle.getString(KEY_REMOTE_NOTIFICATION_LARGE_ICON);
-            int largeIconResId = hubUtil.getLargeIcon(bundle, largeIcon, res, packageName);
+            int largeIconResId = ReactNativeUtil.getLargeIcon(bundle, largeIcon, res, packageName);
             Bitmap largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
             if (largeIconResId != 0 && (largeIcon != null || Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
                 notificationBuilder.setLargeIcon(largeIconBitmap);
@@ -121,10 +120,10 @@ public final class ReactNativeNotificationsHandler {
             notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
 
             // Create notification intent
-            Intent intent = hubUtil.createNotificationIntent(context, bundle, intentClass);
+            Intent intent = ReactNativeUtil.createNotificationIntent(context, bundle, intentClass);
 
             if (!bundle.containsKey(KEY_REMOTE_NOTIFICATION_PLAY_SOUND) || bundle.getBoolean(KEY_REMOTE_NOTIFICATION_PLAY_SOUND)) {
-                Uri soundUri = hubUtil.getSoundUri(context, bundle);
+                Uri soundUri = ReactNativeUtil.getSoundUri(context, bundle);
                 notificationBuilder.setSound(soundUri);
             }
 
@@ -157,7 +156,7 @@ public final class ReactNativeNotificationsHandler {
             }
 
             // Process notification's actions
-            hubUtil.processNotificationActions(context, bundle, notificationBuilder, notificationID);
+            ReactNativeUtil.processNotificationActions(context, bundle, notificationBuilder, notificationID);
 
             Notification notification = notificationBuilder.build();
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(
