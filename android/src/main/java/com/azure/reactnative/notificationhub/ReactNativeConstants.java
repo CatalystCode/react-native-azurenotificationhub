@@ -1,6 +1,6 @@
 package com.azure.reactnative.notificationhub;
 
-public final class Constants {
+public final class ReactNativeConstants {
     // Notification
     public static final String AZURE_NOTIFICATION_HUB_NAME = "AzureNotificationHub";
     public static final String NOTIF_REGISTER_AZURE_HUB_EVENT = "azureNotificationHubRegistered";
@@ -82,6 +82,6 @@ public final class Constants {
     public static final String ERROR_NOT_REGISTERED = "E_NOT_REGISTERED";
     public static final String ERROR_NOT_REGISTERED_DESC = "No registration to Azure Notification Hub.";
 
-    private Constants() {
+    private ReactNativeConstants() {
     }
 }

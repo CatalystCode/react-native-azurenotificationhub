@@ -21,7 +21,7 @@ import android.util.Log;
 
 import org.json.JSONObject;
 
-import static com.azure.reactnative.notificationhub.Constants.*;
+import static com.azure.reactnative.notificationhub.ReactNativeConstants.*;
 
 public final class ReactNativeNotificationsHandler {
     public static final String TAG = "ReactNativeNotification";
@@ -32,7 +32,7 @@ public final class ReactNativeNotificationsHandler {
     }
 
     public static void sendBroadcast(final Context context, final Bundle bundle, final long delay) {
-        final NotificationHubUtil hubUtil = NotificationHubUtil.getInstance();
+        final ReactNativeNotificationHubUtil hubUtil = ReactNativeNotificationHubUtil.getInstance();
         hubUtil.runInWorkerThread(new Runnable() {
             public void run() {
                 try {
@@ -49,7 +49,7 @@ public final class ReactNativeNotificationsHandler {
 
     public static void sendNotification(Context context, Bundle bundle, String notificationChannelID) {
         try {
-            final NotificationHubUtil hubUtil = NotificationHubUtil.getInstance();
+            final ReactNativeNotificationHubUtil hubUtil = ReactNativeNotificationHubUtil.getInstance();
             Class intentClass = hubUtil.getMainActivityClass(context);
             if (intentClass == null) {
                 Log.e(TAG, ERROR_NO_ACTIVITY_CLASS);

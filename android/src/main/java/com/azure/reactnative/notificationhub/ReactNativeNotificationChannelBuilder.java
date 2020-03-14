@@ -3,8 +3,8 @@ package com.azure.reactnative.notificationhub;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 
-public class NotificationChannelBuilder {
-    private String mID = Constants.NOTIFICATION_CHANNEL_ID;
+public class ReactNativeNotificationChannelBuilder {
+    private String mID = ReactNativeConstants.NOTIFICATION_CHANNEL_ID;
     private CharSequence mName = "rn-push-notification-channel-name";
     private String mDesc = "rn-push-notification-channel-description";
     private int mImportance = NotificationManager.IMPORTANCE_DEFAULT;
@@ -13,12 +13,12 @@ public class NotificationChannelBuilder {
     private boolean mEnableVibration = true;
 
     public static class Factory {
-        public static NotificationChannelBuilder create() {
-            return new NotificationChannelBuilder();
+        public static ReactNativeNotificationChannelBuilder create() {
+            return new ReactNativeNotificationChannelBuilder();
         }
     }
 
-    private NotificationChannelBuilder() {
+    private ReactNativeNotificationChannelBuilder() {
     }
 
     public NotificationChannel build() {
@@ -30,32 +30,32 @@ public class NotificationChannelBuilder {
         return channel;
     }
 
-    public NotificationChannelBuilder setName(CharSequence name) {
+    public ReactNativeNotificationChannelBuilder setName(CharSequence name) {
         this.mName = name;
         return this;
     }
 
-    public NotificationChannelBuilder setImportance(int importance) {
+    public ReactNativeNotificationChannelBuilder setImportance(int importance) {
         this.mImportance = importance;
         return this;
     }
 
-    public NotificationChannelBuilder setDescription(String desc) {
+    public ReactNativeNotificationChannelBuilder setDescription(String desc) {
         this.mDesc = desc;
         return this;
     }
 
-    public NotificationChannelBuilder setShowBadge(boolean showBadge) {
+    public ReactNativeNotificationChannelBuilder setShowBadge(boolean showBadge) {
         this.mShowBadge = showBadge;
         return this;
     }
 
-    public NotificationChannelBuilder enableLights(boolean enableLights) {
+    public ReactNativeNotificationChannelBuilder enableLights(boolean enableLights) {
         this.mEnableLights = enableLights;
         return this;
     }
 
-    public NotificationChannelBuilder enableVibration(boolean enableVibration) {
+    public ReactNativeNotificationChannelBuilder enableVibration(boolean enableVibration) {
         this.mEnableVibration = enableVibration;
         return this;
     }

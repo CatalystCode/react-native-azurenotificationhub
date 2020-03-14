@@ -21,8 +21,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.azure.reactnative.notificationhub.NotificationHubUtil.*;
-import static com.azure.reactnative.notificationhub.Constants.*;
+import static com.azure.reactnative.notificationhub.ReactNativeNotificationHubUtil.*;
+import static com.azure.reactnative.notificationhub.ReactNativeConstants.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
@@ -38,7 +38,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.azure.reactnative.notificationhub.NotificationHubUtil;
+import com.azure.reactnative.notificationhub.ReactNativeNotificationHubUtil;
 import com.facebook.react.bridge.ReactApplicationContext;
 
 import java.util.Arrays;
@@ -56,7 +56,7 @@ import java.util.HashSet;
         PendingIntent.class,
         Log.class
 })
-public class NotificationHubUtilTest {
+public class ReactNativeNotificationHubUtilTest {
 
     @Mock
     ReactApplicationContext mReactApplicationContext;
@@ -70,7 +70,7 @@ public class NotificationHubUtilTest {
     @Mock
     Bundle mBundle;
 
-    NotificationHubUtil mHubUtil;
+    ReactNativeNotificationHubUtil mHubUtil;
 
     @Before
     public void setUp() {
@@ -89,7 +89,7 @@ public class NotificationHubUtilTest {
                 SHARED_PREFS_NAME, Context.MODE_PRIVATE)).thenReturn(mSharedPreferences);
         when(mSharedPreferences.edit()).thenReturn(mEditor);
 
-        mHubUtil = NotificationHubUtil.getInstance();
+        mHubUtil = ReactNativeNotificationHubUtil.getInstance();
     }
 
     @Test

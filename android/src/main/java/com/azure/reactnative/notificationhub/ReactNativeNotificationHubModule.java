@@ -26,7 +26,7 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.UiThreadUtil;
 
-import static com.azure.reactnative.notificationhub.Constants.*;
+import static com.azure.reactnative.notificationhub.ReactNativeConstants.*;
 
 public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule implements
         ActivityEventListener, LifecycleEventListener {
@@ -53,18 +53,18 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
     }
 
     public void setIsForeground(boolean isForeground) {
-        NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
+        ReactNativeNotificationHubUtil notificationHubUtil = ReactNativeNotificationHubUtil.getInstance();
         notificationHubUtil.setAppIsForeground(isForeground);
     }
 
     public boolean getIsForeground() {
-        NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
+        ReactNativeNotificationHubUtil notificationHubUtil = ReactNativeNotificationHubUtil.getInstance();
         return notificationHubUtil.getAppIsForeground();
     }
 
     @ReactMethod
     public void register(ReadableMap config, Promise promise) {
-        NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
+        ReactNativeNotificationHubUtil notificationHubUtil = ReactNativeNotificationHubUtil.getInstance();
         String connectionString = config.getString("connectionString");
         if (connectionString == null) {
             promise.reject(ERROR_INVALID_ARGUMENTS, ERROR_INVALID_CONNECTION_STRING);
@@ -134,14 +134,14 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
             return;
         }
 
-        Intent intent = NotificationHubUtil.IntentFactory.createIntent(
+        Intent intent = ReactNativeNotificationHubUtil.IntentFactory.createIntent(
                 reactContext, ReactNativeRegistrationIntentService.class);
         ReactNativeRegistrationIntentService.enqueueWork(reactContext, intent);
     }
 
     @ReactMethod
     public void unregister(Promise promise) {
-        NotificationHubUtil notificationHubUtil = NotificationHubUtil.getInstance();
+        ReactNativeNotificationHubUtil notificationHubUtil = ReactNativeNotificationHubUtil.getInstance();
 
         ReactContext reactContext = getReactApplicationContext();
         String connectionString = notificationHubUtil.getConnectionString(reactContext);

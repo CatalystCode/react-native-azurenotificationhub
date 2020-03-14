@@ -12,7 +12,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.azure.reactnative.notificationhub.Constants.*;
+import static com.azure.reactnative.notificationhub.ReactNativeConstants.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
@@ -30,7 +30,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.azure.reactnative.notificationhub.NotificationHubUtil;
+import com.azure.reactnative.notificationhub.ReactNativeNotificationHubUtil;
 import com.azure.reactnative.notificationhub.ReactNativeNotificationHubModule;
 import com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler;
 import com.azure.reactnative.notificationhub.ReactNativeRegistrationIntentService;
@@ -49,7 +49,7 @@ import com.microsoft.windowsazure.messaging.NotificationHub;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({
         LocalBroadcastManager.class,
-        NotificationHubUtil.class,
+        ReactNativeNotificationHubUtil.class,
         ReactNativeNotificationsHandler.class,
         ReactNativeRegistrationIntentService.class,
         GoogleApiAvailability.class
@@ -74,7 +74,7 @@ public class ReactNativeNotificationHubModuleTest {
     ReadableArray mTags;
 
     @Mock
-    NotificationHubUtil mNotificationHubUtil;
+    ReactNativeNotificationHubUtil mNotificationHubUtil;
 
     @Mock
     NotificationHub mNotificationHub;
@@ -93,8 +93,8 @@ public class ReactNativeNotificationHubModuleTest {
         // Prepare mock objects
         PowerMockito.mockStatic(LocalBroadcastManager.class);
         when(LocalBroadcastManager.getInstance(mReactApplicationContext)).thenReturn(mLocalBroadcastManager);
-        PowerMockito.mockStatic(NotificationHubUtil.class);
-        when(NotificationHubUtil.getInstance()).thenReturn(mNotificationHubUtil);
+        PowerMockito.mockStatic(ReactNativeNotificationHubUtil.class);
+        when(ReactNativeNotificationHubUtil.getInstance()).thenReturn(mNotificationHubUtil);
         PowerMockito.mockStatic(ReactNativeNotificationsHandler.class);
         PowerMockito.mockStatic(ReactNativeRegistrationIntentService.class);
         PowerMockito.mockStatic(GoogleApiAvailability.class);

@@ -25,12 +25,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.azure.reactnative.notificationhub.Constants.*;
+import static com.azure.reactnative.notificationhub.ReactNativeConstants.*;
 
-public class NotificationHubUtil {
+public class ReactNativeNotificationHubUtil {
     public static final String TAG = "NotificationHubUtil";
 
-    private static NotificationHubUtil sharedNotificationHubUtilInstance = null;
+    private static ReactNativeNotificationHubUtil sharedNotificationHubUtilInstance = null;
 
     private final ExecutorService mPool = Executors.newFixedThreadPool(1);
 
@@ -50,9 +50,9 @@ public class NotificationHubUtil {
         }
     }
 
-    public static NotificationHubUtil getInstance() {
+    public static ReactNativeNotificationHubUtil getInstance() {
         if (sharedNotificationHubUtilInstance == null) {
-            sharedNotificationHubUtilInstance = new NotificationHubUtil();
+            sharedNotificationHubUtilInstance = new ReactNativeNotificationHubUtil();
         }
         return sharedNotificationHubUtilInstance;
     }

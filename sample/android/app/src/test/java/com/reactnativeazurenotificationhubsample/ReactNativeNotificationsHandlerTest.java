@@ -22,7 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.azure.reactnative.notificationhub.ReactNativeNotificationsHandler.*;
-import static com.azure.reactnative.notificationhub.Constants.*;
+import static com.azure.reactnative.notificationhub.ReactNativeConstants.*;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -41,7 +41,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
-import com.azure.reactnative.notificationhub.NotificationHubUtil;
+import com.azure.reactnative.notificationhub.ReactNativeNotificationHubUtil;
 import com.facebook.react.bridge.ReactApplicationContext;
 
 /**
@@ -50,7 +50,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({
         LocalBroadcastManager.class,
-        NotificationHubUtil.class,
+        ReactNativeNotificationHubUtil.class,
         BitmapFactory.class,
         Build.VERSION.class,
         Color.class,
@@ -68,7 +68,7 @@ public class ReactNativeNotificationsHandlerTest {
     ReactApplicationContext mReactApplicationContext;
 
     @Mock
-    NotificationHubUtil mNotificationHubUtil;
+    ReactNativeNotificationHubUtil mNotificationHubUtil;
 
     @Mock
     LocalBroadcastManager mLocalBroadcastManager;
@@ -94,8 +94,8 @@ public class ReactNativeNotificationsHandlerTest {
         // Prepare mock objects
         PowerMockito.mockStatic(LocalBroadcastManager.class);
         when(LocalBroadcastManager.getInstance(mReactApplicationContext)).thenReturn(mLocalBroadcastManager);
-        PowerMockito.mockStatic(NotificationHubUtil.class);
-        when(NotificationHubUtil.getInstance()).thenReturn(mNotificationHubUtil);
+        PowerMockito.mockStatic(ReactNativeNotificationHubUtil.class);
+        when(ReactNativeNotificationHubUtil.getInstance()).thenReturn(mNotificationHubUtil);
         PowerMockito.mockStatic(BitmapFactory.class);
         PowerMockito.mockStatic(Color.class);
         PowerMockito.mockStatic(PendingIntent.class);
