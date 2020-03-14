@@ -85,6 +85,8 @@ public final class ReactNativeUtil {
                     map.putInt(key, ((Short) o).intValue());
                 } else if (o instanceof Byte) {
                     map.putInt(key, ((Byte) o).intValue());
+                } else if (o instanceof Boolean) {
+                    map.putBoolean(key, (Boolean) o);
                 } else {
                     map.putNull(key);
                 }

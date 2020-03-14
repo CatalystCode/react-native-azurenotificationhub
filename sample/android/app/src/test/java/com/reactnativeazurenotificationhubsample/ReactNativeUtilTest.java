@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import static com.azure.reactnative.notificationhub.ReactNativeNotificationHubUtil.*;
 import static com.azure.reactnative.notificationhub.ReactNativeConstants.*;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -113,6 +114,7 @@ public class ReactNativeUtilTest {
         verify(expectedMap, times(0)).putDouble(anyString(), anyDouble());
         verify(expectedMap, times(0)).putDouble(anyString(), anyFloat());
         verify(expectedMap, times(0)).putInt(anyString(), anyInt());
+        verify(expectedMap, times(0)).putBoolean(anyString(), anyBoolean());
         verify(expectedMap, times(0)).putNull(anyString());
     }
 
@@ -183,6 +185,13 @@ public class ReactNativeUtilTest {
         when(mBundle.get(key)).thenReturn(byteValue);
         convertBundleToMap(mBundle);
         verify(expectedMap, times(1)).putInt(key, byteValue.intValue());
+
+        reset(expectedMap);
+        when(mBundle.keySet()).thenReturn(keys);
+        final Boolean booleanValue = new Boolean(true);
+        when(mBundle.get(key)).thenReturn(booleanValue);
+        convertBundleToMap(mBundle);
+        verify(expectedMap, times(1)).putBoolean(key, booleanValue);
 
         reset(expectedMap);
         when(mBundle.keySet()).thenReturn(keys);
