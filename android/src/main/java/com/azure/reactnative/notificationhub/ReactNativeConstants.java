@@ -4,6 +4,8 @@ public final class ReactNativeConstants {
     // Notification
     public static final String AZURE_NOTIFICATION_HUB_NAME = "AzureNotificationHub";
     public static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
+    public static final String KEY_NOTIFICATION_PAYLOAD_TYPE = "notification";
+    public static final String KEY_DATA_PAYLOAD_TYPE = "data";
 
     // Notification hub events
     public static final String EVENT_REMOTE_NOTIFICATION_RECEIVED = "remoteNotificationReceived";
@@ -37,6 +39,7 @@ public final class ReactNativeConstants {
 
     // Remote notification payload
     public static final String KEY_REMOTE_NOTIFICATION_MESSAGE = "message";
+    public static final String KEY_REMOTE_NOTIFICATION_BODY = "body";
     public static final String KEY_REMOTE_NOTIFICATION_ID = "google.message_id";
     public static final String KEY_REMOTE_NOTIFICATION_TITLE = "title";
     public static final String KEY_REMOTE_NOTIFICATION_PRIORITY = "google.original_priority";
@@ -69,7 +72,6 @@ public final class ReactNativeConstants {
     public static final String REMOTE_NOTIFICATION_PRIORITY_NORMAL = "normal";
 
     // Intent
-    public static final String KEY_INTENT_NOTIFICATION = "notification";
     public static final String KEY_INTENT_EVENT_NAME = "eventName";
     public static final String KEY_INTENT_EVENT_TYPE = "eventType";
     public static final String KEY_INTENT_EVENT_STRING_DATA = "eventStringData";
@@ -85,7 +87,6 @@ public final class ReactNativeConstants {
     // Errors
     public static final String ERROR_NO_ACTIVITY_CLASS = "No activity class found for the notification";
     public static final String ERROR_NO_MESSAGE = "No message specified for the notification";
-    public static final String ERROR_NO_NOTIF_ID = "No notification ID specified for the notification";
     public static final String ERROR_COVERT_ACTIONS = "Exception while converting actions to JSON object.";
     public static final String ERROR_GET_ACTIONS_ARRAY = "Exception while getting action from actionsArray.";
     public static final String ERROR_SEND_PUSH_NOTIFICATION = "failed to send push notification";

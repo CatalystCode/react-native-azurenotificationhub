@@ -229,7 +229,7 @@ public final class ReactNativeUtil {
         bundle.putBoolean(KEY_REMOTE_NOTIFICATION_FOREGROUND, true);
         bundle.putBoolean(KEY_REMOTE_NOTIFICATION_USER_INTERACTION, false);
         bundle.putBoolean(KEY_REMOTE_NOTIFICATION_COLDSTART, false);
-        intent.putExtra(KEY_INTENT_NOTIFICATION, bundle);
+        intent.putExtra(KEY_NOTIFICATION_PAYLOAD_TYPE, bundle);
 
         return intent;
     }
@@ -263,7 +263,7 @@ public final class ReactNativeUtil {
                 actionIntent.setAction(context.getPackageName() + "." + action);
                 // Add "action" for later identifying which button gets pressed.
                 bundle.putString(KEY_REMOTE_NOTIFICATION_ACTION, action);
-                actionIntent.putExtra(KEY_INTENT_NOTIFICATION, bundle);
+                actionIntent.putExtra(KEY_NOTIFICATION_PAYLOAD_TYPE, bundle);
                 PendingIntent pendingActionIntent = PendingIntent.getBroadcast(context, notificationID, actionIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT);
                 notification.addAction(icon, action, pendingActionIntent);
@@ -286,6 +286,21 @@ public final class ReactNativeUtil {
                 .setAutoCancel(autoCancel);
 
         return notificationBuilder;
+    }
+
+    public static Bundle getBundleFromIntent(Intent intent) {
+        Bundle bundle = null;
+        if (intent.hasExtra(KEY_NOTIFICATION_PAYLOAD_TYPE)) {
+            bundle = intent.getBundleExtra(KEY_NOTIFICATION_PAYLOAD_TYPE);
+        } else if (intent.hasExtra(KEY_REMOTE_NOTIFICATION_ID)) {
+            bundle = intent.getExtras();
+        }
+
+        return bundle;
+    }
+
+    public static NotificationCompat.BigTextStyle getBigTextStyle(String bigText) {
+        return new NotificationCompat.BigTextStyle().bigText(bigText);
     }
 
     private ReactNativeUtil() {

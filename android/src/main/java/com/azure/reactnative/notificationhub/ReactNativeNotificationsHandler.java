@@ -26,6 +26,13 @@ public final class ReactNativeNotificationsHandler {
 
     private static final long DEFAULT_VIBRATION = 300L;
 
+    /**
+     * Used for both "notification" and "data" payload types in order to notify a running ReactJS app.
+     *
+     * Example:
+     *  {"data":{"message":"Notification Hub test notification"}} // data
+     *  {"notification":{"body":"Notification Hub test notification"}} // notification
+     */
     public static void sendBroadcast(final Context context, final Intent intent, final long delay) {
         ReactNativeUtil.runInWorkerThread(new Runnable() {
             public void run() {
@@ -39,6 +46,13 @@ public final class ReactNativeNotificationsHandler {
         });
     }
 
+    /**
+     * Used for both "notification" and "data" payload types in order to notify a running ReactJS app.
+     *
+     * Example:
+     *  {"data":{"message":"Notification Hub test notification"}} // data
+     *  {"notification":{"body":"Notification Hub test notification"}} // notification
+     */
     public static void sendBroadcast(final Context context, final Bundle bundle, final long delay) {
         ReactNativeUtil.runInWorkerThread(new Runnable() {
             public void run() {
@@ -53,6 +67,12 @@ public final class ReactNativeNotificationsHandler {
         });
     }
 
+    /**
+     * Used for "data" payload type in order to create a notification and announce it using
+     * notification service.
+     *
+     * Example: {"data":{"message":"Notification Hub test notification"}}
+     */
     public static void sendNotification(Context context, Bundle bundle, String notificationChannelID) {
         try {
             Class intentClass = ReactNativeUtil.getMainActivityClass(context);
@@ -61,14 +81,13 @@ public final class ReactNativeNotificationsHandler {
                 return;
             }
 
-            if (bundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE) == null) {
-                Log.e(TAG, ERROR_NO_MESSAGE);
-                return;
+            String message = bundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE);
+            if (message == null) {
+                message = bundle.getString(KEY_REMOTE_NOTIFICATION_BODY);
             }
 
-            String notificationIdString = bundle.getString(KEY_REMOTE_NOTIFICATION_ID);
-            if (notificationIdString == null) {
-                Log.e(TAG, ERROR_NO_NOTIF_ID);
+            if (message == null) {
+                Log.e(TAG, ERROR_NO_MESSAGE);
                 return;
             }
 
@@ -97,7 +116,7 @@ public final class ReactNativeNotificationsHandler {
                 notificationBuilder.setGroup(group);
             }
 
-            notificationBuilder.setContentText(bundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE));
+            notificationBuilder.setContentText(message);
 
             String subText = bundle.getString(KEY_REMOTE_NOTIFICATION_SUB_TEXT);
             if (subText != null) {
@@ -121,10 +140,9 @@ public final class ReactNativeNotificationsHandler {
 
             String bigText = bundle.getString(KEY_REMOTE_NOTIFICATION_BIG_TEXT);
             if (bigText == null) {
-                bigText = bundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE);
+                bigText = message;
             }
-
-            notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(bigText));
+            notificationBuilder.setStyle(ReactNativeUtil.getBigTextStyle(bigText));
 
             // Create notification intent
             Intent intent = ReactNativeUtil.createNotificationIntent(context, bundle, intentClass);
@@ -147,11 +165,9 @@ public final class ReactNativeNotificationsHandler {
                 }
             }
 
-            int notificationID = notificationIdString.hashCode();
-
+            int notificationID = bundle.getString(KEY_REMOTE_NOTIFICATION_ID).hashCode();
             PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationID, intent,
                     PendingIntent.FLAG_UPDATE_CURRENT);
-
             notificationBuilder.setContentIntent(pendingIntent);
 
             if (!bundle.containsKey(KEY_REMOTE_NOTIFICATION_VIBRATE) || bundle.getBoolean(KEY_REMOTE_NOTIFICATION_VIBRATE)) {

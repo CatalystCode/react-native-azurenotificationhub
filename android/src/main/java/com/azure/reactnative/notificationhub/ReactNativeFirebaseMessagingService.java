@@ -49,8 +49,10 @@ public class ReactNativeFirebaseMessagingService extends FirebaseMessagingServic
                 NotificationChannel channel = builder.build();
                 NotificationManager notificationManager = (NotificationManager) context.getSystemService(
                         Context.NOTIFICATION_SERVICE);
-                notificationManager.createNotificationChannel(channel);
-                notificationChannelID = channel.getId();
+                if (notificationManager != null) {
+                    notificationManager.createNotificationChannel(channel);
+                    notificationChannelID = channel.getId();
+                }
             }
         }
     }

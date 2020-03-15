@@ -59,8 +59,8 @@ import com.facebook.react.bridge.ReactApplicationContext;
 })
 public class ReactNativeNotificationsHandlerTest {
     private final static String CHANNEL_ID = "Channel ID";
-    private final static String NOTIFICATION_TITLE = "Notification Title";
     private final static String NOTIFICATION_ID = "Notification ID";
+    private final static String NOTIFICATION_TITLE = "Notification Title";
     private final static String NOTIFICATION_MESSAGE = "Notification Message";
     private final static String NOTIFICATION_PRIORITY = "normal";
 
@@ -163,26 +163,30 @@ public class ReactNativeNotificationsHandlerTest {
 
     @Test
     public void testSendNotificationNoMessage() {
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_BODY)).thenReturn(null);
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        PowerMockito.verifyStatic(Log.class, times(0));
+        Log.e(TAG, ERROR_NO_MESSAGE);
 
+        reset(mBundle);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(null);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_BODY)).thenReturn(NOTIFICATION_MESSAGE);
+        sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        PowerMockito.verifyStatic(Log.class, times(0));
+        Log.e(TAG, ERROR_NO_MESSAGE);
+
+        reset(mBundle);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(null);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_BODY)).thenReturn(null);
+        sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
         PowerMockito.verifyStatic(Log.class);
         Log.e(TAG, ERROR_NO_MESSAGE);
     }
 
     @Test
-    public void testSendNotificationNoNotifID() {
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-
-        sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
-
-        PowerMockito.verifyStatic(Log.class);
-        Log.e(TAG, ERROR_NO_NOTIF_ID);
-    }
-
-    @Test
     public void testSendNotificationNoTitle() {
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
 
         ApplicationInfo appInfo = PowerMockito.mock(ApplicationInfo.class);
         PackageManager packageManager = PowerMockito.mock(PackageManager.class);
@@ -202,7 +206,6 @@ public class ReactNativeNotificationsHandlerTest {
     @Test
     public void testSendNotificationHasTitle() {
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
@@ -220,7 +223,6 @@ public class ReactNativeNotificationsHandlerTest {
     @Test
     public void testSendNotificationNoPriority() {
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
@@ -232,7 +234,6 @@ public class ReactNativeNotificationsHandlerTest {
     @Test
     public void testSendNotificationHasPriority() {
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_PRIORITY)).thenReturn(NOTIFICATION_PRIORITY);
 
@@ -247,7 +248,6 @@ public class ReactNativeNotificationsHandlerTest {
         final String group = "Notification Group";
 
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_GROUP)).thenReturn(group);
 
@@ -259,7 +259,6 @@ public class ReactNativeNotificationsHandlerTest {
     @Test
     public void testSendNotificationSetContentText() {
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
@@ -272,7 +271,6 @@ public class ReactNativeNotificationsHandlerTest {
         final String subText = "Sub Text";
 
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_SUB_TEXT)).thenReturn(subText);
 
@@ -286,7 +284,6 @@ public class ReactNativeNotificationsHandlerTest {
         final String strNumber = "1";
 
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_NUMBER)).thenReturn(strNumber);
 
@@ -298,7 +295,6 @@ public class ReactNativeNotificationsHandlerTest {
     @Test
     public void testSendNotificationHasSmallIcon() {
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
@@ -311,7 +307,6 @@ public class ReactNativeNotificationsHandlerTest {
     @Test
     public void testSendNotificationNoLargeIcon() {
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
@@ -327,7 +322,6 @@ public class ReactNativeNotificationsHandlerTest {
         final int largeIconResID = 1;
 
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_LARGE_ICON)).thenReturn(largeIcon);
         when(ReactNativeUtil.getLargeIcon(any(), any(), any(), any())).thenReturn(largeIconResID);
@@ -340,38 +334,49 @@ public class ReactNativeNotificationsHandlerTest {
     }
 
     @Test
-    public void testSendNotificationNoBigText() {
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
-
-        sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
-
-        verify(mBundle, times(1)).getString(KEY_REMOTE_NOTIFICATION_BIG_TEXT);
-        verify(mBundle, times(3)).getString(KEY_REMOTE_NOTIFICATION_MESSAGE);
-        verify(mNotificationBuilder, times(1)).setStyle(any());
-    }
-
-    @Test
     public void testSendNotificationHasBigText() {
         final String bigText = "Big Text";
 
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_BIG_TEXT)).thenReturn(bigText);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
 
         verify(mBundle, times(1)).getString(KEY_REMOTE_NOTIFICATION_BIG_TEXT);
-        verify(mBundle, times(2)).getString(KEY_REMOTE_NOTIFICATION_MESSAGE);
-        verify(mNotificationBuilder, times(1)).setStyle(any());
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.getBigTextStyle(bigText);
+    }
+
+    @Test
+    public void testSendNotificationNoBigTextMessage() {
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn("message");
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_BIG_TEXT)).thenReturn(null);
+
+        sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+
+        verify(mBundle, times(1)).getString(KEY_REMOTE_NOTIFICATION_BIG_TEXT);
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.getBigTextStyle("message");
+    }
+
+    @Test
+    public void testSendNotificationNoBigTextBody() {
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_BODY)).thenReturn("body");
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_BIG_TEXT)).thenReturn(null);
+
+        sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+
+        verify(mBundle, times(1)).getString(KEY_REMOTE_NOTIFICATION_BIG_TEXT);
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.getBigTextStyle("body");
     }
 
     @Test
     public void testSendNotificationCreateNotificationIntent() {
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
@@ -385,7 +390,6 @@ public class ReactNativeNotificationsHandlerTest {
         final String playSound = "Play Sound";
 
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.getBoolean(KEY_REMOTE_NOTIFICATION_PLAY_SOUND)).thenReturn(true);
         Uri soundUri = PowerMockito.mock(Uri.class);
@@ -401,7 +405,6 @@ public class ReactNativeNotificationsHandlerTest {
     @Test
     public void testSendNotificationDisableSound() {
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.containsKey(KEY_REMOTE_NOTIFICATION_PLAY_SOUND)).thenReturn(true);
         when(mBundle.getBoolean(KEY_REMOTE_NOTIFICATION_PLAY_SOUND)).thenReturn(false);
@@ -417,7 +420,6 @@ public class ReactNativeNotificationsHandlerTest {
         final boolean ongoing = true;
 
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.containsKey(KEY_REMOTE_NOTIFICATION_ONGOING)).thenReturn(true);
         when(mBundle.getBoolean(KEY_REMOTE_NOTIFICATION_ONGOING)).thenReturn(ongoing);
@@ -433,7 +435,6 @@ public class ReactNativeNotificationsHandlerTest {
         final String color = "#FF00FF";
 
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_COLOR)).thenReturn(color);
 
@@ -447,8 +448,8 @@ public class ReactNativeNotificationsHandlerTest {
 
     @Test
     public void testSendNotificationSetContentIntent() {
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
@@ -459,7 +460,6 @@ public class ReactNativeNotificationsHandlerTest {
     @Test
     public void testSendNotificationDisableVibration() {
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.containsKey(KEY_REMOTE_NOTIFICATION_VIBRATE)).thenReturn(true);
         when(mBundle.getBoolean(KEY_REMOTE_NOTIFICATION_VIBRATE)).thenReturn(false);
@@ -471,8 +471,8 @@ public class ReactNativeNotificationsHandlerTest {
 
     @Test
     public void testSendNotificationHasVibration() {
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.containsKey(KEY_REMOTE_NOTIFICATION_VIBRATE)).thenReturn(false);
 
@@ -483,8 +483,8 @@ public class ReactNativeNotificationsHandlerTest {
 
     @Test
     public void testSendNotificationProcessActions() {
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
@@ -495,8 +495,8 @@ public class ReactNativeNotificationsHandlerTest {
 
     @Test
     public void testSendNotificationNotifyNoTag() {
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         NotificationManager notificationManager = PowerMockito.mock(NotificationManager.class);
         when(mReactApplicationContext.getSystemService(Context.NOTIFICATION_SERVICE)).thenReturn(
@@ -513,8 +513,8 @@ public class ReactNativeNotificationsHandlerTest {
     public void testSendNotificationNotifyHasTag() {
         final String tags = "[ Tag0, Tag1, Tag2 ]";
 
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.containsKey(KEY_REMOTE_NOTIFICATION_TAG)).thenReturn(true);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TAG)).thenReturn(tags);

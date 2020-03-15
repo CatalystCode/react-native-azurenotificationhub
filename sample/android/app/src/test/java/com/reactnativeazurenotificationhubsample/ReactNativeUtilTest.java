@@ -511,7 +511,7 @@ public class ReactNativeUtilTest {
         PowerMockito.verifyStatic(IntentFactory.class);
         IntentFactory.createIntent(mReactApplicationContext, null);
         verify(intent, times(1)).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        verify(intent, times(1)).putExtra(KEY_INTENT_NOTIFICATION, mBundle);
+        verify(intent, times(1)).putExtra(KEY_NOTIFICATION_PAYLOAD_TYPE, mBundle);
         verify(mBundle, times(1)).putBoolean(
                 KEY_REMOTE_NOTIFICATION_FOREGROUND, true);
         verify(mBundle, times(1)).putBoolean(
@@ -596,5 +596,26 @@ public class ReactNativeUtilTest {
                 KEY_REMOTE_NOTIFICATION_ACTION, "Action");
         verify(notificationBuilder, times(2)).addAction(
                 eq(0), eq("Action"), any());
+    }
+
+    @Test
+    public void testGetBundleFromIntent() {
+        Intent intent = PowerMockito.mock(Intent.class);
+        when(intent.hasExtra(KEY_NOTIFICATION_PAYLOAD_TYPE)).thenReturn(true);
+        getBundleFromIntent(intent);
+        verify(intent, times(1)).getBundleExtra(KEY_NOTIFICATION_PAYLOAD_TYPE);
+
+        reset(intent);
+        when(intent.hasExtra(KEY_NOTIFICATION_PAYLOAD_TYPE)).thenReturn(false);
+        when(intent.hasExtra(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(true);
+        getBundleFromIntent(intent);
+        verify(intent, times(1)).getExtras();
+
+        reset(intent);
+        when(intent.hasExtra(KEY_NOTIFICATION_PAYLOAD_TYPE)).thenReturn(false);
+        when(intent.hasExtra(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(false);
+        getBundleFromIntent(intent);
+        verify(intent, times(0)).getBundleExtra(KEY_NOTIFICATION_PAYLOAD_TYPE);
+        verify(intent, times(0)).getExtras();
     }
 }
