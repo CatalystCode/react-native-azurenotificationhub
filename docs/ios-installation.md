@@ -16,7 +16,7 @@ In addition to the standard React Native requirements, you will also need the fo
 
 Install the library using either **Yarn**:
 
-    yar add react-native-azurenotificationhub
+    yarn add react-native-azurenotificationhub
 
 or npm:
 
