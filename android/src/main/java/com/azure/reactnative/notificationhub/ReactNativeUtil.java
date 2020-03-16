@@ -26,9 +26,9 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -333,6 +333,10 @@ public final class ReactNativeUtil {
             Log.e(TAG, ERROR_FETCH_IMAGE, e);
             return null;
         }
+    }
+
+    public static String genUUID() {
+        return UUID.randomUUID().toString();
     }
 
     private ReactNativeUtil() {

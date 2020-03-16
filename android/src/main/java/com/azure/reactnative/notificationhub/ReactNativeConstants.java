@@ -22,6 +22,9 @@ public final class ReactNativeConstants {
     public static final String KEY_REGISTRATION_CHANNELSHOWBADGE = "channelShowBadge";
     public static final String KEY_REGISTRATION_CHANNELENABLELIGHTS = "channelEnableLights";
     public static final String KEY_REGISTRATION_CHANNELENABLEVIBRATION = "channelEnableVibration";
+    public static final String KEY_REGISTRATION_TEMPLATENAME = "templateName";
+    public static final String KEY_REGISTRATION_TEMPLATE = "template";
+    public static final String KEY_REGISTRATION_ISTEMPLATE = "isTemplate";
 
     // Shared prefs used in NotificationHubUtil
     public static final String SHARED_PREFS_NAME = "com.azure.reactnative.notificationhub.NotificationHubUtil";
@@ -36,6 +39,10 @@ public final class ReactNativeConstants {
     public static final String KEY_FOR_PREFS_CHANNELSHOWBADGE = "AzureNotificationHub_channelShowBadge";
     public static final String KEY_FOR_PREFS_CHANNELENABLELIGHTS = "AzureNotificationHub_channelEnableLights";
     public static final String KEY_FOR_PREFS_CHANNELENABLEVIBRATION = "AzureNotificationHub_channelEnableVibration";
+    public static final String KEY_FOR_PREFS_TEMPLATENAME = "AzureNotificationHub_templateName";
+    public static final String KEY_FOR_PREFS_TEMPLATE = "AzureNotificationHub_template";
+    public static final String KEY_FOR_PREFS_ISTEMPLATE = "AzureNotificationHub_isTemplate";
+    public static final String KEY_FOR_PREFS_UUID = "AzureNotificationHub_UUID";
 
     // Remote notification payload
     public static final String KEY_REMOTE_NOTIFICATION_MESSAGE = "message";
@@ -85,6 +92,10 @@ public final class ReactNativeConstants {
     public static final String RESOURCE_NAME_NOTIFICATION = "ic_notification";
     public static final String RESOURCE_NAME_LAUNCHER = "ic_launcher";
 
+    // Promise
+    public static final String KEY_PROMISE_RESOLVE_UUID = "uuid";
+    public static final String AZURE_NOTIFICATION_HUB_UNREGISTERED = "Unregistered successfully";
+
     // Errors
     public static final String ERROR_NO_ACTIVITY_CLASS = "No activity class found for the notification";
     public static final String ERROR_NO_MESSAGE = "No message specified for the notification";
@@ -96,6 +107,8 @@ public final class ReactNativeConstants {
     public static final String ERROR_INVALID_CONNECTION_STRING = "Connection string cannot be null.";
     public static final String ERROR_INVALID_HUBNAME = "Hub name cannot be null.";
     public static final String ERROR_INVALID_SENDER_ID = "Sender ID cannot be null.";
+    public static final String ERROR_INVALID_TEMPLATE_NAME = "Template Name cannot be null.";
+    public static final String ERROR_INVALID_TEMPLATE = "Template cannot be null.";
     public static final String ERROR_PLAY_SERVICES = "E_PLAY_SERVICES";
     public static final String ERROR_PLAY_SERVICES_DISABLED = "User must enable Google Play Services.";
     public static final String ERROR_PLAY_SERVICES_UNSUPPORTED = "This device is not supported by Google Play Services.";
@@ -103,6 +116,12 @@ public final class ReactNativeConstants {
     public static final String ERROR_NOT_REGISTERED = "E_NOT_REGISTERED";
     public static final String ERROR_NOT_REGISTERED_DESC = "No registration to Azure Notification Hub.";
     public static final String ERROR_FETCH_IMAGE = "Error while fetching image.";
+    public static final String ERROR_GET_INIT_NOTIFICATION = "E_GET_INIT_NOTIF";
+    public static final String ERROR_ACTIVITY_IS_NULL = "Current activity is null";
+    public static final String ERROR_INTENT_EXTRAS_IS_NULL = "Intent get extras is null";
+    public static final String ERROR_ACTIVITY_INTENT_IS_NULL = "Activity intent is null";
+    public static final String ERROR_GET_UUID = "E_GET_UUID";
+    public static final String ERROR_NO_UUID_SET = "No uuid set";
 
     private ReactNativeConstants() {
     }
