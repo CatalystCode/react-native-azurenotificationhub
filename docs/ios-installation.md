@@ -14,9 +14,17 @@ In addition to the standard React Native requirements, you will also need the fo
 
 ## Install react-native-azurenotificationhub
 
-```
-npm install react-native-azurenotificationhub
-```
+Install the library using either **Yarn**:
+
+    yar add react-native-azurenotificationhub
+
+or npm:
+
+    npm install --save react-native-azurenotificationhub
+
+Add the following line to your `ios/Podfile` file and run **pod install**
+    
+    pod 'RNAzureNotificationHub', :podspec => '../node_modules/react-native-azurenotificationhub/RNAzureNotificationHub.podspec'
 
 ## Create a Notification Hub
 
