@@ -3,10 +3,25 @@ package com.azure.reactnative.notificationhub;
 public final class ReactNativeConstants {
     // Notification
     public static final String AZURE_NOTIFICATION_HUB_NAME = "AzureNotificationHub";
-    public static final String NOTIF_REGISTER_AZURE_HUB_EVENT = "azureNotificationHubRegistered";
-    public static final String NOTIF_AZURE_HUB_REGISTRATION_ERROR_EVENT = "azureNotificationHubRegistrationError";
-    public static final String DEVICE_NOTIF_EVENT = "remoteNotificationReceived";
     public static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
+    public static final String KEY_NOTIFICATION_PAYLOAD_TYPE = "notification";
+    public static final String KEY_DATA_PAYLOAD_TYPE = "data";
+
+    // Notification hub events
+    public static final String EVENT_REMOTE_NOTIFICATION_RECEIVED = "remoteNotificationReceived";
+    public static final String EVENT_AZURE_NOTIFICATION_HUB_REGISTERED = "azureNotificationHubRegistered";
+    public static final String EVENT_AZURE_NOTIFICATION_HUB_REGISTERED_ERROR = "azureNotificationHubRegisteredError";
+
+    // Registration's keys
+    public static final String KEY_REGISTRATION_CONNECTIONSTRING = "connectionString";
+    public static final String KEY_REGISTRATION_HUBNAME = "hubName";
+    public static final String KEY_REGISTRATION_SENDERID = "senderID";
+    public static final String KEY_REGISTRATION_TAGS = "tags";
+    public static final String KEY_REGISTRATION_CHANNELNAME = "channelName";
+    public static final String KEY_REGISTRATION_CHANNELIMPORTANCE = "channelImportance";
+    public static final String KEY_REGISTRATION_CHANNELSHOWBADGE = "channelShowBadge";
+    public static final String KEY_REGISTRATION_CHANNELENABLELIGHTS = "channelEnableLights";
+    public static final String KEY_REGISTRATION_CHANNELENABLEVIBRATION = "channelEnableVibration";
 
     // Shared prefs used in NotificationHubUtil
     public static final String SHARED_PREFS_NAME = "com.azure.reactnative.notificationhub.NotificationHubUtil";
@@ -16,6 +31,7 @@ public final class ReactNativeConstants {
     public static final String KEY_FOR_PREFS_FCMTOKEN = "AzureNotificationHub_FCMToken";
     public static final String KEY_FOR_PREFS_TAGS = "AzureNotificationHub_Tags";
     public static final String KEY_FOR_PREFS_SENDERID = "AzureNotificationHub_senderID";
+    public static final String KEY_FOR_PREFS_CHANNELNAME = "AzureNotificationHub_channelName";
     public static final String KEY_FOR_PREFS_CHANNELIMPORTANCE = "AzureNotificationHub_channelImportance";
     public static final String KEY_FOR_PREFS_CHANNELSHOWBADGE = "AzureNotificationHub_channelShowBadge";
     public static final String KEY_FOR_PREFS_CHANNELENABLELIGHTS = "AzureNotificationHub_channelEnableLights";
@@ -23,6 +39,7 @@ public final class ReactNativeConstants {
 
     // Remote notification payload
     public static final String KEY_REMOTE_NOTIFICATION_MESSAGE = "message";
+    public static final String KEY_REMOTE_NOTIFICATION_BODY = "body";
     public static final String KEY_REMOTE_NOTIFICATION_ID = "google.message_id";
     public static final String KEY_REMOTE_NOTIFICATION_TITLE = "title";
     public static final String KEY_REMOTE_NOTIFICATION_PRIORITY = "google.original_priority";
@@ -46,6 +63,7 @@ public final class ReactNativeConstants {
     public static final String KEY_REMOTE_NOTIFICATION_TAG = "tag";
     public static final String KEY_REMOTE_NOTIFICATION_USER_INTERACTION = "userInteraction";
     public static final String KEY_REMOTE_NOTIFICATION_COLDSTART = "coldstart";
+    public static final String KEY_REMOTE_NOTIFICATION_AVATAR_URL = "avatarUrl";
 
     // Remote notification payload's priority
     public static final String REMOTE_NOTIFICATION_PRIORITY_MAX = "max";
@@ -54,8 +72,12 @@ public final class ReactNativeConstants {
     public static final String REMOTE_NOTIFICATION_PRIORITY_MIN = "min";
     public static final String REMOTE_NOTIFICATION_PRIORITY_NORMAL = "normal";
 
-    // Intent payload
-    public static final String KEY_INTENT_NOTIFICATION = "notification";
+    // Intent
+    public static final String KEY_INTENT_EVENT_NAME = "eventName";
+    public static final String KEY_INTENT_EVENT_TYPE = "eventType";
+    public static final String KEY_INTENT_EVENT_STRING_DATA = "eventStringData";
+    public static final String INTENT_EVENT_TYPE_STRING = "eventTypeString";
+    public static final String INTENT_EVENT_TYPE_BUNDLE = "eventTypeBundle";
 
     // Resources
     public static final String RESOURCE_DEF_TYPE_MIPMAP = "mipmap";
@@ -66,7 +88,6 @@ public final class ReactNativeConstants {
     // Errors
     public static final String ERROR_NO_ACTIVITY_CLASS = "No activity class found for the notification";
     public static final String ERROR_NO_MESSAGE = "No message specified for the notification";
-    public static final String ERROR_NO_NOTIF_ID = "No notification ID specified for the notification";
     public static final String ERROR_COVERT_ACTIONS = "Exception while converting actions to JSON object.";
     public static final String ERROR_GET_ACTIONS_ARRAY = "Exception while getting action from actionsArray.";
     public static final String ERROR_SEND_PUSH_NOTIFICATION = "failed to send push notification";
@@ -81,6 +102,7 @@ public final class ReactNativeConstants {
     public static final String ERROR_NOTIFICATION_HUB = "E_NOTIFICATION_HUB";
     public static final String ERROR_NOT_REGISTERED = "E_NOT_REGISTERED";
     public static final String ERROR_NOT_REGISTERED_DESC = "No registration to Azure Notification Hub.";
+    public static final String ERROR_FETCH_IMAGE = "Error while fetching image.";
 
     private ReactNativeConstants() {
     }

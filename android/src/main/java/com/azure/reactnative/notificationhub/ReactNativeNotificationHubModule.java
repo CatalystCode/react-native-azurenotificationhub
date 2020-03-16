@@ -11,7 +11,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.LifecycleEventListener;
-import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
@@ -65,27 +64,27 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
     @ReactMethod
     public void register(ReadableMap config, Promise promise) {
         ReactNativeNotificationHubUtil notificationHubUtil = ReactNativeNotificationHubUtil.getInstance();
-        String connectionString = config.getString("connectionString");
+        String connectionString = config.getString(KEY_REGISTRATION_CONNECTIONSTRING);
         if (connectionString == null) {
             promise.reject(ERROR_INVALID_ARGUMENTS, ERROR_INVALID_CONNECTION_STRING);
             return;
         }
 
-        String hubName = config.getString("hubName");
+        String hubName = config.getString(KEY_REGISTRATION_HUBNAME);
         if (hubName == null) {
             promise.reject(ERROR_INVALID_ARGUMENTS, ERROR_INVALID_HUBNAME);
             return;
         }
 
-        String senderID = config.getString("senderID");
+        String senderID = config.getString(KEY_REGISTRATION_SENDERID);
         if (senderID == null) {
             promise.reject(ERROR_INVALID_ARGUMENTS, ERROR_INVALID_SENDER_ID);
             return;
         }
 
         String[] tags = null;
-        if (config.hasKey("tags") && !config.isNull("tags")) {
-            ReadableArray tagsJson = config.getArray("tags");
+        if (config.hasKey(KEY_REGISTRATION_TAGS) && !config.isNull(KEY_REGISTRATION_TAGS)) {
+            ReadableArray tagsJson = config.getArray(KEY_REGISTRATION_TAGS);
             tags = new String[tagsJson.size()];
             for (int i = 0; i < tagsJson.size(); ++i) {
                 tags[i] = tagsJson.getString(i);
@@ -98,23 +97,28 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
         notificationHubUtil.setSenderID(reactContext, senderID);
         notificationHubUtil.setTags(reactContext, tags);
 
-        if (config.hasKey("channelImportance")) {
-            int channelImportance = config.getInt("channelImportance");
+        if (config.hasKey(KEY_REGISTRATION_CHANNELNAME)) {
+            String channelName = config.getString(KEY_REGISTRATION_CHANNELNAME);
+            notificationHubUtil.setChannelName(reactContext, channelName);
+        }
+
+        if (config.hasKey(KEY_REGISTRATION_CHANNELIMPORTANCE)) {
+            int channelImportance = config.getInt(KEY_REGISTRATION_CHANNELIMPORTANCE);
             notificationHubUtil.setChannelImportance(reactContext, channelImportance);
         }
 
-        if (config.hasKey("channelShowBadge")) {
-            boolean channelShowBadge = config.getBoolean("channelShowBadge");
+        if (config.hasKey(KEY_REGISTRATION_CHANNELSHOWBADGE)) {
+            boolean channelShowBadge = config.getBoolean(KEY_REGISTRATION_CHANNELSHOWBADGE);
             notificationHubUtil.setChannelShowBadge(reactContext, channelShowBadge);
         }
 
-        if (config.hasKey("channelEnableLights")) {
-            boolean channelEnableLights = config.getBoolean("channelEnableLights");
+        if (config.hasKey(KEY_REGISTRATION_CHANNELENABLELIGHTS)) {
+            boolean channelEnableLights = config.getBoolean(KEY_REGISTRATION_CHANNELENABLELIGHTS);
             notificationHubUtil.setChannelEnableLights(reactContext, channelEnableLights);
         }
 
-        if (config.hasKey("channelEnableVibration")) {
-            boolean channelEnableVibration = config.getBoolean("channelEnableVibration");
+        if (config.hasKey(KEY_REGISTRATION_CHANNELENABLEVIBRATION)) {
+            boolean channelEnableVibration = config.getBoolean(KEY_REGISTRATION_CHANNELENABLEVIBRATION);
             notificationHubUtil.setChannelEnableVibration(reactContext, channelEnableVibration);
         }
 
@@ -170,9 +174,9 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
         if (activity != null) {
             Intent intent = activity.getIntent();
             if (intent != null) {
-                Bundle bundle = intent.getBundleExtra(KEY_INTENT_NOTIFICATION);
+                Bundle bundle = ReactNativeUtil.getBundleFromIntent(intent);
                 if (bundle != null) {
-                    intent.removeExtra(KEY_INTENT_NOTIFICATION);
+                    ReactNativeUtil.removeNotificationFromIntent(intent);
                     bundle.putBoolean(KEY_REMOTE_NOTIFICATION_FOREGROUND, false);
                     bundle.putBoolean(KEY_REMOTE_NOTIFICATION_USER_INTERACTION, true);
                     bundle.putBoolean(KEY_REMOTE_NOTIFICATION_COLDSTART, true);
@@ -194,7 +198,7 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
 
     @Override
     public void onNewIntent(Intent intent) {
-        Bundle bundle = intent.getBundleExtra(KEY_INTENT_NOTIFICATION);
+        Bundle bundle = ReactNativeUtil.getBundleFromIntent(intent);
         if (bundle != null) {
             bundle.putBoolean(KEY_REMOTE_NOTIFICATION_FOREGROUND, false);
             bundle.putBoolean(KEY_REMOTE_NOTIFICATION_USER_INTERACTION, true);
@@ -211,10 +215,7 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
         @Override
         public void onReceive(Context context, Intent intent) {
             if (getIsForeground()) {
-                String event = intent.getStringExtra("event");
-                String data = intent.getStringExtra("data");
-                mReactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                        .emit(event, data);
+                ReactNativeUtil.emitIntent(mReactContext, intent);
             }
         }
     }

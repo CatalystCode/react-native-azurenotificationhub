@@ -120,6 +120,11 @@ In `android/app/src/main/AndroidManifest.xml`
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <activity
+          android:launchMode="singleTop"
+          ...>
+        </activity>
     ...
 ```
 
@@ -181,14 +186,15 @@ import {
 const NotificationHub = require('react-native-azurenotificationhub');
 const PushNotificationEmitter = new NativeEventEmitter(NotificationHub);
 
-const NOTIF_REGISTER_AZURE_HUB_EVENT = 'azureNotificationHubRegistered';
-const NOTIF_AZURE_HUB_REGISTRATION_ERROR_EVENT = 'azureNotificationHubRegistrationError';
-const DEVICE_NOTIF_EVENT = 'remoteNotificationReceived';
+const EVENT_AZURE_NOTIFICATION_HUB_REGISTERED           = 'azureNotificationHubRegistered';
+const EVENT_AZURE_NOTIFICATION_HUB_REGISTERED_ERROR     = 'azureNotificationHubRegisteredError';
+const EVENT_REMOTE_NOTIFICATION_RECEIVED                = 'remoteNotificationReceived';
 
 const connectionString = '...';       // The Notification Hub connection string
 const hubName = '...';                // The Notification Hub name
 const senderID = '...';               // The Sender ID from the Cloud Messaging tab of the Firebase console
 const tags = [ ... ];                 // The set of tags to subscribe to
+const channelName = '...';            // The channel's name
 const channelImportance = 3;          // The channel's importance (NotificationManager.IMPORTANCE_DEFAULT = 3)
                                       // Notes:
                                       //   1. Setting this value to 4 enables heads-up notification on Android 8
@@ -201,18 +207,19 @@ const channelEnableVibration = true;
 export default class App extends Component {
   constructor(props) {
     super(props);
-    PushNotificationEmitter.addListener(DEVICE_NOTIF_EVENT, this._onRemoteNotification);
+    PushNotificationEmitter.addListener(EVENT_REMOTE_NOTIFICATION_RECEIVED, this._onRemoteNotification);
   }
 
   register() {
-    PushNotificationEmitter.addListener(NOTIF_REGISTER_AZURE_HUB_EVENT, this._onAzureNotificationHubRegistered);
-    PushNotificationEmitter.addListener(NOTIF_AZURE_HUB_REGISTRATION_ERROR_EVENT, this._onAzureNotificationHubRegistrationError);
+    PushNotificationEmitter.addListener(EVENT_AZURE_NOTIFICATION_HUB_REGISTERED, this._onAzureNotificationHubRegistered);
+    PushNotificationEmitter.addListener(EVENT_AZURE_NOTIFICATION_HUB_REGISTERED_ERROR, this._onAzureNotificationHubRegisteredError);
   
     NotificationHub.register({
       connectionString,
       hubName,
       senderID,
       tags,
+      channelName,
       channelImportance,
       channelShowBadge,
       channelEnableLights,
@@ -251,13 +258,12 @@ export default class App extends Component {
     console.warn('RegistrationID: ' + registrationID);
   }
   
-  _onAzureNotificationHubRegistrationError(error) {
+  _onAzureNotificationHubRegisteredError(error) {
     console.warn('Error: ' + error);
   }
   
   _onRemoteNotification(notification) {
-    // Note notification will be a JSON string for android
-    console.warn('Notification received: ' + notification);
+    console.warn(notification);
   }
 }
 

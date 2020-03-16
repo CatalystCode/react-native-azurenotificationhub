@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
@@ -17,7 +18,6 @@ import android.util.Log;
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -35,7 +35,6 @@ import static org.powermock.api.mockito.PowerMockito.when;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -61,8 +60,8 @@ import com.facebook.react.bridge.ReactApplicationContext;
 })
 public class ReactNativeNotificationsHandlerTest {
     private final static String CHANNEL_ID = "Channel ID";
-    private final static String NOTIFICATION_TITLE = "Notification Title";
     private final static String NOTIFICATION_ID = "Notification ID";
+    private final static String NOTIFICATION_TITLE = "Notification Title";
     private final static String NOTIFICATION_MESSAGE = "Notification Message";
     private final static String NOTIFICATION_PRIORITY = "normal";
 
@@ -85,6 +84,7 @@ public class ReactNativeNotificationsHandlerTest {
     Bundle mBundle;
 
     private Class mIntentClass;
+    private ArgumentCaptor<Runnable> mWorkerTask;
 
     @Before
     public void setUp() throws Exception {
@@ -106,6 +106,9 @@ public class ReactNativeNotificationsHandlerTest {
 
         mIntentClass = Class.forName("com.reactnativeazurenotificationhubsample.MainActivity");
         when(ReactNativeUtil.getMainActivityClass(mReactApplicationContext)).thenReturn(mIntentClass);
+        mWorkerTask = ArgumentCaptor.forClass(Runnable.class);
+        PowerMockito.doNothing().when(
+                ReactNativeUtil.class, "runInWorkerThread", mWorkerTask.capture());
         mNotificationBuilder = PowerMockito.mock(NotificationCompat.Builder.class);
         when(ReactNativeUtil.initNotificationCompatBuilder(
                 any(), any(), any(), any(), anyInt(), anyInt(), anyBoolean())).thenReturn(mNotificationBuilder);
@@ -114,25 +117,33 @@ public class ReactNativeNotificationsHandlerTest {
     }
 
     @Test
-    public void testSendBroadcast() throws Exception {
+    public void testSendBroadcastIntent() throws Exception {
         final int delay = 1000;
-        JSONObject json = PowerMockito.mock(JSONObject.class);
-        when(ReactNativeUtil.convertBundleToJSON(mBundle)).thenReturn(json);
 
         Intent intent = PowerMockito.mock(Intent.class);
-        when(ReactNativeUtil.createBroadcastIntent(TAG, json)).thenReturn(intent);
 
-        ArgumentCaptor<Runnable> workerTask = ArgumentCaptor.forClass(Runnable.class);
-        PowerMockito.doNothing().when(
-                ReactNativeUtil.class, "runInWorkerThread", workerTask.capture());
-
-        sendBroadcast(mReactApplicationContext, mBundle, delay);
-        workerTask.getValue().run();
+        sendBroadcast(mReactApplicationContext, intent, delay);
+        mWorkerTask.getValue().run();
 
         PowerMockito.verifyStatic(ReactNativeUtil.class);
         ReactNativeUtil.runInWorkerThread(any(Runnable.class));
-        ReactNativeUtil.convertBundleToJSON(mBundle);
-        ReactNativeUtil.createBroadcastIntent(TAG, json);
+        verify(mLocalBroadcastManager, times(1)).sendBroadcast(intent);
+    }
+
+    @Test
+    public void testSendBroadcastBundle() throws Exception {
+        final int delay = 1000;
+
+        Intent intent = PowerMockito.mock(Intent.class);
+        when(ReactNativeUtil.createBroadcastIntent(TAG, mBundle)).thenReturn(intent);
+
+        sendBroadcast(mReactApplicationContext, mBundle, delay);
+        mWorkerTask.getValue().run();
+
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.runInWorkerThread(any(Runnable.class));
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.createBroadcastIntent(TAG, mBundle);
         verify(mLocalBroadcastManager, times(1)).sendBroadcast(intent);
     }
 
@@ -143,6 +154,7 @@ public class ReactNativeNotificationsHandlerTest {
         Bundle bundle = PowerMockito.mock(Bundle.class);
 
         sendNotification(mReactApplicationContext, bundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         PowerMockito.verifyStatic(Log.class);
         Log.e(TAG, ERROR_NO_ACTIVITY_CLASS);
@@ -150,26 +162,33 @@ public class ReactNativeNotificationsHandlerTest {
 
     @Test
     public void testSendNotificationNoMessage() {
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_BODY)).thenReturn(null);
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
+        PowerMockito.verifyStatic(Log.class, times(0));
+        Log.e(TAG, ERROR_NO_MESSAGE);
 
+        reset(mBundle);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(null);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_BODY)).thenReturn(NOTIFICATION_MESSAGE);
+        sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
+        PowerMockito.verifyStatic(Log.class, times(0));
+        Log.e(TAG, ERROR_NO_MESSAGE);
+
+        reset(mBundle);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(null);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_BODY)).thenReturn(null);
+        sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
         PowerMockito.verifyStatic(Log.class);
         Log.e(TAG, ERROR_NO_MESSAGE);
     }
 
     @Test
-    public void testSendNotificationNoNotifID() {
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-
-        sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
-
-        PowerMockito.verifyStatic(Log.class);
-        Log.e(TAG, ERROR_NO_NOTIF_ID);
-    }
-
-    @Test
     public void testSendNotificationNoTitle() {
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
 
         ApplicationInfo appInfo = PowerMockito.mock(ApplicationInfo.class);
         PackageManager packageManager = PowerMockito.mock(PackageManager.class);
@@ -180,6 +199,7 @@ public class ReactNativeNotificationsHandlerTest {
         when(applicationLabel.toString()).thenReturn(NOTIFICATION_TITLE);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         PowerMockito.verifyStatic(ReactNativeUtil.class);
         ReactNativeUtil.initNotificationCompatBuilder(
@@ -189,10 +209,10 @@ public class ReactNativeNotificationsHandlerTest {
     @Test
     public void testSendNotificationHasTitle() {
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         PowerMockito.verifyStatic(ReactNativeUtil.class);
         ReactNativeUtil.initNotificationCompatBuilder(
@@ -207,10 +227,10 @@ public class ReactNativeNotificationsHandlerTest {
     @Test
     public void testSendNotificationNoPriority() {
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         PowerMockito.verifyStatic(ReactNativeUtil.class);
         ReactNativeUtil.getNotificationCompatPriority(null);
@@ -219,11 +239,11 @@ public class ReactNativeNotificationsHandlerTest {
     @Test
     public void testSendNotificationHasPriority() {
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_PRIORITY)).thenReturn(NOTIFICATION_PRIORITY);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         PowerMockito.verifyStatic(ReactNativeUtil.class);
         ReactNativeUtil.getNotificationCompatPriority(NOTIFICATION_PRIORITY);
@@ -234,11 +254,11 @@ public class ReactNativeNotificationsHandlerTest {
         final String group = "Notification Group";
 
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_GROUP)).thenReturn(group);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         verify(mNotificationBuilder, times(1)).setGroup(group);
     }
@@ -246,10 +266,10 @@ public class ReactNativeNotificationsHandlerTest {
     @Test
     public void testSendNotificationSetContentText() {
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         verify(mNotificationBuilder, times(1)).setContentText(NOTIFICATION_MESSAGE);
     }
@@ -259,11 +279,11 @@ public class ReactNativeNotificationsHandlerTest {
         final String subText = "Sub Text";
 
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_SUB_TEXT)).thenReturn(subText);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         verify(mNotificationBuilder, times(1)).setSubText(subText);
     }
@@ -273,11 +293,11 @@ public class ReactNativeNotificationsHandlerTest {
         final String strNumber = "1";
 
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_NUMBER)).thenReturn(strNumber);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         verify(mNotificationBuilder, times(1)).setNumber(Integer.parseInt(strNumber));
     }
@@ -285,10 +305,10 @@ public class ReactNativeNotificationsHandlerTest {
     @Test
     public void testSendNotificationHasSmallIcon() {
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         PowerMockito.verifyStatic(ReactNativeUtil.class);
         ReactNativeUtil.getSmallIcon(any(), any(), any());
@@ -298,10 +318,10 @@ public class ReactNativeNotificationsHandlerTest {
     @Test
     public void testSendNotificationNoLargeIcon() {
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         PowerMockito.verifyStatic(ReactNativeUtil.class);
         ReactNativeUtil.getLargeIcon(any(), eq(null), any(), any());
@@ -314,12 +334,12 @@ public class ReactNativeNotificationsHandlerTest {
         final int largeIconResID = 1;
 
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_LARGE_ICON)).thenReturn(largeIcon);
         when(ReactNativeUtil.getLargeIcon(any(), any(), any(), any())).thenReturn(largeIconResID);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         PowerMockito.verifyStatic(ReactNativeUtil.class);
         ReactNativeUtil.getLargeIcon(any(), eq(largeIcon), any(), any());
@@ -327,16 +347,34 @@ public class ReactNativeNotificationsHandlerTest {
     }
 
     @Test
-    public void testSendNotificationNoBigText() {
+    public void testSendNotificationHasAvatarUrl() {
+        final String url = "http://avatar.com/1.png";
+
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_AVATAR_URL)).thenReturn(url);
+        Bitmap bitmap = PowerMockito.mock(Bitmap.class);
+        when(ReactNativeUtil.fetchImage(url)).thenReturn(bitmap);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
-        verify(mBundle, times(1)).getString(KEY_REMOTE_NOTIFICATION_BIG_TEXT);
-        verify(mBundle, times(3)).getString(KEY_REMOTE_NOTIFICATION_MESSAGE);
-        verify(mNotificationBuilder, times(1)).setStyle(any());
+        verify(mNotificationBuilder, times(1)).setLargeIcon(bitmap);
+    }
+
+    @Test
+    public void testSendNotificationHasAvatarUrlFetchFailed() {
+        final String url = "http://avatar.com/1.png";
+
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_AVATAR_URL)).thenReturn(url);
+        when(ReactNativeUtil.fetchImage(url)).thenReturn(null);
+
+        sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
+
+        verify(mNotificationBuilder, times(0)).setLargeIcon(any());
     }
 
     @Test
@@ -344,24 +382,52 @@ public class ReactNativeNotificationsHandlerTest {
         final String bigText = "Big Text";
 
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_BIG_TEXT)).thenReturn(bigText);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         verify(mBundle, times(1)).getString(KEY_REMOTE_NOTIFICATION_BIG_TEXT);
-        verify(mBundle, times(2)).getString(KEY_REMOTE_NOTIFICATION_MESSAGE);
-        verify(mNotificationBuilder, times(1)).setStyle(any());
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.getBigTextStyle(bigText);
+    }
+
+    @Test
+    public void testSendNotificationNoBigTextMessage() {
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn("message");
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_BIG_TEXT)).thenReturn(null);
+
+        sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
+
+        verify(mBundle, times(1)).getString(KEY_REMOTE_NOTIFICATION_BIG_TEXT);
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.getBigTextStyle("message");
+    }
+
+    @Test
+    public void testSendNotificationNoBigTextBody() {
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_BODY)).thenReturn("body");
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_BIG_TEXT)).thenReturn(null);
+
+        sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
+
+        verify(mBundle, times(1)).getString(KEY_REMOTE_NOTIFICATION_BIG_TEXT);
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.getBigTextStyle("body");
     }
 
     @Test
     public void testSendNotificationCreateNotificationIntent() {
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         PowerMockito.verifyStatic(ReactNativeUtil.class);
         ReactNativeUtil.createNotificationIntent(any(), any(), any());
@@ -372,13 +438,13 @@ public class ReactNativeNotificationsHandlerTest {
         final String playSound = "Play Sound";
 
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.getBoolean(KEY_REMOTE_NOTIFICATION_PLAY_SOUND)).thenReturn(true);
         Uri soundUri = PowerMockito.mock(Uri.class);
         when(ReactNativeUtil.getSoundUri(any(), any())).thenReturn(soundUri);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         PowerMockito.verifyStatic(ReactNativeUtil.class);
         ReactNativeUtil.getSoundUri(any(), any());
@@ -388,12 +454,12 @@ public class ReactNativeNotificationsHandlerTest {
     @Test
     public void testSendNotificationDisableSound() {
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.containsKey(KEY_REMOTE_NOTIFICATION_PLAY_SOUND)).thenReturn(true);
         when(mBundle.getBoolean(KEY_REMOTE_NOTIFICATION_PLAY_SOUND)).thenReturn(false);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         PowerMockito.verifyStatic(ReactNativeUtil.class, times(0));
         ReactNativeUtil.getSoundUri(any(), any());
@@ -404,12 +470,12 @@ public class ReactNativeNotificationsHandlerTest {
         final boolean ongoing = true;
 
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.containsKey(KEY_REMOTE_NOTIFICATION_ONGOING)).thenReturn(true);
         when(mBundle.getBoolean(KEY_REMOTE_NOTIFICATION_ONGOING)).thenReturn(ongoing);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         verify(mNotificationBuilder, times(1)).setOngoing(ongoing);
     }
@@ -420,13 +486,12 @@ public class ReactNativeNotificationsHandlerTest {
         final String color = "#FF00FF";
 
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_COLOR)).thenReturn(color);
 
         Whitebox.setInternalState(Build.VERSION.class, "SDK_INT", sdkVersion);
-
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         verify(mNotificationBuilder, times(1)).setCategory(NotificationCompat.CATEGORY_CALL);
         verify(mNotificationBuilder, times(1)).setColor(Color.parseColor(color));
@@ -434,11 +499,12 @@ public class ReactNativeNotificationsHandlerTest {
 
     @Test
     public void testSendNotificationSetContentIntent() {
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         verify(mNotificationBuilder, times(1)).setContentIntent(any());
     }
@@ -446,35 +512,37 @@ public class ReactNativeNotificationsHandlerTest {
     @Test
     public void testSendNotificationDisableVibration() {
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.containsKey(KEY_REMOTE_NOTIFICATION_VIBRATE)).thenReturn(true);
         when(mBundle.getBoolean(KEY_REMOTE_NOTIFICATION_VIBRATE)).thenReturn(false);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         verify(mNotificationBuilder, times(0)).setVibrate(any());
     }
 
     @Test
     public void testSendNotificationHasVibration() {
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.containsKey(KEY_REMOTE_NOTIFICATION_VIBRATE)).thenReturn(false);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         verify(mNotificationBuilder, times(1)).setVibrate(any());
     }
 
     @Test
     public void testSendNotificationProcessActions() {
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         PowerMockito.verifyStatic(ReactNativeUtil.class);
         ReactNativeUtil.processNotificationActions(any(), any(), any(), anyInt());
@@ -482,14 +550,15 @@ public class ReactNativeNotificationsHandlerTest {
 
     @Test
     public void testSendNotificationNotifyNoTag() {
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         NotificationManager notificationManager = PowerMockito.mock(NotificationManager.class);
         when(mReactApplicationContext.getSystemService(Context.NOTIFICATION_SERVICE)).thenReturn(
                 notificationManager);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         PowerMockito.verifyStatic(ReactNativeUtil.class);
         ReactNativeUtil.processNotificationActions(any(), any(), any(), anyInt());
@@ -500,8 +569,8 @@ public class ReactNativeNotificationsHandlerTest {
     public void testSendNotificationNotifyHasTag() {
         final String tags = "[ Tag0, Tag1, Tag2 ]";
 
-        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(NOTIFICATION_ID);
+        when(mBundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE)).thenReturn(NOTIFICATION_MESSAGE);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TITLE)).thenReturn(NOTIFICATION_TITLE);
         when(mBundle.containsKey(KEY_REMOTE_NOTIFICATION_TAG)).thenReturn(true);
         when(mBundle.getString(KEY_REMOTE_NOTIFICATION_TAG)).thenReturn(tags);
@@ -510,6 +579,7 @@ public class ReactNativeNotificationsHandlerTest {
                 notificationManager);
 
         sendNotification(mReactApplicationContext, mBundle, CHANNEL_ID);
+        mWorkerTask.getValue().run();
 
         PowerMockito.verifyStatic(ReactNativeUtil.class);
         ReactNativeUtil.processNotificationActions(any(), any(), any(), anyInt());

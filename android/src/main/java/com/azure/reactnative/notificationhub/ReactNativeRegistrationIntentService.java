@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 
 import androidx.core.app.JobIntentService;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.util.Log;
 
@@ -33,7 +32,6 @@ public class ReactNativeRegistrationIntentService extends JobIntentService {
 
     @Override
     protected void onHandleWork(Intent intent) {
-        final LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(this);
         final Intent event = ReactNativeNotificationHubUtil.IntentFactory.createIntent(TAG);
         final ReactNativeNotificationHubUtil notificationHubUtil = ReactNativeNotificationHubUtil.getInstance();
         final String connectionString = notificationHubUtil.getConnectionString(this);
@@ -71,9 +69,16 @@ public class ReactNativeRegistrationIntentService extends JobIntentService {
                                 notificationHubUtil.setRegistrationID(ReactNativeRegistrationIntentService.this, regID);
                                 notificationHubUtil.setFCMToken(ReactNativeRegistrationIntentService.this, token);
 
-                                event.putExtra("event", ReactNativeConstants.NOTIF_REGISTER_AZURE_HUB_EVENT);
-                                event.putExtra("data", regID);
-                                localBroadcastManager.sendBroadcast(event);
+                                event.putExtra(
+                                        ReactNativeConstants.KEY_INTENT_EVENT_NAME,
+                                        ReactNativeConstants.EVENT_AZURE_NOTIFICATION_HUB_REGISTERED);
+                                event.putExtra(
+                                        ReactNativeConstants.KEY_INTENT_EVENT_TYPE,
+                                        ReactNativeConstants.INTENT_EVENT_TYPE_STRING);
+                                event.putExtra(
+                                        ReactNativeConstants.KEY_INTENT_EVENT_STRING_DATA, regID);
+                                ReactNativeNotificationsHandler.sendBroadcast(
+                                        ReactNativeRegistrationIntentService.this, event, 0);
 
                                 // Create notification handler
                                 ReactNativeFirebaseMessagingService.createNotificationChannel(
@@ -82,9 +87,15 @@ public class ReactNativeRegistrationIntentService extends JobIntentService {
                         } catch (Exception e) {
                             Log.e(TAG, "Failed to complete token refresh", e);
 
-                            event.putExtra("event", ReactNativeConstants.NOTIF_AZURE_HUB_REGISTRATION_ERROR_EVENT);
-                            event.putExtra("data", e.getMessage());
-                            localBroadcastManager.sendBroadcast(event);
+                            event.putExtra(
+                                    ReactNativeConstants.KEY_INTENT_EVENT_NAME,
+                                    ReactNativeConstants.EVENT_AZURE_NOTIFICATION_HUB_REGISTERED_ERROR);
+                            event.putExtra(
+                                    ReactNativeConstants.KEY_INTENT_EVENT_TYPE,
+                                    ReactNativeConstants.INTENT_EVENT_TYPE_STRING);
+                            event.putExtra(ReactNativeConstants.KEY_INTENT_EVENT_STRING_DATA, e.getMessage());
+                            ReactNativeNotificationsHandler.sendBroadcast(
+                                    ReactNativeRegistrationIntentService.this, event, 0);
                         }
                     }
                 });
