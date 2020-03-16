@@ -1,4 +1,6 @@
 .gitattributes
 .gitignore
+.github
+.slather.yml
 azure-pipelines.yml
 sample
