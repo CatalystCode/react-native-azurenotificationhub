@@ -378,17 +378,16 @@ public class ReactNativeNotificationHubModuleTest {
         Bundle bundle = PowerMockito.mock(Bundle.class);
         when(mReactApplicationContext.getCurrentActivity()).thenReturn(activity);
         when(activity.getIntent()).thenReturn(intent);
-        when(intent.hasExtra(KEY_NOTIFICATION_PAYLOAD_TYPE)).thenReturn(true);
         when(ReactNativeUtil.getBundleFromIntent(intent)).thenReturn(bundle);
 
         mHubModule.onHostResume();
 
         verify(mNotificationHubUtil, times(1)).setAppIsForeground(true);
-        verify(intent, times(1)).hasExtra(KEY_NOTIFICATION_PAYLOAD_TYPE);
-        verify(intent, times(1)).removeExtra(KEY_NOTIFICATION_PAYLOAD_TYPE);
         verify(bundle, times(1)).putBoolean(KEY_REMOTE_NOTIFICATION_FOREGROUND, false);
         verify(bundle, times(1)).putBoolean(KEY_REMOTE_NOTIFICATION_USER_INTERACTION, true);
         verify(bundle, times(1)).putBoolean(KEY_REMOTE_NOTIFICATION_COLDSTART, true);
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.removeNotificationFromIntent(intent);
         PowerMockito.verifyStatic(ReactNativeNotificationsHandler.class);
         ReactNativeNotificationsHandler.sendBroadcast(eq(mReactApplicationContext), eq(bundle), anyLong());
     }
@@ -400,17 +399,16 @@ public class ReactNativeNotificationHubModuleTest {
         Bundle bundle = PowerMockito.mock(Bundle.class);
         when(mReactApplicationContext.getCurrentActivity()).thenReturn(activity);
         when(activity.getIntent()).thenReturn(intent);
-        when(intent.hasExtra(KEY_NOTIFICATION_PAYLOAD_TYPE)).thenReturn(false);
         when(ReactNativeUtil.getBundleFromIntent(intent)).thenReturn(bundle);
 
         mHubModule.onHostResume();
 
         verify(mNotificationHubUtil, times(1)).setAppIsForeground(true);
-        verify(intent, times(1)).hasExtra(KEY_NOTIFICATION_PAYLOAD_TYPE);
-        verify(intent, times(0)).removeExtra(KEY_NOTIFICATION_PAYLOAD_TYPE);
         verify(bundle, times(1)).putBoolean(KEY_REMOTE_NOTIFICATION_FOREGROUND, false);
         verify(bundle, times(1)).putBoolean(KEY_REMOTE_NOTIFICATION_USER_INTERACTION, true);
         verify(bundle, times(1)).putBoolean(KEY_REMOTE_NOTIFICATION_COLDSTART, true);
+        PowerMockito.verifyStatic(ReactNativeUtil.class);
+        ReactNativeUtil.removeNotificationFromIntent(intent);
         PowerMockito.verifyStatic(ReactNativeNotificationsHandler.class);
         ReactNativeNotificationsHandler.sendBroadcast(eq(mReactApplicationContext), eq(bundle), anyLong());
     }

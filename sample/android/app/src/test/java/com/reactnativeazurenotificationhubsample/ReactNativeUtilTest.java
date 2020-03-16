@@ -5,6 +5,8 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -46,6 +48,8 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -63,6 +67,8 @@ import static com.azure.reactnative.notificationhub.ReactNativeUtil.*;
         IntentFactory.class,
         PendingIntent.class,
         Arguments.class,
+        BitmapFactory.class,
+        UrlWrapper.class,
         Log.class
 })
 public class ReactNativeUtilTest {
@@ -84,6 +90,8 @@ public class ReactNativeUtilTest {
         PowerMockito.mockStatic(IntentFactory.class);
         PowerMockito.mockStatic(PendingIntent.class);
         PowerMockito.mockStatic(Arguments.class);
+        PowerMockito.mockStatic(BitmapFactory.class);
+        PowerMockito.mockStatic(UrlWrapper.class);
         PowerMockito.mockStatic(Log.class);
     }
 
@@ -617,5 +625,36 @@ public class ReactNativeUtilTest {
         getBundleFromIntent(intent);
         verify(intent, times(0)).getBundleExtra(KEY_NOTIFICATION_PAYLOAD_TYPE);
         verify(intent, times(0)).getExtras();
+    }
+
+    @Test
+    public void testRemoveNotificationFromIntent() {
+        Intent intent = PowerMockito.mock(Intent.class);
+        when(intent.hasExtra(KEY_NOTIFICATION_PAYLOAD_TYPE)).thenReturn(true);
+        removeNotificationFromIntent(intent);
+        verify(intent, times(1)).removeExtra(KEY_NOTIFICATION_PAYLOAD_TYPE);
+        verify(intent, times(0)).removeExtra(KEY_REMOTE_NOTIFICATION_ID);
+
+        reset(intent);
+        when(intent.hasExtra(KEY_REMOTE_NOTIFICATION_ID)).thenReturn(true);
+        removeNotificationFromIntent(intent);
+        verify(intent, times(0)).removeExtra(KEY_NOTIFICATION_PAYLOAD_TYPE);
+        verify(intent, times(1)).removeExtra(KEY_REMOTE_NOTIFICATION_ID);
+    }
+
+    @Test
+    public void testFetchImage() throws Exception {
+        final String urlString = "http://somedomain.com/someimage.png";
+
+        HttpURLConnection connection = PowerMockito.mock(HttpURLConnection.class);
+        when(UrlWrapper.openConnection(urlString)).thenReturn(connection);
+        InputStream input = PowerMockito.mock(InputStream.class);
+        when(connection.getInputStream()).thenReturn(input);
+        Bitmap expectedBitmap = PowerMockito.mock(Bitmap.class);
+        when(BitmapFactory.decodeStream(input)).thenReturn(expectedBitmap);
+
+        Bitmap bitmap = ReactNativeUtil.fetchImage(urlString);
+
+        Assert.assertEquals(bitmap, expectedBitmap);
     }
 }

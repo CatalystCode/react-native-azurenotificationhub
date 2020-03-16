@@ -4,6 +4,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,7 +24,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.invoke.WrongMethodTypeException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,7 +37,7 @@ import static com.azure.reactnative.notificationhub.ReactNativeConstants.*;
 public final class ReactNativeUtil {
     public static final String TAG = "ReactNativeUtil";
 
-    private static final ExecutorService mPool = Executors.newFixedThreadPool(1);
+    private static final ExecutorService mPool = Executors.newFixedThreadPool(2);
 
     public static void runInWorkerThread(Runnable runnable) {
         mPool.execute(runnable);
@@ -299,8 +304,35 @@ public final class ReactNativeUtil {
         return bundle;
     }
 
+    public static void removeNotificationFromIntent(Intent intent) {
+        if (intent.hasExtra(KEY_NOTIFICATION_PAYLOAD_TYPE)) {
+            intent.removeExtra(KEY_NOTIFICATION_PAYLOAD_TYPE);
+        } else if (intent.hasExtra(KEY_REMOTE_NOTIFICATION_ID)) {
+            intent.removeExtra(KEY_REMOTE_NOTIFICATION_ID);
+        }
+    }
+
     public static NotificationCompat.BigTextStyle getBigTextStyle(String bigText) {
         return new NotificationCompat.BigTextStyle().bigText(bigText);
+    }
+
+    public static class UrlWrapper {
+        public static HttpURLConnection openConnection(String url) throws Exception {
+            return (HttpURLConnection)(new URL(url)).openConnection();
+        }
+    }
+
+    public static Bitmap fetchImage(String urlString) {
+        try {
+            HttpURLConnection connection = UrlWrapper.openConnection(urlString);
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            return BitmapFactory.decodeStream(input);
+        } catch (Exception e) {
+            Log.e(TAG, ERROR_FETCH_IMAGE, e);
+            return null;
+        }
     }
 
     private ReactNativeUtil() {

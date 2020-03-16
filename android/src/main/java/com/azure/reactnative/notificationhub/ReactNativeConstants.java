@@ -63,6 +63,7 @@ public final class ReactNativeConstants {
     public static final String KEY_REMOTE_NOTIFICATION_TAG = "tag";
     public static final String KEY_REMOTE_NOTIFICATION_USER_INTERACTION = "userInteraction";
     public static final String KEY_REMOTE_NOTIFICATION_COLDSTART = "coldstart";
+    public static final String KEY_REMOTE_NOTIFICATION_AVATAR_URL = "avatarUrl";
 
     // Remote notification payload's priority
     public static final String REMOTE_NOTIFICATION_PRIORITY_MAX = "max";
@@ -101,6 +102,7 @@ public final class ReactNativeConstants {
     public static final String ERROR_NOTIFICATION_HUB = "E_NOTIFICATION_HUB";
     public static final String ERROR_NOT_REGISTERED = "E_NOT_REGISTERED";
     public static final String ERROR_NOT_REGISTERED_DESC = "No registration to Azure Notification Hub.";
+    public static final String ERROR_FETCH_IMAGE = "Error while fetching image.";
 
     private ReactNativeConstants() {
     }

@@ -120,6 +120,11 @@ In `android/app/src/main/AndroidManifest.xml`
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <activity
+          android:launchMode="singleTop"
+          ...>
+        </activity>
     ...
 ```
 
