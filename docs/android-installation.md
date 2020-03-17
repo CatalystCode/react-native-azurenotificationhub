@@ -203,6 +203,9 @@ const channelImportance = 3;          // The channel's importance (NotificationM
 const channelShowBadge = true;
 const channelEnableLights = true;
 const channelEnableVibration = true;
+const template = '...';               // Notification hub templates:
+                                      // https://docs.microsoft.com/en-us/azure/notification-hubs/notification-hubs-templates-cross-platform-push-messages
+const templateName = '...';           // The template's name
 
 export default class App extends Component {
   constructor(props) {
@@ -213,7 +216,7 @@ export default class App extends Component {
   register() {
     PushNotificationEmitter.addListener(EVENT_AZURE_NOTIFICATION_HUB_REGISTERED, this._onAzureNotificationHubRegistered);
     PushNotificationEmitter.addListener(EVENT_AZURE_NOTIFICATION_HUB_REGISTERED_ERROR, this._onAzureNotificationHubRegisteredError);
-  
+
     NotificationHub.register({
       connectionString,
       hubName,
@@ -225,12 +228,59 @@ export default class App extends Component {
       channelEnableLights,
       channelEnableVibration
     })
+    .then((res) => console.warn(res))
+    .catch(reason => console.warn(reason));
+  }
+
+  registerTemplate() {
+    PushNotificationEmitter.addListener(EVENT_AZURE_NOTIFICATION_HUB_REGISTERED, this._onAzureNotificationHubRegistered);
+    PushNotificationEmitter.addListener(EVENT_AZURE_NOTIFICATION_HUB_REGISTERED_ERROR, this._onAzureNotificationHubRegisteredError);
+
+    NotificationHub.registerTemplate({
+      connectionString,
+      hubName,
+      senderID,
+      template,
+      templateName,
+      tags,
+      channelName,
+      channelImportance,
+      channelShowBadge,
+      channelEnableLights,
+      channelEnableVibration
+    })
+    .then((res) => console.warn(res))
+    .catch(reason => console.warn(reason));
+  }
+
+  getInitialNotification() {
+    NotificationHub.getInitialNotification()
+    .then((res) => console.warn(res))
+    .catch(reason => console.warn(reason));
+  }
+
+  getUUID() {
+    NotificationHub.getUUID(false)
+    .then((res) => console.warn(res))
+    .catch(reason => console.warn(reason));
+  }
+
+  isNotificationEnabledOnOSLevel() {
+    NotificationHub.isNotificationEnabledOnOSLevel()
+    .then((res) => console.warn(res))
     .catch(reason => console.warn(reason));
   }
 
   unregister() {
     NotificationHub.unregister()
-      .catch(reason => console.warn(reason));
+    .then((res) => console.warn(res))
+    .catch(reason => console.warn(reason));
+  }
+
+  unregisterTemplate() {
+    NotificationHub.unregisterTemplate(templateName)
+    .then((res) => console.warn(res))
+    .catch(reason => console.warn(reason));
   }
 
   render() {
@@ -240,28 +290,63 @@ export default class App extends Component {
          <View style={styles.button}>
            <Text style={styles.buttonText}>
              Register
-           </Text> 
+           </Text>
+         </View>
+       </TouchableOpacity>
+       <TouchableOpacity onPress={this.registerTemplate.bind(this)}>
+         <View style={styles.button}>
+           <Text style={styles.buttonText}>
+             Register Template
+           </Text>
+         </View>
+       </TouchableOpacity>
+       <TouchableOpacity onPress={this.getInitialNotification.bind(this)}>
+         <View style={styles.button}>
+           <Text style={styles.buttonText}>
+            Get initial notification
+           </Text>
+         </View>
+       </TouchableOpacity>
+       <TouchableOpacity onPress={this.getUUID.bind(this)}>
+         <View style={styles.button}>
+           <Text style={styles.buttonText}>
+            Get UUID
+           </Text>
+         </View>
+       </TouchableOpacity>
+       <TouchableOpacity onPress={this.isNotificationEnabledOnOSLevel.bind(this)}>
+         <View style={styles.button}>
+           <Text style={styles.buttonText}>
+            Check if notification is enabled
+           </Text>
          </View>
        </TouchableOpacity>
        <TouchableOpacity onPress={this.unregister.bind(this)}>
          <View style={styles.button}>
            <Text style={styles.buttonText}>
              Unregister
-           </Text> 
+           </Text>
+         </View>
+       </TouchableOpacity>
+       <TouchableOpacity onPress={this.unregisterTemplate.bind(this)}>
+         <View style={styles.button}>
+           <Text style={styles.buttonText}>
+             Unregister Template
+           </Text>
          </View>
        </TouchableOpacity>
       </View>
     );
   }
-  
+
   _onAzureNotificationHubRegistered(registrationID) {
     console.warn('RegistrationID: ' + registrationID);
   }
-  
+
   _onAzureNotificationHubRegisteredError(error) {
     console.warn('Error: ' + error);
   }
-  
+
   _onRemoteNotification(notification) {
     console.warn(notification);
   }
