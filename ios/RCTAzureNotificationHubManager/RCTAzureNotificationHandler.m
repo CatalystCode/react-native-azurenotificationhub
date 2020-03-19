@@ -10,6 +10,8 @@
 #import "RCTAzureNotificationHub.h"
 #import "RCTAzureNotificationHandler.h"
 
+extern RCTPromiseResolveBlock requestPermissionsResolveBlock;
+
 @implementation RCTAzureNotificationHandler
 {
 @private
@@ -107,6 +109,7 @@
     };
     
     resolve(notificationTypes);
+    requestPermissionsResolveBlock = nil;
 }
 
 @end
