@@ -10,6 +10,8 @@
 #ifndef RCTAzureNotificationHub_h
 #define RCTAzureNotificationHub_h
 
+@import UserNotifications;
+
 // Notification Hub events
 extern NSString *const RCTLocalNotificationReceived;
 extern NSString *const RCTRemoteNotificationReceived;
@@ -23,9 +25,10 @@ extern NSString *const RCTUserNotificationSettingsRegistered;
 extern NSString *const RCTConnectionStringKey;
 extern NSString *const RCTHubNameKey;
 extern NSString *const RCTTagsKey;
+extern NSString *const RCTTemplateNameKey;
+extern NSString *const RCTTemplateKey;
 
 // User info
-extern NSString *const RCTUserInfoNotificationSettings;
 extern NSString *const RCTUserInfoDeviceToken;
 extern NSString *const RCTUserInfoRemote;
 extern NSString *const RCTUserInfoResolveBlock;
@@ -38,15 +41,25 @@ extern NSString *const RCTNotificationTypeBadge;
 extern NSString *const RCTNotificationTypeSound;
 extern NSString *const RCTNotificationTypeAlert;
 
+// Messages
+extern NSString *const RCTPromiseResolveUnregiseredSuccessfully;
+
 // Errors
 extern NSString *const RCTErrorUnableToRequestPermissions;
-extern NSString *const RCTErrorUnableToRequestPermissionsDetails;
+extern NSString *const RCTErrorUnableToRequestPermissionsAppExt;
 extern NSString *const RCTErrorUnableToRequestPermissionsTwice;
+extern NSString *const RCTErrorUnableToRequestPermissionsUserReject;
 extern NSString *const RCTErrorInvalidArguments;
 extern NSString *const RCTErrorMissingConnectionString;
 extern NSString *const RCTErrorMissingHubName;
+extern NSString *const RCTErrorMissingTemplateName;
+extern NSString *const RCTErrorMissingTemplate;
+extern NSString *const RCTErrorUnableToUnregister;
+extern NSString *const RCTErrorUnableToUnregisterNoRegistration;
 
-// Completion type used in Azure Notification Hub's native methods
+// Completion types
 typedef void (^RCTNativeCompletion)(NSError *error);
+typedef void (^RCTNotificationCompletion)(BOOL granted, NSError * _Nullable error);
+typedef void (^RCTNotificationSettingsCompletion)(UNNotificationSettings * _Nonnull settings);
 
 #endif /* RCTAzureNotificationHub_h */

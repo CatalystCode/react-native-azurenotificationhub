@@ -357,12 +357,20 @@ class AzureNotificationHubIOS {
     RCTAzureNotificationHubManager.checkPermissions(callback);
   }
 
-  static register(deviceToken, config) {
-    RCTAzureNotificationHubManager.register(deviceToken, config);
+  static register(deviceToken, config): Promise<string | Object> {
+    return RCTAzureNotificationHubManager.register(deviceToken, config);
   }
 
-  static unregister() {
-    RCTAzureNotificationHubManager.unregister();
+  static registerTemplate(deviceToken, config): Promise<string | Object> {
+    return RCTAzureNotificationHubManager.registerTemplate(deviceToken, config);
+  }
+
+  static unregister(): Promise<string | Object> {
+    return RCTAzureNotificationHubManager.unregister();
+  }
+
+  static unregisterTemplate(templateName): Promise<string | Object> {
+    return RCTAzureNotificationHubManager.unregisterTemplate(templateName);
   }
 
   /**

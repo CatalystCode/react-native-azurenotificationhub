@@ -9,7 +9,7 @@ react-native init ReactNativeAzureNotificationHubSample
 ```
 
 In addition to the standard React Native requirements, you will also need the following:
-* An iOS 9 (or later version)-capable device (simulator doesn't work with push notifications)
+* An iOS 10 (or later version)-capable device (simulator doesn't work with push notifications)
 * [Apple Developer Program](https://developer.apple.com/programs/) membership
 
 ## Install react-native-azurenotificationhub
@@ -156,34 +156,44 @@ Add the following line to your `ios/Podfile` file and run **pod install**
 * And then add the following code in the same file:
 
 ```objective-c
-// Required to register for notifications
-- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [RCTAzureNotificationHubManager didRegisterUserNotificationSettings:notificationSettings];
+    ...
+
+    // Registering for local notifications
+    [[UNUserNotificationCenter currentNotificationCenter] setDelegate:self];
+
+    return YES;
 }
 
-// Required for the register event.
+// Invoked when the app successfully registered with Apple Push Notification service (APNs).
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
     [RCTAzureNotificationHubManager didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
 }
 
-// Required for the registrationError event.
+// Invoked when APNs cannot successfully complete the registration process.
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
 {
     [RCTAzureNotificationHubManager didFailToRegisterForRemoteNotificationsWithError:error];
 }
 
-// Required for the notification event.
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)notification
+// Invoked when a remote notification arrived and there is data to be fetched.
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
+fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler
 {
-    [RCTAzureNotificationHubManager didReceiveRemoteNotification:notification];
+    [RCTAzureNotificationHubManager didReceiveRemoteNotification:userInfo
+                                          fetchCompletionHandler:completionHandler];
 }
 
-// Required for the localNotification event.
-- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
+// Invoked when a notification arrived while the app was running in the foreground.
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+       willPresentNotification:(UNNotification *)notification
+         withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
 {
-    [RCTAzureNotificationHubManager didReceiveLocalNotification:notification];
+    [RCTAzureNotificationHubManager userNotificationCenter:center
+                                   willPresentNotification:notification
+                                     withCompletionHandler:completionHandler];
 }
 ```
 
@@ -221,9 +231,12 @@ import {
 
 const NotificationHub = require('react-native-azurenotificationhub/index.ios');
 
-const connectionString = '...'; // The Notification Hub connection string
-const hubName = '...';          // The Notification Hub name
-const tags = [ ... ];           // The set of tags to subscribe to
+const connectionString = '...';       // The Notification Hub connection string
+const hubName = '...';                // The Notification Hub name
+const tags = [ ... ];                 // The set of tags to subscribe to
+const template = '...';               // Notification hub templates:
+                                      // https://docs.microsoft.com/en-us/azure/notification-hubs/notification-hubs-templates-cross-platform-push-messages
+const templateName = '...';           // The template's name
 
 let remoteNotificationsDeviceToken = '';  // The device token registered with APNS
 
@@ -267,15 +280,33 @@ export default class App extends Component {
     // rejects, or if the permissions were previously rejected. The promise
     // resolves to the current state of the permission of 
     // {alert: boolean, badge: boolean,sound: boolean }
-    NotificationHub.requestPermissions();
+    NotificationHub.requestPermissions()
+      .then((res) => console.warn(res))
+      .catch(reason => console.warn(reason));
   }
 
   register() {
-    NotificationHub.register(remoteNotificationsDeviceToken, {connectionString, hubName, tags});
+    NotificationHub.register(remoteNotificationsDeviceToken, { connectionString, hubName, tags })
+      .then((res) => console.warn(res))
+      .catch(reason => console.warn(reason));
+  }
+
+  registerTemplate() {
+    NotificationHub.registerTemplate(remoteNotificationsDeviceToken, { connectionString, hubName, tags, templateName, template })
+      .then((res) => console.warn(res))
+      .catch(reason => console.warn(reason));
   }
 
   unregister() {
-    NotificationHub.unregister();
+    NotificationHub.unregister()
+      .then((res) => console.warn(res))
+      .catch(reason => console.warn(reason));
+  }
+
+  unregisterTemplate() {
+    NotificationHub.unregisterTemplate(templateName)
+      .then((res) => console.warn(res))
+      .catch(reason => console.warn(reason));
   }
 
   render() {
@@ -295,11 +326,25 @@ export default class App extends Component {
            </Text> 
          </View>
        </TouchableOpacity>
+       <TouchableOpacity onPress={this.registerTemplate.bind(this)}>
+         <View style={styles.button}>
+           <Text style={styles.buttonText}>
+             Register Template
+           </Text>
+         </View>
+       </TouchableOpacity>
        <TouchableOpacity onPress={this.unregister.bind(this)}>
          <View style={styles.button}>
            <Text style={styles.buttonText}>
              Unregister
            </Text> 
+         </View>
+       </TouchableOpacity>
+       <TouchableOpacity onPress={this.unregisterTemplate.bind(this)}>
+         <View style={styles.button}>
+           <Text style={styles.buttonText}>
+             Unregister Template
+           </Text>
          </View>
        </TouchableOpacity>
       </View>

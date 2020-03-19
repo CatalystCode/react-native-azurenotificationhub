@@ -15,6 +15,33 @@
 
 @implementation RCTAzureNotificationHubUtil
 
+// Format UNNotification
++ (nonnull NSDictionary *)formatUNNotification:(nonnull UNNotification *)notification
+{
+    NSMutableDictionary *formattedNotification = [NSMutableDictionary dictionary];
+    UNNotificationContent *content = notification.request.content;
+
+    formattedNotification[@"identifier"] = notification.request.identifier;
+
+    if (notification.date)
+    {
+        NSDateFormatter *formatter = [NSDateFormatter new];
+        [formatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"];
+        NSString *dateString = [formatter stringFromDate:notification.date];
+        formattedNotification[@"date"] = dateString;
+    }
+
+    formattedNotification[@"title"] = RCTNullIfNil(content.title);
+    formattedNotification[@"thread-id"] = RCTNullIfNil(content.threadIdentifier);
+    formattedNotification[@"alertBody"] = RCTNullIfNil(content.body);
+    formattedNotification[@"applicationIconBadgeNumber"] = RCTNullIfNil(content.badge);
+    formattedNotification[@"category"] = RCTNullIfNil(content.categoryIdentifier);
+    formattedNotification[@"soundName"] = RCTNullIfNil(content.sound);
+    formattedNotification[@"userInfo"] = RCTNullIfNil(RCTJSONClean(content.userInfo));
+
+    return formattedNotification;
+}
+
 // Format local notification
 + (nonnull NSDictionary *)formatLocalNotification:(nonnull UILocalNotification *)notification
 {
@@ -26,7 +53,7 @@
         NSString *fireDateString = [formatter stringFromDate:notification.fireDate];
         formattedLocalNotification[@"fireDate"] = fireDateString;
     }
-    
+
     formattedLocalNotification[@"alertAction"] = RCTNullIfNil(notification.alertAction);
     formattedLocalNotification[@"alertBody"] = RCTNullIfNil(notification.alertBody);
     formattedLocalNotification[@"applicationIconBadgeNumber"] = @(notification.applicationIconBadgeNumber);
@@ -62,36 +89,36 @@
 }
 
 // Get notification types with permissions
-+ (UIUserNotificationType)getNotificationTypesWithPermissions:(nullable NSDictionary *)permissions
++ (UNAuthorizationOptions)getNotificationTypesWithPermissions:(nullable NSDictionary *)permissions
 {
-    UIUserNotificationType types = UIUserNotificationTypeNone;
+    UNAuthorizationOptions types = 0;
     if (permissions)
     {
         if ([RCTConvert BOOL:permissions[RCTNotificationTypeAlert]])
         {
-            types |= UIUserNotificationTypeAlert;
+            types |= UNAuthorizationOptionAlert;
         }
         
         if ([RCTConvert BOOL:permissions[RCTNotificationTypeBadge]])
         {
-            types |= UIUserNotificationTypeBadge;
+            types |= UNAuthorizationOptionBadge;
         }
         
         if ([RCTConvert BOOL:permissions[RCTNotificationTypeSound]])
         {
-            types |= UIUserNotificationTypeSound;
+            types |= UNAuthorizationOptionSound;
         }
     }
     else
     {
-        types = UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound;
+        types = UNAuthorizationOptionAlert | UNAuthorizationOptionBadge | UNAuthorizationOptionSound;
     }
     
     return types;
 }
 
 // Run block on the main thread
-+ (void)runOnMainThread:(dispatch_block_t)block
++ (void)runOnMainThread:(nonnull dispatch_block_t)block
 {
     dispatch_async(dispatch_get_main_queue(), block);
 }

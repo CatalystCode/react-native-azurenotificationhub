@@ -10,8 +10,6 @@
 #import "RCTAzureNotificationHub.h"
 #import "RCTAzureNotificationHandler.h"
 
-extern RCTPromiseResolveBlock requestPermissionsResolveBlock;
-
 @implementation RCTAzureNotificationHandler
 {
 @private
@@ -90,26 +88,6 @@ extern RCTPromiseResolveBlock requestPermissionsResolveBlock;
     
     [_eventEmitter sendEventWithName:RCTAzureNotificationHubRegisteredError
                                 body:errorDetails];
-}
-
-// Handle successful registration for UIUserNotificationSettings
-- (void)userNotificationSettingsRegistered:(nonnull NSNotification *)notification
-{
-    RCTPromiseResolveBlock resolve = notification.userInfo[RCTUserInfoResolveBlock];
-    if (resolve == nil)
-    {
-        return;
-    }
-    
-    UIUserNotificationSettings *notificationSettings = notification.userInfo[RCTUserInfoNotificationSettings];
-    NSDictionary *notificationTypes = @{
-        RCTNotificationTypeAlert: @((notificationSettings.types & UIUserNotificationTypeAlert) > 0),
-        RCTNotificationTypeSound: @((notificationSettings.types & UIUserNotificationTypeSound) > 0),
-        RCTNotificationTypeBadge: @((notificationSettings.types & UIUserNotificationTypeBadge) > 0),
-    };
-    
-    resolve(notificationTypes);
-    requestPermissionsResolveBlock = nil;
 }
 
 @end
