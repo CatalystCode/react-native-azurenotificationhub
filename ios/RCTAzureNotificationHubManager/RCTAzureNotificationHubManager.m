@@ -23,8 +23,8 @@
 RCT_EXTERN NSString *const RCTErrorUnspecified;
 
 static RCTAzureNotificationHandler *notificationHandler;
-static RCTPromiseResolveBlock requestPermissionsResolveBlock;
-static RCTPromiseRejectBlock requestPermissionsRejectBlock;
+RCTPromiseResolveBlock requestPermissionsResolveBlock;
+RCTPromiseRejectBlock requestPermissionsRejectBlock;
 
 @implementation RCTAzureNotificationHubManager
 {
