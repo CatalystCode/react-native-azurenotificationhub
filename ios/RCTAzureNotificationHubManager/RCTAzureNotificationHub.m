@@ -20,9 +20,10 @@ NSString *const RCTUserNotificationSettingsRegistered           = @"userNotifica
 NSString *const RCTConnectionStringKey                          = @"connectionString";
 NSString *const RCTHubNameKey                                   = @"hubName";
 NSString *const RCTTagsKey                                      = @"tags";
+NSString *const RCTTemplateNameKey                              = @"templateName";
+NSString *const RCTTemplateKey                                  = @"template";
 
 // User info
-NSString *const RCTUserInfoNotificationSettings                 = @"notificationSettings";
 NSString *const RCTUserInfoDeviceToken                          = @"deviceToken";
 NSString *const RCTUserInfoRemote                               = @"remote";
 NSString *const RCTUserInfoResolveBlock                         = @"resolveBlock";
@@ -35,10 +36,18 @@ NSString *const RCTNotificationTypeBadge                        = @"badge";
 NSString *const RCTNotificationTypeSound                        = @"sound";
 NSString *const RCTNotificationTypeAlert                        = @"alert";
 
+// Messages
+NSString *const RCTPromiseResolveUnregiseredSuccessfully        = @"Unregisted successfully";
+
 // Errors
 NSString *const RCTErrorUnableToRequestPermissions              = @"Unabled to request permissions";
-NSString *const RCTErrorUnableToRequestPermissionsDetails       = @"Requesting push notifications is currently unavailable in an app extension";
+NSString *const RCTErrorUnableToRequestPermissionsAppExt        = @"Requesting push notifications is currently unavailable in an app extension.";
 NSString *const RCTErrorUnableToRequestPermissionsTwice         = @"Cannot call requestPermissions twice before the first has returned.";
+NSString *const RCTErrorUnableToRequestPermissionsUserReject    = @"User didn't allow permissions.";
 NSString *const RCTErrorInvalidArguments                        = @"Invalid arguments";
 NSString *const RCTErrorMissingConnectionString                 = @"Connection string cannot be null.";
 NSString *const RCTErrorMissingHubName                          = @"Hub name cannot be null.";
+NSString *const RCTErrorMissingTemplateName                     = @"Template name cannot be null.";
+NSString *const RCTErrorMissingTemplate                         = @"Template cannot be null.";
+NSString *const RCTErrorUnableToUnregister                      = @"Unabled to unregister";
+NSString *const RCTErrorUnableToUnregisterNoRegistration        = @"There is no registration.";

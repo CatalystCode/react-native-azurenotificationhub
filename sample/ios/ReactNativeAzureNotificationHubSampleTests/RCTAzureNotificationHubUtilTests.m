@@ -11,10 +11,48 @@
 #import <RNAzureNotificationHub/RCTAzureNotificationHub.h>
 #import <RNAzureNotificationHub/RCTAzureNotificationHubUtil.h>
 
+@import OCMock;
+@import UserNotifications;
+
 @interface RCTAzureNotificationHubUtilTests : XCTestCase
 @end
 
 @implementation RCTAzureNotificationHubUtilTests
+
+- (void)testFormatUNNotification
+{
+    UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
+    id notificationRequestMock = OCMClassMock([UNNotificationRequest class]);
+    OCMStub([notificationRequestMock content]).andReturn(content);
+    OCMStub([notificationRequestMock identifier]).andReturn( @"identifier");
+    id notificationMock = OCMClassMock([UNNotification class]);
+    OCMStub([notificationMock request]).andReturn(notificationRequestMock);
+
+    NSArray *keys = [NSArray arrayWithObjects:@"userInfoKey", nil];
+    NSArray *objects = [NSArray arrayWithObjects:@"userInfoObject", nil];
+    NSDictionary *info = [[NSDictionary alloc] initWithObjects:objects forKeys:keys];
+    content.title = @"title";
+    content.threadIdentifier = @"threadIdentifier";
+    content.body = @"body";
+    content.badge = @(1);
+    content.categoryIdentifier = @"category";
+    content.sound = @"sound";
+    content.userInfo = info;
+    NSDictionary *expectedNotification = @{
+        @"identifier": @"identifier",
+        @"title": @"title",
+        @"thread-id": @"threadIdentifier",
+        @"userInfo": @{ @"userInfoKey": @"userInfoObject" },
+        @"alertBody": @"body",
+        @"applicationIconBadgeNumber": [NSNumber numberWithInt:1],
+        @"category": @"category",
+        @"soundName": @"sound"
+    };
+
+    NSDictionary *formattedNotification = [RCTAzureNotificationHubUtil formatUNNotification:notificationMock];
+
+    XCTAssertEqualObjects(formattedNotification, expectedNotification);
+}
 
 - (void)testFormatLocalNotification
 {
@@ -37,9 +75,9 @@
         @"soundName": @"soundName",
         @"remote": @NO
     };
-    
+
     NSDictionary *formattedNotification = [RCTAzureNotificationHubUtil formatLocalNotification:notification];
-    
+
     XCTAssertEqualObjects(formattedNotification, expectedNotification);
 }
 
@@ -57,20 +95,19 @@
 - (void)testGetNotificationTypesWithPermissions
 {
     NSMutableDictionary *permissions = [[NSMutableDictionary alloc] init];
-    XCTAssertEqual([RCTAzureNotificationHubUtil getNotificationTypesWithPermissions:permissions],
-                   UIUserNotificationTypeNone);
+    XCTAssertEqual([RCTAzureNotificationHubUtil getNotificationTypesWithPermissions:permissions], 0);
     
     [permissions setValue:@YES forKey:RCTNotificationTypeAlert];
     XCTAssertEqual([RCTAzureNotificationHubUtil getNotificationTypesWithPermissions:permissions],
-                   UIUserNotificationTypeAlert);
+                   UNAuthorizationOptionAlert);
     
     [permissions setValue:@YES forKey:RCTNotificationTypeBadge];
     XCTAssertEqual([RCTAzureNotificationHubUtil getNotificationTypesWithPermissions:permissions],
-                   UIUserNotificationTypeAlert | UIUserNotificationTypeBadge);
+                   UNAuthorizationOptionAlert | UNAuthorizationOptionBadge);
     
     [permissions setValue:@YES forKey:RCTNotificationTypeSound];
     XCTAssertEqual([RCTAzureNotificationHubUtil getNotificationTypesWithPermissions:permissions],
-                   UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound);
+                   UNAuthorizationOptionAlert | UNAuthorizationOptionBadge | UNAuthorizationOptionSound);
 }
 
 @end

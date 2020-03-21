@@ -35,9 +35,6 @@
 // Handle registration error for Azure Notification Hub
 - (void)azureNotificationHubRegisteredError:(nonnull NSNotification *)notification;
 
-// Handle successful registration for UIUserNotificationSettings
-- (void)userNotificationSettingsRegistered:(nonnull NSNotification *)notification;
-
 @end
 
 #endif /* RCTAzureNotificationHandler_h */

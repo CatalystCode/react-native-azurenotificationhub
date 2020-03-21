@@ -28,6 +28,10 @@
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+
+  // Registering for local notifications
+  [[UNUserNotificationCenter currentNotificationCenter] setDelegate:self];
+
   return YES;
 }
 
@@ -40,34 +44,34 @@
 #endif
 }
 
-// Required to register for notifications
-- (void)application:(UIApplication *)application didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings
-{
-  [RCTAzureNotificationHubManager didRegisterUserNotificationSettings:notificationSettings];
-}
-
-// Required for the register event.
+// Invoked when the app successfully registered with Apple Push Notification service (APNs).
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
   [RCTAzureNotificationHubManager didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
 }
 
-// Required for the registrationError event.
+// Invoked when APNs cannot successfully complete the registration process.
 - (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error
 {
   [RCTAzureNotificationHubManager didFailToRegisterForRemoteNotificationsWithError:error];
 }
 
-// Required for the notification event.
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)notification
+// Invoked when a remote notification arrived and there is data to be fetched.
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
+                                                       fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler
 {
-  [RCTAzureNotificationHubManager didReceiveRemoteNotification:notification];
+  [RCTAzureNotificationHubManager didReceiveRemoteNotification:userInfo
+                                        fetchCompletionHandler:completionHandler];
 }
 
-// Required for the localNotification event.
-- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification
+// Invoked when a notification arrived while the app was running in the foreground.
+- (void)userNotificationCenter:(UNUserNotificationCenter *)center
+       willPresentNotification:(UNNotification *)notification
+         withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
 {
-  [RCTAzureNotificationHubManager didReceiveLocalNotification:notification];
+  [RCTAzureNotificationHubManager userNotificationCenter:center
+                                 willPresentNotification:notification
+                                   withCompletionHandler:completionHandler];
 }
 
 @end

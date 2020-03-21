@@ -323,4 +323,80 @@ public class ReactNativeNotificationHubUtilTest {
 
         verify(mSharedPreferences, times(1)).contains(KEY_FOR_PREFS_CHANNELENABLELIGHTS);
     }
+
+    @Test
+    public void testGetTemplateName() {
+        mHubUtil.getTemplateName(mReactApplicationContext);
+
+        verify(mSharedPreferences, times(1)).getString(
+                KEY_FOR_PREFS_TEMPLATENAME, null);
+    }
+
+    @Test
+    public void testSetTemplateName() {
+        final String templateName = "Template Name";
+
+        mHubUtil.setTemplateName(mReactApplicationContext, templateName);
+
+        verify(mEditor, times(1)).putString(
+                KEY_FOR_PREFS_TEMPLATENAME, templateName);
+        verify(mEditor, times(1)).apply();
+    }
+
+    @Test
+    public void testGetTemplate() {
+        mHubUtil.getTemplate(mReactApplicationContext);
+
+        verify(mSharedPreferences, times(1)).getString(
+                KEY_FOR_PREFS_TEMPLATE, null);
+    }
+
+    @Test
+    public void testSetTemplate() {
+        final String template = "Template";
+
+        mHubUtil.setTemplate(mReactApplicationContext, template);
+
+        verify(mEditor, times(1)).putString(
+                KEY_FOR_PREFS_TEMPLATE, template);
+        verify(mEditor, times(1)).apply();
+    }
+
+    @Test
+    public void testIsTemplated() {
+        mHubUtil.isTemplated(mReactApplicationContext);
+
+        verify(mSharedPreferences, times(1)).getBoolean(
+                KEY_FOR_PREFS_ISTEMPLATE, false);
+    }
+
+    @Test
+    public void testSetTemplated() {
+        final boolean isTemplated = true;
+
+        mHubUtil.setTemplated(mReactApplicationContext, isTemplated);
+
+        verify(mEditor, times(1)).putBoolean(
+                KEY_FOR_PREFS_ISTEMPLATE, isTemplated);
+        verify(mEditor, times(1)).apply();
+    }
+
+    @Test
+    public void testGetUUID() {
+        mHubUtil.getUUID(mReactApplicationContext);
+
+        verify(mSharedPreferences, times(1)).getString(
+                KEY_FOR_PREFS_UUID, null);
+    }
+
+    @Test
+    public void testSetUUID() {
+        final String uuid = "uuid";
+
+        mHubUtil.setUUID(mReactApplicationContext, uuid);
+
+        verify(mEditor, times(1)).putString(
+                KEY_FOR_PREFS_UUID, uuid);
+        verify(mEditor, times(1)).apply();
+    }
 }

@@ -93,31 +93,39 @@
                                           body:expectedErrorDetails]);
 }
 
-- (void)testUserNotificationSettingsRegistered
+- (void)testAzureNotificationHubRegistered
 {
-    __block NSDictionary *notificationTypes = nil;
-    RCTPromiseResolveBlock resolver = ^(NSDictionary *callbackNotificationTypes)
-    {
-        notificationTypes = callbackNotificationTypes;
-    };
+    NSNotification* notification = [NSNotification notificationWithName:@"Notification" object:_userInfo userInfo:_userInfo];
     
-    UIUserNotificationType types = UIUserNotificationTypeAlert | UIUserNotificationTypeBadge;
-    UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:(NSUInteger)types
-                                                                             categories:nil];
+    [_notificationHandler azureNotificationHubRegistered:notification];
     
-    NSArray *keys = [NSArray arrayWithObjects:RCTUserInfoNotificationSettings, RCTUserInfoResolveBlock, nil];
-    NSArray *objects = [NSArray arrayWithObjects:settings, resolver, nil];
+    OCMVerify([_eventEmitter sendEventWithName:RCTAzureNotificationHubRegistered
+                                          body:_userInfo]);
+}
+
+- (void)testAzureNotificationHubRegisteredError
+{
+    NSDictionary *errorUserInfo = [[NSDictionary alloc]
+                                   initWithObjectsAndKeys:NSLocalizedDescriptionKey, NSLocalizedDescriptionKey, nil];
+    
+    NSError* error = [NSError errorWithDomain:@"Error domain"
+                                         code:100
+                                     userInfo:errorUserInfo];
+    
+    NSArray *keys = [NSArray arrayWithObjects:RCTUserInfoError, nil];
+    NSArray *objects = [NSArray arrayWithObjects:error, nil];
     NSDictionary *userInfo = [[NSMutableDictionary alloc] initWithObjects:objects forKeys:keys];
     NSNotification* notification = [NSNotification notificationWithName:@"Notification" object:userInfo userInfo:userInfo];
-    NSDictionary *expectedNotificationTypes = @{
-        RCTNotificationTypeAlert: @YES,
-        RCTNotificationTypeSound: @NO,
-        RCTNotificationTypeBadge: @YES
+    NSDictionary *expectedErrorDetails = @{
+        @"message": NSLocalizedDescriptionKey,
+        @"code": [NSNumber numberWithInt:100],
+        @"details": errorUserInfo
     };
-
-    [_notificationHandler userNotificationSettingsRegistered:notification];
     
-    XCTAssertEqualObjects(notificationTypes, expectedNotificationTypes);
+    [_notificationHandler azureNotificationHubRegisteredError:notification];
+    
+    OCMVerify([_eventEmitter sendEventWithName:RCTAzureNotificationHubRegisteredError
+                                          body:expectedErrorDetails]);
 }
 
 @end

@@ -12,7 +12,12 @@
 
 #import <WindowsAzureMessaging/WindowsAzureMessaging.h>
 
+@import UserNotifications;
+
 @interface RCTAzureNotificationHubUtil : NSObject
+
+// Format UNNotification
++ (nonnull NSDictionary *)formatUNNotification:(nonnull UNNotification *)notification;
 
 // Format local notification
 + (nonnull NSDictionary *)formatLocalNotification:(nonnull UILocalNotification *)notification;
@@ -25,10 +30,10 @@
 + (nonnull NSString *)convertDeviceTokenToString:(nonnull NSData *)deviceToken;
 
 // Get notification types with permissions
-+ (UIUserNotificationType)getNotificationTypesWithPermissions:(nullable NSDictionary *)permissions;
++ (UNAuthorizationOptions)getNotificationTypesWithPermissions:(nullable NSDictionary *)permissions;
 
 // Run block on the main thread
-+ (void)runOnMainThread:(dispatch_block_t)block;
++ (void)runOnMainThread:(nonnull dispatch_block_t)block;
 
 @end
 

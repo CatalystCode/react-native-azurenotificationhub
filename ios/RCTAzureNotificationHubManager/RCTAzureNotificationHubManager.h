@@ -9,22 +9,26 @@
 
 #import "React/RCTEventEmitter.h"
 
+#import "RCTAzureNotificationHandler.h"
+
+@import UserNotifications;
+
 @interface RCTAzureNotificationHubManager : RCTEventEmitter
 
-// Required to register for notifications, invoked from AppDelegate
-+ (void)didRegisterUserNotificationSettings:(nonnull UIUserNotificationSettings *)notificationSettings;
-
-// Required for the register event, invoked from AppDelegate
+// Invoked from AppDelegate when the app successfully registered with Apple Push Notification service (APNs).
 + (void)didRegisterForRemoteNotificationsWithDeviceToken:(nonnull NSData *)deviceToken;
 
-// Required for the notification event, invoked from AppDelegate
-+ (void)didReceiveRemoteNotification:(nonnull NSDictionary *)notification;
-
-// Required for the localNotification event, invoked from AppDelegate
-+ (void)didReceiveLocalNotification:(nonnull UILocalNotification *)notification;
-
-// Required for the registrationError event, invoked from AppDelegate
+// Invoked from AppDelegate when APNs cannot successfully complete the registration process.
 + (void)didFailToRegisterForRemoteNotificationsWithError:(nonnull NSError *)error;
+
+// Invoked from AppDelegate when a remote notification arrived and there is data to be fetched.
++ (void)didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo
+              fetchCompletionHandler:(void (__unused ^_Nonnull)(UIBackgroundFetchResult result))completionHandler;
+
+// Invoked from AppDelegate when a notification arrived while the app was running in the foreground.
++ (void)userNotificationCenter:(nonnull __unused UNUserNotificationCenter *)center
+       willPresentNotification:(nonnull UNNotification *)notification
+         withCompletionHandler:(void (__unused ^_Nonnull)(UNNotificationPresentationOptions options))completionHandler;
 
 // Set application icon badge number
 - (void)setApplicationIconBadgeNumber:(NSInteger)number;
@@ -65,11 +69,25 @@
 // Register with Azure Notification Hub
 - (void)register:(nonnull NSString *)deviceToken
           config:(nonnull NSDictionary *)config
-        resolver:(nonnull RCTPromiseResolveBlock)resolve
+        resolver:(nonnull __unused RCTPromiseResolveBlock)resolve
         rejecter:(nonnull RCTPromiseRejectBlock)reject;
+
+// Register template
+- (void)registerTemplate:(nonnull NSString *)deviceToken
+                  config:(nonnull NSDictionary *)config
+                resolver:(nonnull __unused RCTPromiseResolveBlock)resolve
+                rejecter:(nonnull RCTPromiseRejectBlock)reject;
 
 // Unregister with Azure Notification Hub
 - (void)unregister:(nonnull RCTPromiseResolveBlock)resolve
           rejecter:(nonnull RCTPromiseRejectBlock)reject;
+
+// Unregister template
+- (void)unregisterTemplate:(nonnull NSString *)templateName
+                  resolver:(nonnull RCTPromiseResolveBlock)resolve
+                  rejecter:(nonnull RCTPromiseRejectBlock)reject;
+
+// Set notification handler
+- (void)setNotificationHandler:(nonnull RCTAzureNotificationHandler *)handler;
 
 @end

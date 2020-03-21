@@ -165,6 +165,38 @@ public class ReactNativeNotificationHubUtil {
         return hasKey(context, KEY_FOR_PREFS_CHANNELENABLEVIBRATION);
     }
 
+    public String getTemplateName(Context context) {
+        return getPref(context, KEY_FOR_PREFS_TEMPLATENAME);
+    }
+
+    public void setTemplateName(Context context, String templateName) {
+        setPref(context, KEY_FOR_PREFS_TEMPLATENAME, templateName);
+    }
+
+    public String getTemplate(Context context) {
+        return getPref(context, KEY_FOR_PREFS_TEMPLATE);
+    }
+
+    public void setTemplate(Context context, String template) {
+        setPref(context, KEY_FOR_PREFS_TEMPLATE, template);
+    }
+
+    public boolean isTemplated(Context context) {
+        return getPrefBoolean(context, KEY_FOR_PREFS_ISTEMPLATE);
+    }
+
+    public void setTemplated(Context context, boolean templated) {
+        setPrefBoolean(context, KEY_FOR_PREFS_ISTEMPLATE, templated);
+    }
+
+    public String getUUID(Context context) {
+        return getPref(context, KEY_FOR_PREFS_UUID);
+    }
+
+    public void setUUID(Context context, String uuid) {
+        setPref(context, KEY_FOR_PREFS_UUID, uuid);
+    }
+
     public void setAppIsForeground(boolean isForeground) {
         mIsForeground = isForeground;
     }

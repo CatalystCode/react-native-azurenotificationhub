@@ -55,6 +55,7 @@
 		2D02E4901E0B4A5D006451C7 /* ReactNativeAzureNotificationHubSample-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "ReactNativeAzureNotificationHubSample-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3AAB39D4BDBE7F53EC74C4C4 /* libPods-ReactNativeAzureNotificationHubSample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ReactNativeAzureNotificationHubSample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B18387DF86E68D789995173 /* Pods-ReactNativeAzureNotificationHubSample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReactNativeAzureNotificationHubSample.release.xcconfig"; path = "Target Support Files/Pods-ReactNativeAzureNotificationHubSample/Pods-ReactNativeAzureNotificationHubSample.release.xcconfig"; sourceTree = "<group>"; };
+		45454162242451A2003F4618 /* ReactNativeAzureNotificationHubSample.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = ReactNativeAzureNotificationHubSample.entitlements; path = ReactNativeAzureNotificationHubSample/ReactNativeAzureNotificationHubSample.entitlements; sourceTree = "<group>"; };
 		45E30B45240821F000A339F1 /* RCTAzureNotificationHubManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = RCTAzureNotificationHubManagerTests.m; sourceTree = "<group>"; tabWidth = 4; };
 		45E30B46240821F000A339F1 /* RCTAzureNotificationHubUtilTests.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = RCTAzureNotificationHubUtilTests.m; sourceTree = "<group>"; tabWidth = 4; };
 		45E30B47240821F100A339F1 /* RCTAzureNotificationHandlerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = RCTAzureNotificationHandlerTests.m; sourceTree = "<group>"; tabWidth = 4; };
@@ -120,6 +121,7 @@
 		13B07FAE1A68108700A75B9A /* ReactNativeAzureNotificationHubSample */ = {
 			isa = PBXGroup;
 			children = (
+				45454162242451A2003F4618 /* ReactNativeAzureNotificationHubSample.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
@@ -589,6 +591,7 @@
 			baseConfigurationReference = 2351567499705FB80A85A312 /* Pods-ReactNativeAzureNotificationHubSample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ReactNativeAzureNotificationHubSample/ReactNativeAzureNotificationHubSample.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				INFOPLIST_FILE = ReactNativeAzureNotificationHubSample/Info.plist;
@@ -609,6 +612,7 @@
 			baseConfigurationReference = 3B18387DF86E68D789995173 /* Pods-ReactNativeAzureNotificationHubSample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ReactNativeAzureNotificationHubSample/ReactNativeAzureNotificationHubSample.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				INFOPLIST_FILE = ReactNativeAzureNotificationHubSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
