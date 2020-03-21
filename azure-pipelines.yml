@@ -42,10 +42,6 @@ steps:
   displayName: 'Run lint'
   workingDirectory: '../sample'
 
-- script: npm run test
-  displayName: 'Run unit tests'
-  workingDirectory: '../sample'
-
 - task: Gradle@2
   displayName: 'Building Android'
   inputs:
@@ -78,6 +74,7 @@ steps:
 
 - script: |
     pod install
+    pod update
     sudo cp -R ../node_modules/react-native-azurenotificationhub/ios Pods/RNAzureNotificationHub
     sudo chown -R $(id -u):$(id -g) Pods/RNAzureNotificationHub
     pod update

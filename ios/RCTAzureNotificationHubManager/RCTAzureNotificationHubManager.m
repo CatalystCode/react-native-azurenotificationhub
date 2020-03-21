@@ -312,7 +312,7 @@ RCT_EXPORT_METHOD(getScheduledLocalNotifications:(RCTResponseSenderBlock)callbac
 
 RCT_EXPORT_METHOD(register:(nonnull NSString *)deviceToken
                     config:(nonnull NSDictionary *)config
-                  resolver:(__unused RCTPromiseResolveBlock)resolve
+                  resolver:(nonnull __unused RCTPromiseResolveBlock)resolve
                   rejecter:(nonnull RCTPromiseRejectBlock)reject)
 {
     // Store the connection string, hub name and tags
@@ -365,7 +365,7 @@ RCT_EXPORT_METHOD(registerTemplate:(nonnull NSString *)deviceToken
                           resolver:(nonnull __unused RCTPromiseResolveBlock)resolve
                           rejecter:(nonnull RCTPromiseRejectBlock)reject)
 {
-    // Store the connection string, hub name and tags
+    // Store the connection string, hub name, tags, template name and template
     _connectionString = [config objectForKey:RCTConnectionStringKey];
     _hubName = [config objectForKey:RCTHubNameKey];
     _tags = [config objectForKey:RCTTagsKey];
