@@ -1,6 +1,6 @@
 {
   "name": "react-native-azurenotificationhub",
-  "version": "0.9.4",
+  "version": "0.9.4-Patched.1",
   "description": "React Native module to support Azure Notification Hub push notifications on Android, iOS, and Windows.",
   "main": "index.js",
   "repository": {
