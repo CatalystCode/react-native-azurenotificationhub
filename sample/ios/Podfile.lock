@@ -218,7 +218,7 @@ PODS:
     - React-cxxreact (= 0.61.5)
     - React-jsi (= 0.61.5)
     - ReactCommon/jscallinvoker (= 0.61.5)
-  - RNAzureNotificationHub (0.9.3):
+  - RNAzureNotificationHub (0.9.5):
     - React
     - WindowsAzureMessaging
   - WindowsAzureMessaging (1.0.2)
@@ -343,10 +343,10 @@ SPEC CHECKSUMS:
   React-RCTText: 9ccc88273e9a3aacff5094d2175a605efa854dbe
   React-RCTVibration: a49a1f42bf8f5acf1c3e297097517c6b3af377ad
   ReactCommon: 198c7c8d3591f975e5431bec1b0b3b581aa1c5dd
-  RNAzureNotificationHub: 5fcbffdc8a92334d65cbd5a237eaac3c5f9de105
+  RNAzureNotificationHub: 1026801fff760ac374ad0c6f263d079ebe88f3ee
   WindowsAzureMessaging: 3ec1c2ca507508e9595c34f6cf977e0c447fdd87
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
 PODFILE CHECKSUM: 7bea7f3c6021bc946076bfddd71ac33f227e9bf2
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.9.1
