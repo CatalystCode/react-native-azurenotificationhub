@@ -194,15 +194,16 @@ const connectionString = '...';       // The Notification Hub connection string
 const hubName = '...';                // The Notification Hub name
 const senderID = '...';               // The Sender ID from the Cloud Messaging tab of the Firebase console
 const tags = [ ... ];                 // The set of tags to subscribe to
-const channelName = '...';            // The channel's name
-const channelImportance = 3;          // The channel's importance (NotificationManager.IMPORTANCE_DEFAULT = 3)
+const channelName = '...';            // The channel's name (optional)
+const channelDescription = '...';     // The channel's description (optional)
+const channelImportance = 3;          // The channel's importance (NotificationManager.IMPORTANCE_DEFAULT = 3) (optional)
                                       // Notes:
                                       //   1. Setting this value to 4 enables heads-up notification on Android 8
                                       //   2. On some devices such as Samsung Galaxy, changing this value requires
                                       //      uninstalling/re-installing the app to take effect.
-const channelShowBadge = true;
-const channelEnableLights = true;
-const channelEnableVibration = true;
+const channelShowBadge = true;        // Optional
+const channelEnableLights = true;     // Optional
+const channelEnableVibration = true;  // Optional
 const template = '...';               // Notification hub templates:
                                       // https://docs.microsoft.com/en-us/azure/notification-hubs/notification-hubs-templates-cross-platform-push-messages
 const templateName = '...';           // The template's name
@@ -223,6 +224,7 @@ export default class App extends Component {
       senderID,
       tags,
       channelName,
+      channelDescription,
       channelImportance,
       channelShowBadge,
       channelEnableLights,
@@ -244,6 +246,7 @@ export default class App extends Component {
       templateName,
       tags,
       channelName,
+      channelDescription,
       channelImportance,
       channelShowBadge,
       channelEnableLights,
