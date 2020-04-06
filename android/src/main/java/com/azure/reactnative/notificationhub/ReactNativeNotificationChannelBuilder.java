@@ -6,11 +6,11 @@ import android.app.NotificationManager;
 public class ReactNativeNotificationChannelBuilder {
     private String mID = ReactNativeConstants.NOTIFICATION_CHANNEL_ID;
     private CharSequence mName = "rn-push-notification-channel-name";
-    private String mDesc = "rn-push-notification-channel-description";
     private int mImportance = NotificationManager.IMPORTANCE_DEFAULT;
     private boolean mShowBadge = true;
     private boolean mEnableLights = true;
     private boolean mEnableVibration = true;
+    private String mDesc = null;
 
     public static class Factory {
         public static ReactNativeNotificationChannelBuilder create() {
@@ -23,10 +23,14 @@ public class ReactNativeNotificationChannelBuilder {
 
     public NotificationChannel build() {
         NotificationChannel channel = new NotificationChannel(mID, mName, mImportance);
-        channel.setDescription(mDesc);
         channel.setShowBadge(mShowBadge);
         channel.enableLights(mEnableLights);
         channel.enableVibration(mEnableVibration);
+
+        if (mDesc != null) {
+            channel.setDescription(mDesc);
+        }
+
         return channel;
     }
 

@@ -221,6 +221,32 @@ public class ReactNativeNotificationHubUtilTest {
     }
 
     @Test
+    public void testGetChannelDescription() {
+        mHubUtil.getChannelDescription(mReactApplicationContext);
+
+        verify(mSharedPreferences, times(1)).getString(
+                KEY_FOR_PREFS_CHANNELDESCRIPTION, null);
+    }
+
+    @Test
+    public void testSetChannelDescription() {
+        final String channelDescription = "Channel Description";
+
+        mHubUtil.setChannelDescription(mReactApplicationContext, channelDescription);
+
+        verify(mEditor, times(1)).putString(
+                KEY_FOR_PREFS_CHANNELDESCRIPTION, channelDescription);
+        verify(mEditor, times(1)).apply();
+    }
+
+    @Test
+    public void testHasChannelDescription() {
+        mHubUtil.hasChannelDescription(mReactApplicationContext);
+
+        verify(mSharedPreferences, times(1)).contains(KEY_FOR_PREFS_CHANNELDESCRIPTION);
+    }
+
+    @Test
     public void testGetChannelImportance() {
         mHubUtil.getChannelImportance(mReactApplicationContext);
 

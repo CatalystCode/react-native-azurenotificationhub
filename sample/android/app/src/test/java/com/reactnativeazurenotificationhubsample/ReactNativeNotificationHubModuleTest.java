@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 
-import androidx.annotation.RequiresPermission;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -16,7 +15,6 @@ import org.junit.Test;
 
 import static com.azure.reactnative.notificationhub.ReactNativeConstants.*;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.matches;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -186,6 +184,19 @@ public class ReactNativeNotificationHubModuleTest {
     }
 
     @Test
+    public void testRegisterNoChannelName() {
+        when(mConfig.getString(KEY_REGISTRATION_CONNECTIONSTRING)).thenReturn("Connection String");
+        when(mConfig.getString(KEY_REGISTRATION_HUBNAME)).thenReturn("Hub Name");
+        when(mConfig.getString(KEY_REGISTRATION_SENDERID)).thenReturn("Sender ID");
+        when(mConfig.hasKey(KEY_REGISTRATION_CHANNELNAME)).thenReturn(false);
+
+        mHubModule.register(mConfig, mPromise);
+
+        verify(mNotificationHubUtil, times(0)).setChannelName(
+                any(ReactContext.class), anyString());
+    }
+
+    @Test
     public void testRegisterHasChannelName() {
         final String channelName = "Channel Name";
 
@@ -199,6 +210,35 @@ public class ReactNativeNotificationHubModuleTest {
 
         verify(mNotificationHubUtil, times(1)).setChannelName(
                 any(ReactContext.class), eq(channelName));
+    }
+
+    @Test
+    public void testRegisterNoChannelDescription() {
+        when(mConfig.getString(KEY_REGISTRATION_CONNECTIONSTRING)).thenReturn("Connection String");
+        when(mConfig.getString(KEY_REGISTRATION_HUBNAME)).thenReturn("Hub Name");
+        when(mConfig.getString(KEY_REGISTRATION_SENDERID)).thenReturn("Sender ID");
+        when(mConfig.hasKey(KEY_REGISTRATION_CHANNELDESCRIPTION)).thenReturn(false);
+
+        mHubModule.register(mConfig, mPromise);
+
+        verify(mNotificationHubUtil, times(0)).setChannelDescription(
+                any(ReactContext.class), anyString());
+    }
+
+    @Test
+    public void testRegisterHasChannelDescription() {
+        final String channelDescription = "Channel Description";
+
+        when(mConfig.getString(KEY_REGISTRATION_CONNECTIONSTRING)).thenReturn("Connection String");
+        when(mConfig.getString(KEY_REGISTRATION_HUBNAME)).thenReturn("Hub Name");
+        when(mConfig.getString(KEY_REGISTRATION_SENDERID)).thenReturn("Sender ID");
+        when(mConfig.hasKey(KEY_REGISTRATION_CHANNELDESCRIPTION)).thenReturn(true);
+        when(mConfig.getString(KEY_REGISTRATION_CHANNELDESCRIPTION)).thenReturn(channelDescription);
+
+        mHubModule.register(mConfig, mPromise);
+
+        verify(mNotificationHubUtil, times(1)).setChannelDescription(
+                any(ReactContext.class), eq(channelDescription));
     }
 
     @Test
