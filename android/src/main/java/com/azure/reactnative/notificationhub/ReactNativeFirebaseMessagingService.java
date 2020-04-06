@@ -28,6 +28,10 @@ public class ReactNativeFirebaseMessagingService extends FirebaseMessagingServic
                 builder.setName(notificationHubUtil.getChannelName(context));
             }
 
+            if (notificationHubUtil.hasChannelDescription(context)) {
+                builder.setDescription(notificationHubUtil.getChannelDescription(context));
+            }
+
             if (notificationHubUtil.hasChannelImportance(context)) {
                 builder.setImportance(notificationHubUtil.getChannelImportance(context));
             }

@@ -129,6 +129,11 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
             notificationHubUtil.setChannelName(reactContext, channelName);
         }
 
+        if (config.hasKey(KEY_REGISTRATION_CHANNELDESCRIPTION)) {
+            String channelDescription = config.getString(KEY_REGISTRATION_CHANNELDESCRIPTION);
+            notificationHubUtil.setChannelDescription(reactContext, channelDescription);
+        }
+
         if (config.hasKey(KEY_REGISTRATION_CHANNELIMPORTANCE)) {
             int channelImportance = config.getInt(KEY_REGISTRATION_CHANNELIMPORTANCE);
             notificationHubUtil.setChannelImportance(reactContext, channelImportance);
@@ -234,6 +239,11 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
         if (config.hasKey(KEY_REGISTRATION_CHANNELNAME)) {
             String channelName = config.getString(KEY_REGISTRATION_CHANNELNAME);
             notificationHubUtil.setChannelName(reactContext, channelName);
+        }
+
+        if (config.hasKey(KEY_REGISTRATION_CHANNELDESCRIPTION)) {
+            String channelDescription = config.getString(KEY_REGISTRATION_CHANNELDESCRIPTION);
+            notificationHubUtil.setChannelDescription(reactContext, channelDescription);
         }
 
         if (config.hasKey(KEY_REGISTRATION_CHANNELIMPORTANCE)) {

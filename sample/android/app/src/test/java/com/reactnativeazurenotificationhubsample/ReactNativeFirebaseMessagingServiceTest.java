@@ -122,6 +122,7 @@ public class ReactNativeFirebaseMessagingServiceTest {
     @Test
     public void testCreateNotificationChannel() {
         final String channelName = "Channel Name";
+        final String channelDescription = "Channel Description";
         final int channelImportance = 1;
         final boolean channelShowBadge = true;
         final boolean channelEnableLights = true;
@@ -135,6 +136,8 @@ public class ReactNativeFirebaseMessagingServiceTest {
         when(builder.build()).thenReturn(channel);
         when(mHubUtil.hasChannelName(mReactApplicationContext)).thenReturn(true);
         when(mHubUtil.getChannelName(mReactApplicationContext)).thenReturn(channelName);
+        when(mHubUtil.hasChannelDescription(mReactApplicationContext)).thenReturn(true);
+        when(mHubUtil.getChannelDescription(mReactApplicationContext)).thenReturn(channelDescription);
         when(mHubUtil.hasChannelImportance(mReactApplicationContext)).thenReturn(true);
         when(mHubUtil.getChannelImportance(mReactApplicationContext)).thenReturn(channelImportance);
         when(mHubUtil.hasChannelShowBadge(mReactApplicationContext)).thenReturn(true);
@@ -149,6 +152,8 @@ public class ReactNativeFirebaseMessagingServiceTest {
 
         verify(mHubUtil, times(1)).hasChannelName(mReactApplicationContext);
         verify(builder, times(1)).setName(channelName);
+        verify(mHubUtil, times(1)).hasChannelDescription(mReactApplicationContext);
+        verify(builder, times(1)).setDescription(channelDescription);
         verify(mHubUtil, times(1)).hasChannelImportance(mReactApplicationContext);
         verify(builder, times(1)).setImportance(channelImportance);
         verify(mHubUtil, times(1)).hasChannelShowBadge(mReactApplicationContext);
