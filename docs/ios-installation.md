@@ -233,7 +233,7 @@ const NotificationHub = require('react-native-azurenotificationhub/index.ios');
 
 const connectionString = '...';       // The Notification Hub connection string
 const hubName = '...';                // The Notification Hub name
-const tags = [ ... ];                 // The set of tags to subscribe to
+const tags = [ '...' ];                 // The set of tags to subscribe to
 const template = '...';               // Notification hub templates:
                                       // https://docs.microsoft.com/en-us/azure/notification-hubs/notification-hubs-templates-cross-platform-push-messages
 const templateName = '...';           // The template's name
@@ -313,40 +313,40 @@ export default class App extends Component {
     return (
       <View style={styles.container}>
         <TouchableOpacity onPress={this.requestPermissions.bind(this)}>
-         <View style={styles.button}>
-           <Text style={styles.buttonText}>
-             Request permission
-           </Text> 
-         </View>
-       </TouchableOpacity>
-       <TouchableOpacity onPress={this.register.bind(this)}>
-         <View style={styles.button}>
-           <Text style={styles.buttonText}>
-             Register
-           </Text> 
-         </View>
-       </TouchableOpacity>
-       <TouchableOpacity onPress={this.registerTemplate.bind(this)}>
-         <View style={styles.button}>
-           <Text style={styles.buttonText}>
-             Register Template
-           </Text>
-         </View>
-       </TouchableOpacity>
-       <TouchableOpacity onPress={this.unregister.bind(this)}>
-         <View style={styles.button}>
-           <Text style={styles.buttonText}>
-             Unregister
-           </Text> 
-         </View>
-       </TouchableOpacity>
-       <TouchableOpacity onPress={this.unregisterTemplate.bind(this)}>
-         <View style={styles.button}>
-           <Text style={styles.buttonText}>
-             Unregister Template
-           </Text>
-         </View>
-       </TouchableOpacity>
+          <View style={styles.button}>
+            <Text style={styles.buttonText}>
+              Request permission
+            </Text> 
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={this.register.bind(this)}>
+          <View style={styles.button}>
+            <Text style={styles.buttonText}>
+              Register
+            </Text> 
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={this.registerTemplate.bind(this)}>
+          <View style={styles.button}>
+            <Text style={styles.buttonText}>
+              Register Template
+            </Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={this.unregister.bind(this)}>
+          <View style={styles.button}>
+            <Text style={styles.buttonText}>
+              Unregister
+            </Text> 
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={this.unregisterTemplate.bind(this)}>
+          <View style={styles.button}>
+            <Text style={styles.buttonText}>
+              Unregister Template
+            </Text>
+          </View>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -358,7 +358,7 @@ export default class App extends Component {
       `Device Token: ${deviceToken}`,
       [{
         text: 'Dismiss',
-        onPress: null,
+        onPress: () => {},
       }]
     );
   }
@@ -369,7 +369,7 @@ export default class App extends Component {
       `Error (${error.code}): ${error.message}`,
       [{
         text: 'Dismiss',
-        onPress: null,
+        onPress: () => {},
       }]
     );
   }
@@ -380,17 +380,17 @@ export default class App extends Component {
       'Alert message: ' + notification.getMessage(),
       [{
         text: 'Dismiss',
-        onPress: null,
+        onPress: () => {},
       }]
     );
   }
 
   _onAzureNotificationHubRegistered(registrationInfo) {
     Alert.alert('Registered For Azure notification hub',
-      'Registered For Azure notification hub'
+      'Registered For Azure notification hub',
       [{
         text: 'Dismiss',
-        onPress: null,
+        onPress: () => {},
       }]
     );
   }
@@ -401,7 +401,7 @@ export default class App extends Component {
       `Error (${error.code}): ${error.message}`,
       [{
         text: 'Dismiss',
-        onPress: null,
+        onPress: () => {},
       }]
     );
   }
@@ -413,7 +413,7 @@ export default class App extends Component {
       'Alert message: ' + notification.getMessage(),
       [{
         text: 'Dismiss',
-        onPress: null,
+        onPress: () => {},
       }]
     );
   }
@@ -436,5 +436,16 @@ const styles = StyleSheet.create({
     color: '#333333',
     marginBottom: 5,
   },
+  button: {
+    backgroundColor: '#295a7b',
+    borderRadius: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 14,
+  },
+  buttonText: {
+    color: '#333333',
+  },
 });
+
 ```
