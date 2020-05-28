@@ -171,7 +171,7 @@ On the [Azure Portal](https://portal.azure.com) page for your notification hub, 
 
 ![Get Connection String](img/GetConnectionString.png)
 
-The example below shows how you can register and unregister from Azure Notification Hub in your React component.
+The example below shows how you can register and unregister from Azure Notification Hub in your React Native component.
 
 ```js
 import React, { Component } from 'react';
@@ -193,7 +193,7 @@ const EVENT_REMOTE_NOTIFICATION_RECEIVED                = 'remoteNotificationRec
 const connectionString = '...';       // The Notification Hub connection string
 const hubName = '...';                // The Notification Hub name
 const senderID = '...';               // The Sender ID from the Cloud Messaging tab of the Firebase console
-const tags = [ ... ];                 // The set of tags to subscribe to
+const tags = [ '...' ];               // The set of tags to subscribe to.  See notes after code sample
 const channelName = '...';            // The channel's name (optional)
 const channelDescription = '...';     // The channel's description (optional)
 const channelImportance = 3;          // The channel's importance (NotificationManager.IMPORTANCE_DEFAULT = 3) (optional)
@@ -216,7 +216,7 @@ export default class App extends Component {
 
   register() {
     PushNotificationEmitter.addListener(EVENT_AZURE_NOTIFICATION_HUB_REGISTERED, this._onAzureNotificationHubRegistered);
-    PushNotificationEmitter.addListener(EVENT_AZURE_NOTIFICATION_HUB_REGISTERED_ERROR, this._onAzureNotificationHubRegisteredError);
+    PushNotificationEmitter.addListener(EVENT_AZURE_NOTIFICATION_HUB_REGISTERED_ERROR, this._onAzureNotificationHubRegistrationError);
 
     NotificationHub.register({
       connectionString,
@@ -230,13 +230,13 @@ export default class App extends Component {
       channelEnableLights,
       channelEnableVibration
     })
-    .then((res) => console.warn(res))
-    .catch(reason => console.warn(reason));
+    .then(console.log)
+    .catch(console.warn);
   }
 
   registerTemplate() {
     PushNotificationEmitter.addListener(EVENT_AZURE_NOTIFICATION_HUB_REGISTERED, this._onAzureNotificationHubRegistered);
-    PushNotificationEmitter.addListener(EVENT_AZURE_NOTIFICATION_HUB_REGISTERED_ERROR, this._onAzureNotificationHubRegisteredError);
+    PushNotificationEmitter.addListener(EVENT_AZURE_NOTIFICATION_HUB_REGISTERED_ERROR, this._onAzureNotificationHubRegistrationError);
 
     NotificationHub.registerTemplate({
       connectionString,
@@ -252,38 +252,38 @@ export default class App extends Component {
       channelEnableLights,
       channelEnableVibration
     })
-    .then((res) => console.warn(res))
-    .catch(reason => console.warn(reason));
+    .then(console.log)
+    .catch(console.warn);
   }
 
   getInitialNotification() {
     NotificationHub.getInitialNotification()
-    .then((res) => console.warn(res))
-    .catch(reason => console.warn(reason));
+    .then(console.log)
+    .catch(console.warn);
   }
 
   getUUID() {
     NotificationHub.getUUID(false)
-    .then((res) => console.warn(res))
-    .catch(reason => console.warn(reason));
+    .then(console.log)
+    .catch(console.warn);
   }
 
   isNotificationEnabledOnOSLevel() {
     NotificationHub.isNotificationEnabledOnOSLevel()
-    .then((res) => console.warn(res))
-    .catch(reason => console.warn(reason));
+    .then(console.log)
+    .catch(console.warn);
   }
 
   unregister() {
     NotificationHub.unregister()
-    .then((res) => console.warn(res))
-    .catch(reason => console.warn(reason));
+    .then(console.log)
+    .catch(console.warn);
   }
 
   unregisterTemplate() {
     NotificationHub.unregisterTemplate(templateName)
-    .then((res) => console.warn(res))
-    .catch(reason => console.warn(reason));
+    .then(console.log)
+    .catch(console.warn);
   }
 
   render() {
@@ -346,7 +346,7 @@ export default class App extends Component {
     console.warn('RegistrationID: ' + registrationID);
   }
 
-  _onAzureNotificationHubRegisteredError(error) {
+  _onAzureNotificationHubRegistrationError(error) {
     console.warn('Error: ' + error);
   }
 
@@ -356,21 +356,38 @@ export default class App extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+	container: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: '#FFF',
+	},
+	welcome: {
+		fontSize: 20,
+		textAlign: 'center',
+		margin: 10,
+	},
+	instructions: {
+		textAlign: 'center',
+		color: '#FFF',
+		marginBottom: 5,
+	},
+	button: {
+		backgroundColor: '#0071c9',
+		borderRadius: 4,
+		justifyContent: 'center',
+		alignItems: 'center',
+		padding: 14,
+		marginVertical: 14,
+	},
+	buttonText: {
+		color: '#FFF',
+	},
 });
 ```
+
+## A Note On Tags
+
+Azure Notification Hubs uses "tags" to target notifications.  To receive targeted notifications, a device subscribes to those tags when registering (they are sent in an array by the `register` and `registerTemplate` methods above).  So, if you want to send a notification to one device, that device must register on a unique tag, and report that tag to your backend, where it can be associated with your user.  This is a contrast to other notification platforms, which often give you a unique ID during the registration process for this purpose.
+
+Needing to supply your own unique, non-random string (you'll want it again when you unregister the device in your backend) could lead to the temptation to use the device's unique identifier (device ID/UDID) to register for notifications.  [There are numerous privacy and security reasons not to do this](https://books.nowsecure.com/secure-mobile-development/en/sensitive-data/limit-use-of-uuid.html).

@@ -166,7 +166,7 @@ Add the following line to your `ios/Podfile` file and run **pod install**
     return YES;
 }
 
-// Invoked when the app successfully registered with Apple Push Notification service (APNs).
+// Invoked when the app successfully registers with Apple Push Notification service (APNs).
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken
 {
     [RCTAzureNotificationHubManager didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
@@ -178,7 +178,7 @@ Add the following line to your `ios/Podfile` file and run **pod install**
     [RCTAzureNotificationHubManager didFailToRegisterForRemoteNotificationsWithError:error];
 }
 
-// Invoked when a remote notification arrived and there is data to be fetched.
+// Invoked when a remote notification arrives and there is data to be fetched.
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
 fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandler
 {
@@ -186,7 +186,7 @@ fetchCompletionHandler:(void (^)(UIBackgroundFetchResult result))completionHandl
                                           fetchCompletionHandler:completionHandler];
 }
 
-// Invoked when a notification arrived while the app was running in the foreground.
+// Invoked when a notification arrives while the app was running in the foreground.
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center
        willPresentNotification:(UNNotification *)notification
          withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
@@ -217,7 +217,7 @@ On the [Azure Portal](https://portal.azure.com) page for your notification hub, 
 
 ![Get Connection String](img/GetConnectionString.png)
 
-The example below shows how you can register and unregister from Azure Notification Hub in your React component.
+The example below shows how you can register and unregister from Azure Notification Hub in your React Native component.
 
 ```js
 import React, { Component } from 'react';
@@ -233,7 +233,7 @@ const NotificationHub = require('react-native-azurenotificationhub/index.ios');
 
 const connectionString = '...';       // The Notification Hub connection string
 const hubName = '...';                // The Notification Hub name
-const tags = [ '...' ];                 // The set of tags to subscribe to
+const tags = [ '...' ];               // The set of tags to subscribe to.  See notes after code sample
 const template = '...';               // Notification hub templates:
                                       // https://docs.microsoft.com/en-us/azure/notification-hubs/notification-hubs-templates-cross-platform-push-messages
 const templateName = '...';           // The template's name
@@ -281,32 +281,32 @@ export default class App extends Component {
     // resolves to the current state of the permission of 
     // {alert: boolean, badge: boolean,sound: boolean }
     NotificationHub.requestPermissions()
-      .then((res) => console.warn(res))
-      .catch(reason => console.warn(reason));
+      .then(console.log)
+      .catch(console.warn);
   }
 
   register() {
     NotificationHub.register(remoteNotificationsDeviceToken, { connectionString, hubName, tags })
-      .then((res) => console.warn(res))
-      .catch(reason => console.warn(reason));
+      .then(console.log)
+      .catch(console.warn);
   }
 
   registerTemplate() {
     NotificationHub.registerTemplate(remoteNotificationsDeviceToken, { connectionString, hubName, tags, templateName, template })
-      .then((res) => console.warn(res))
-      .catch(reason => console.warn(reason));
+      .then(console.log)
+      .catch(console.warn);
   }
 
   unregister() {
     NotificationHub.unregister()
-      .then((res) => console.warn(res))
-      .catch(reason => console.warn(reason));
+      .then(console.log)
+      .catch(console.warn);
   }
 
   unregisterTemplate() {
     NotificationHub.unregisterTemplate(templateName)
-      .then((res) => console.warn(res))
-      .catch(reason => console.warn(reason));
+      .then(console.log)
+      .catch(console.warn);
   }
 
   render() {
@@ -420,32 +420,38 @@ export default class App extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-  button: {
-    backgroundColor: '#295a7b',
-    borderRadius: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
-    margin: 14,
-  },
-  buttonText: {
-    color: '#333333',
-  },
+	container: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: '#FFF',
+	},
+	welcome: {
+		fontSize: 20,
+		textAlign: 'center',
+		margin: 10,
+	},
+	instructions: {
+		textAlign: 'center',
+		color: '#FFF',
+		marginBottom: 5,
+	},
+	button: {
+		backgroundColor: '#0071c9',
+		borderRadius: 4,
+		justifyContent: 'center',
+		alignItems: 'center',
+		padding: 14,
+		marginVertical: 14,
+	},
+	buttonText: {
+		color: '#FFF',
+	},
 });
-
 ```
+
+## A Note On Tags
+
+Azure Notification Hubs uses "tags" to target notifications.  To receive targeted notifications, a device subscribes to those tags when registering (they are sent in an array by the `register` and `registerTemplate` methods above).  So, if you want to send a notification to one device, that device must register on a unique tag, and report that tag to your backend, where it can be associated with your user.  This is a contrast to other notification platforms, which often give you a unique ID during the registration process for this purpose.
+
+Needing to supply your own unique, non-random string (you'll want it again when you unregister the device in your backend) could lead to the temptation to use the device's unique identifier (device ID/UDID) to register for notifications.  [There are numerous privacy and security reasons not to do this](https://books.nowsecure.com/secure-mobile-development/en/sensitive-data/limit-use-of-uuid.html).
