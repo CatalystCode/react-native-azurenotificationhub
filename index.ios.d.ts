@@ -94,6 +94,7 @@ declare class IOSNotification {
     private _alert: string | IOSNotification.IOSAlert;
     private _sound: string;
     private _badgeCount: number;
+    private _category: string;
 
     static presentLocalNotification(details: IOSNotification.LocalNotification): void;
     static scheduleLocalNotification(details: IOSNotification.FutureLocalNotification): void;
@@ -126,6 +127,7 @@ declare class IOSNotification {
     public getMessage(): string | IOSNotification.IOSAlert;
     public getSound(): string;
     public getBadgeCount(): number;
+    public getCategory(): string;
     public getData(): any;
 }
 
