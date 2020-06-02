@@ -124,6 +124,7 @@ class AzureNotificationHubIOS {
   _alert: string | Object;
   _sound: string;
   _badgeCount: number;
+  _category: string;
 
   /**
    * Schedules the localNotification for immediate presentation.
@@ -216,7 +217,7 @@ class AzureNotificationHubIOS {
    */
   static addEventListener(type: PushNotificationEventName, handler: Function) {
     invariant(
-      type === 'notification' || type === 'register' || type === 'registrationError' || 
+      type === 'notification' || type === 'register' || type === 'registrationError' ||
       type === 'registerAzureNotificationHub' || type === 'azureNotificationHubRegistrationError' || type === 'localNotification',
       'AzureNotificationHubIOS only supports `notification`, `register`, `registrationError`, `registerAzureNotificationHub`, `azureNotificationHubRegistrationError` and `localNotification` events'
     );
@@ -273,7 +274,7 @@ class AzureNotificationHubIOS {
    */
   static removeEventListener(type: PushNotificationEventName, handler: Function) {
     invariant(
-      type === 'notification' || type === 'register' || type === 'registrationError' || 
+      type === 'notification' || type === 'register' || type === 'registrationError' ||
       type === 'registerAzureNotificationHub' || type === 'azureNotificationHubRegistrationError' || type === 'localNotification',
       'AzureNotificationHubIOS only supports `notification`, `register`, `registrationError`, `registerAzureNotificationHub`, `azureNotificationHubRegistrationError` and `localNotification` events'
     );
@@ -400,6 +401,7 @@ class AzureNotificationHubIOS {
           this._alert = notifVal.alert;
           this._sound = notifVal.sound;
           this._badgeCount = notifVal.badge;
+          this._category = notifVal.category;
         } else {
           this._data[notifKey] = notifVal;
         }
@@ -440,6 +442,13 @@ class AzureNotificationHubIOS {
    */
   getBadgeCount(): ?number {
     return this._badgeCount;
+  }
+
+  /**
+   * Gets the category from the `aps` object
+   */
+  getCategory(): ?string {
+    return this._category;
   }
 
   /**
