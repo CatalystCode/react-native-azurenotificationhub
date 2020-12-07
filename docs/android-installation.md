@@ -26,7 +26,7 @@ npm install react-native-azurenotificationhub
 ## Register app with Notification Hub
 
 * Log in to the [Firebase console](https://firebase.google.com/console/) and create a new Firebase project if you don't already have one.
-* After your project is created click **Add Firebase to your Android app** and folow the instructions provided.
+* After your project is created click **Add Firebase to your Android app** and follow the instructions provided.
 
 ![Add Firebase to Android](./img/AddFirebaseToAndroid.png).
 
@@ -34,7 +34,7 @@ npm install react-native-azurenotificationhub
 
 ![Firebase Project Settings](./img/FirebaseProjectSettings.png)
 
-* Click the **Cloud Messaging** tab in your project settings and copy the value of the **Server key** and **Sender ID**. The former will be used to configure the Notification Hub Access Policy and and the latter for your React Native module registration.
+* Click the **Cloud Messaging** tab in your project settings and copy the value of the **Server key** and **Sender ID**. The former will be used to configure the Notification Hub Access Policy and the latter for your React Native module registration.
 
 * Back on the [Azure Portal](https://portal.azure.com) page for your notification hub, select **Settings > Notification Services > Google (GCM)**. Enter the FCM **Server key** you copied from the [Firebase console](https://firebase.google.com/console/) and click **Save**.
 
