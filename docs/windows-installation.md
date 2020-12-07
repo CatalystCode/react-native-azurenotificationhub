@@ -55,11 +55,11 @@ npm install react-native-azurenotificationhub
 ![Add Existing Project](./img/AddExistingProject.png)
 
 * Assuming you've already installed `react-native-azurenotificationhub` with NPM, find and select `ReactWindowsAzureNotificationHub.csproj` in `.\node_modules\react-native-azurenotificationhub\windows\ReactWindowsAzureNotificationHub`.
-* Right-click the Windows Store app project, click ** Add > Reference**, and check `ReactWindowsAzureNotificationHub` from **Projects > Solution**.
+* Right-click the Windows Store app project, click **Add > Reference**, and check `ReactWindowsAzureNotificationHub` from **Projects > Solution**.
 
 ![Add Reference](./img/AddReference.png)
 
-* In **MainPage.cs** of your Windows Store app, add the the `ReactAzureNotificationHubPacakge` to your configured set of packages:
+* In **MainPage.cs** of your Windows Store app, add the `ReactAzureNotificationHubPackage` to your configured set of packages:
 
 ```c#
 using ReactWindowsAzureNotificationHub;
