@@ -4,8 +4,8 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 
 public class ReactNativeNotificationChannelBuilder {
-    private String mID = 'channel_goaltune';
-    private CharSequence mName = "rn-push-notification-channel-name";
+    private String mID = "channel_goaltune";
+    private CharSequence mName = "Goal Tune";
     private int mImportance = NotificationManager.IMPORTANCE_DEFAULT;
     private boolean mShowBadge = true;
     private boolean mEnableLights = true;
@@ -32,6 +32,11 @@ public class ReactNativeNotificationChannelBuilder {
         }
 
         return channel;
+    }
+
+    public ReactNativeNotificationChannelBuilder setID(String id) {
+        this.mID = id;
+        return this;
     }
 
     public ReactNativeNotificationChannelBuilder setName(CharSequence name) {

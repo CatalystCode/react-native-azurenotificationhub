@@ -3,7 +3,7 @@ package com.azure.reactnative.notificationhub;
 public final class ReactNativeConstants {
     // Notification
     public static final String AZURE_NOTIFICATION_HUB_NAME = "AzureNotificationHub";
-    public static final String NOTIFICATION_CHANNEL_ID = "rn-push-notification-channel-id";
+    public static final String NOTIFICATION_CHANNEL_ID = "channel_goaltune";
     public static final String KEY_NOTIFICATION_PAYLOAD_TYPE = "notification";
     public static final String KEY_DATA_PAYLOAD_TYPE = "data";
 
