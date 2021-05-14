@@ -4,11 +4,11 @@ declare namespace AzureNotificationHub {
         hubName: string;
         senderID: string;
         tags: string[];
-        channelName: string;
-        channelImportance: boolean;
-        channelShowBadge: boolean;
-        channelEnableLights: boolean;
-        channelEnableVibration: boolean;
+        channelName?: string;
+        channelImportance?: boolean;
+        channelShowBadge?: boolean;
+        channelEnableLights?: boolean;
+        channelEnableVibration?: boolean;
     }
 
     export interface TemplateRegistrationConfig extends RegistrationConfig {
