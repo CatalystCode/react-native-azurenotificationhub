@@ -402,7 +402,6 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
     public void onHostDestroy() {
     }
 
-    @Override
     public void onNewIntent(Intent intent) {
         Bundle bundle = ReactNativeUtil.getBundleFromIntent(intent);
         if (bundle != null) {
