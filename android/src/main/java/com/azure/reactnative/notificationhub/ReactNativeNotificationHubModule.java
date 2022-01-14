@@ -154,6 +154,11 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
             notificationHubUtil.setChannelEnableVibration(reactContext, channelEnableVibration);
         }
 
+        if (config.hasKey(KEY_REGISTRATION_BACKGROUNDTASK)) {
+            String backgroundTaskName = config.getString(KEY_REGISTRATION_BACKGROUNDTASK);
+            notificationHubUtil.setBackgroundTaskName(reactContext, backgroundTaskName);
+        }
+
         String uuid = notificationHubUtil.getUUID(reactContext);
         if (uuid == null) {
             uuid = ReactNativeUtil.genUUID();

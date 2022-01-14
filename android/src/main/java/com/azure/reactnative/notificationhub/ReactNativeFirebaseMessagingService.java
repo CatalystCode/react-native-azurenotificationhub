@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.facebook.react.HeadlessJsTaskService;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -96,9 +97,28 @@ public class ReactNativeFirebaseMessagingService extends FirebaseMessagingServic
             bundle.putBoolean(KEY_REMOTE_NOTIFICATION_USER_INTERACTION, false);
             bundle.putBoolean(KEY_REMOTE_NOTIFICATION_COLDSTART, false);
         } else {
+            runBackgroundTask(this, bundle);
             ReactNativeNotificationsHandler.sendNotification(this, bundle, notificationChannelID);
         }
 
         ReactNativeNotificationsHandler.sendBroadcast(this, bundle, 0);
+    }
+    private void sendToBackground(Context context, final Bundle bundle, final String taskName) {
+        HeadlessJsTaskService.acquireWakeLockNow(context);
+        Intent service = new Intent(context, ReactNativeBackgroundTaskService.class);
+        Bundle serviceBundle = new Bundle(bundle);
+        serviceBundle.putString("taskName", taskName);
+        service.putExtras(serviceBundle);
+        context.startService(service);
+    }
+
+    private void runBackgroundTask(Context context, Bundle bundle) {
+        Log.d(TAG, "running background task for bundle " + bundle.toString());
+        String taskName = ReactNativeNotificationHubUtil.getInstance().getBackgroundTaskName(context);
+        if (taskName != null) {
+            sendToBackground(context, bundle, taskName);
+        } else {
+            Log.w(TAG, "No task name");
+        }
     }
 }
