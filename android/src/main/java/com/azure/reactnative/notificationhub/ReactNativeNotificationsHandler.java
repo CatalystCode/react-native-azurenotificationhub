@@ -1,5 +1,6 @@
 package com.azure.reactnative.notificationhub;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -67,6 +68,10 @@ public final class ReactNativeNotificationsHandler {
         });
     }
 
+    public static boolean getBooleanFrom(final String key, final Bundle bundle) {
+        return bundle.containsKey(key) && Boolean.parseBoolean(bundle.getString(key));
+    }
+
     /**
      * Used for "data" payload type in order to create a notification and announce it using
      * notification service.
@@ -77,6 +82,7 @@ public final class ReactNativeNotificationsHandler {
                                         final Bundle bundle,
                                         final String notificationChannelID) {
         ReactNativeUtil.runInWorkerThread(new Runnable() {
+            @SuppressLint("NewApi")
             public void run() {
                 try {
                     Class intentClass = ReactNativeUtil.getMainActivityClass(context);
@@ -113,7 +119,7 @@ public final class ReactNativeNotificationsHandler {
                             bundle.getString(KEY_REMOTE_NOTIFICATION_TICKER),
                             NotificationCompat.VISIBILITY_PRIVATE,
                             priority,
-                            bundle.getBoolean(KEY_REMOTE_NOTIFICATION_AUTO_CANCEL, true));
+                            getBooleanFrom(KEY_REMOTE_NOTIFICATION_AUTO_CANCEL, bundle));
 
                     String group = bundle.getString(KEY_REMOTE_NOTIFICATION_GROUP);
                     if (group != null) {
@@ -161,13 +167,14 @@ public final class ReactNativeNotificationsHandler {
                     // Create notification intent
                     Intent intent = ReactNativeUtil.createNotificationIntent(context, bundle, intentClass);
 
-                    if (!bundle.containsKey(KEY_REMOTE_NOTIFICATION_PLAY_SOUND) || bundle.getBoolean(KEY_REMOTE_NOTIFICATION_PLAY_SOUND)) {
+                    if (!bundle.containsKey(KEY_REMOTE_NOTIFICATION_PLAY_SOUND)
+                            || getBooleanFrom(KEY_REMOTE_NOTIFICATION_PLAY_SOUND, bundle)) {
                         Uri soundUri = ReactNativeUtil.getSoundUri(context, bundle);
                         notificationBuilder.setSound(soundUri);
                     }
 
                     if (bundle.containsKey(KEY_REMOTE_NOTIFICATION_ONGOING)) {
-                        notificationBuilder.setOngoing(bundle.getBoolean(KEY_REMOTE_NOTIFICATION_ONGOING));
+                        notificationBuilder.setOngoing(getBooleanFrom(KEY_REMOTE_NOTIFICATION_ONGOING, bundle));
                     }
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -181,15 +188,24 @@ public final class ReactNativeNotificationsHandler {
 
                     int notificationID = bundle.getString(KEY_REMOTE_NOTIFICATION_ID).hashCode();
                     PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationID, intent,
-                            PendingIntent.FLAG_UPDATE_CURRENT);
+                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                                    ? PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+                                    : PendingIntent.FLAG_UPDATE_CURRENT
+                    );
                     notificationBuilder.setContentIntent(pendingIntent);
 
-                    if (!bundle.containsKey(KEY_REMOTE_NOTIFICATION_VIBRATE) || bundle.getBoolean(KEY_REMOTE_NOTIFICATION_VIBRATE)) {
+                    if (!bundle.containsKey(KEY_REMOTE_NOTIFICATION_VIBRATE)
+                            || getBooleanFrom(KEY_REMOTE_NOTIFICATION_VIBRATE, bundle)) {
                         long vibration = bundle.containsKey(KEY_REMOTE_NOTIFICATION_VIBRATION) ?
                                 (long) bundle.getDouble(KEY_REMOTE_NOTIFICATION_VIBRATION) : DEFAULT_VIBRATION;
                         if (vibration == 0)
                             vibration = DEFAULT_VIBRATION;
                         notificationBuilder.setVibrate(new long[]{0, vibration});
+                    }
+
+                    if (getBooleanFrom(KEY_REMOTE_NOTIFICATION_FULL_SCREEN_INTENT, bundle)) {
+                        Log.d(TAG, "Starting full screen intent");
+                        notificationBuilder.setFullScreenIntent(pendingIntent, true);
                     }
 
                     // Process notification's actions

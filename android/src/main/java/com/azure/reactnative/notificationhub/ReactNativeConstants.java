@@ -73,6 +73,7 @@ public final class ReactNativeConstants {
     public static final String KEY_REMOTE_NOTIFICATION_USER_INTERACTION = "userInteraction";
     public static final String KEY_REMOTE_NOTIFICATION_COLDSTART = "coldstart";
     public static final String KEY_REMOTE_NOTIFICATION_AVATAR_URL = "avatarUrl";
+    public static final String KEY_REMOTE_NOTIFICATION_FULL_SCREEN_INTENT = "fullScreenIntent";
 
     // Remote notification payload's priority
     public static final String REMOTE_NOTIFICATION_PRIORITY_MAX = "max";
