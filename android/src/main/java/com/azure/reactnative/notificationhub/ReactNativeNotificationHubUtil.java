@@ -209,6 +209,14 @@ public class ReactNativeNotificationHubUtil {
         setPref(context, KEY_FOR_PREFS_UUID, uuid);
     }
 
+    public String getBackgroundTaskName(Context context) {
+        return getPref(context, KEY_FOR_PREFS_BACKGROUND_TASK_NAME);
+    }
+
+    public void setBackgroundTaskName(Context context, String taskName) {
+        setPref(context, KEY_FOR_PREFS_BACKGROUND_TASK_NAME, taskName);
+    }
+
     public void setAppIsForeground(boolean isForeground) {
         mIsForeground = isForeground;
     }

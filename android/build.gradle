@@ -1,3 +1,17 @@
+buildscript {
+    if (project == rootProject) {
+        repositories {
+            google()
+            mavenCentral()
+            jcenter()
+        }
+
+        dependencies {
+            classpath 'com.android.tools.build:gradle:4.0.2'
+        }
+    }
+}
+
 apply plugin: 'com.android.library'
 
 android {
@@ -28,9 +42,17 @@ dependencies {
     implementation 'com.microsoft.azure:notification-hubs-android-sdk:0.6@aar'
 }
 
+
 repositories {
+    mavenLocal()
+    maven {
+        // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+        url("$rootDir/../node_modules/react-native/android")
+    }
+    google()
+    mavenCentral()
+    jcenter()
     maven {
         url "http://dl.bintray.com/microsoftazuremobile/SDK"
     }
 }
-
