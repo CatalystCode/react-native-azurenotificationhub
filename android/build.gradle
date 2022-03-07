@@ -12,6 +12,20 @@ buildscript {
     }
 }
 
+buildscript {
+    if (project == rootProject) {
+        repositories {
+            google()
+            mavenCentral()
+            jcenter()
+        }
+
+        dependencies {
+            classpath 'com.android.tools.build:gradle:3.6.4'
+        }
+    }
+}
+
 apply plugin: 'com.android.library'
 
 android {
@@ -55,4 +69,12 @@ repositories {
     maven {
         url "http://dl.bintray.com/microsoftazuremobile/SDK"
     }
+    mavenLocal()
+    maven {
+        // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
+        url("$rootDir/../node_modules/react-native/android")
+    }
+    google()
+    mavenCentral()
+    jcenter()
 }

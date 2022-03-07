@@ -59,6 +59,7 @@ public class ReactNativeFirebaseMessagingService extends FirebaseMessagingServic
                     notificationChannelID = channel.getId();
                 }
             }
+            Log.d(TAG, "createNotificationChannel ended. Channel ID is " + notificationChannelID);
         }
     }
 
@@ -103,14 +104,6 @@ public class ReactNativeFirebaseMessagingService extends FirebaseMessagingServic
 
         ReactNativeNotificationsHandler.sendBroadcast(this, bundle, 0);
     }
-    private void sendToBackground(Context context, final Bundle bundle, final String taskName) {
-        HeadlessJsTaskService.acquireWakeLockNow(context);
-        Intent service = new Intent(context, ReactNativeBackgroundTaskService.class);
-        Bundle serviceBundle = new Bundle(bundle);
-        serviceBundle.putString("taskName", taskName);
-        service.putExtras(serviceBundle);
-        context.startService(service);
-    }
 
     private void runBackgroundTask(Context context, Bundle bundle) {
         Log.d(TAG, "running background task for bundle " + bundle.toString());
@@ -120,5 +113,14 @@ public class ReactNativeFirebaseMessagingService extends FirebaseMessagingServic
         } else {
             Log.w(TAG, "No task name");
         }
+    }
+
+    private void sendToBackground(Context context, final Bundle bundle, final String taskName) {
+        HeadlessJsTaskService.acquireWakeLockNow(context);
+        Intent service = new Intent(context, ReactNativeBackgroundTaskService.class);
+        Bundle serviceBundle = new Bundle(bundle);
+        serviceBundle.putString("taskName", taskName);
+        service.putExtras(serviceBundle);
+        context.startService(service);
     }
 }
