@@ -29,10 +29,10 @@ public final class ReactNativeNotificationsHandler {
 
     /**
      * Used for both "notification" and "data" payload types in order to notify a running ReactJS app.
-     *
+     * <p>
      * Example:
-     *  {"data":{"message":"Notification Hub test notification"}} // data
-     *  {"notification":{"body":"Notification Hub test notification"}} // notification
+     * {"data":{"message":"Notification Hub test notification"}} // data
+     * {"notification":{"body":"Notification Hub test notification"}} // notification
      */
     public static void sendBroadcast(final Context context, final Intent intent, final long delay) {
         ReactNativeUtil.runInWorkerThread(new Runnable() {
@@ -49,10 +49,10 @@ public final class ReactNativeNotificationsHandler {
 
     /**
      * Used for both "notification" and "data" payload types in order to notify a running ReactJS app.
-     *
+     * <p>
      * Example:
-     *  {"data":{"message":"Notification Hub test notification"}} // data
-     *  {"notification":{"body":"Notification Hub test notification"}} // notification
+     * {"data":{"message":"Notification Hub test notification"}} // data
+     * {"notification":{"body":"Notification Hub test notification"}} // notification
      */
     public static void sendBroadcast(final Context context, final Bundle bundle, final long delay) {
         ReactNativeUtil.runInWorkerThread(new Runnable() {
@@ -72,146 +72,146 @@ public final class ReactNativeNotificationsHandler {
         return bundle.containsKey(key) && Boolean.parseBoolean(bundle.getString(key));
     }
 
+    public static Notification buildNotification(final Context context,
+                                                 final Bundle bundle,
+                                                 final String notificationChannelID,
+                                                 int notificationID) {
+        Class intentClass = ReactNativeUtil.getMainActivityClass(context);
+        if (intentClass == null) {
+            Log.e(TAG, ERROR_NO_ACTIVITY_CLASS);
+            throw new IllegalStateException("No Activity Class");
+        }
+
+        String message = bundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE);
+        if (message == null) {
+            message = bundle.getString(KEY_REMOTE_NOTIFICATION_BODY);
+        }
+
+        if (message == null) {
+            Log.e(TAG, ERROR_NO_MESSAGE);
+            throw new IllegalArgumentException(String.format("Did not found key \"%s\" or \"%s\" in bundle, which is required", KEY_REMOTE_NOTIFICATION_MESSAGE, KEY_REMOTE_NOTIFICATION_BODY));
+        }
+
+        Resources res = context.getResources();
+        String packageName = context.getPackageName();
+
+        String title = bundle.getString(KEY_REMOTE_NOTIFICATION_TITLE);
+        if (title == null) {
+            ApplicationInfo appInfo = context.getApplicationInfo();
+            title = context.getPackageManager().getApplicationLabel(appInfo).toString();
+        }
+
+        int priority = ReactNativeUtil.getNotificationCompatPriority(
+                bundle.getString(KEY_REMOTE_NOTIFICATION_PRIORITY));
+        NotificationCompat.Builder notificationBuilder = ReactNativeUtil.initNotificationCompatBuilder(
+                context,
+                notificationChannelID,
+                title,
+                bundle.getString(KEY_REMOTE_NOTIFICATION_TICKER),
+                NotificationCompat.VISIBILITY_PRIVATE,
+                priority,
+                bundle.getBoolean(KEY_REMOTE_NOTIFICATION_AUTO_CANCEL, true));
+
+        String group = bundle.getString(KEY_REMOTE_NOTIFICATION_GROUP);
+        if (group != null) {
+            notificationBuilder.setGroup(group);
+        }
+
+        notificationBuilder.setContentText(message);
+
+        String subText = bundle.getString(KEY_REMOTE_NOTIFICATION_SUB_TEXT);
+        if (subText != null) {
+            notificationBuilder.setSubText(subText);
+        }
+
+        String numberString = bundle.getString(KEY_REMOTE_NOTIFICATION_NUMBER);
+        if (numberString != null) {
+            notificationBuilder.setNumber(Integer.parseInt(numberString));
+        }
+
+        int smallIconResId = ReactNativeUtil.getSmallIcon(bundle, res, packageName);
+        notificationBuilder.setSmallIcon(smallIconResId);
+
+        if (bundle.getString(KEY_REMOTE_NOTIFICATION_AVATAR_URL) == null) {
+            String largeIcon = bundle.getString(KEY_REMOTE_NOTIFICATION_LARGE_ICON);
+            int largeIconResId = ReactNativeUtil.getLargeIcon(bundle, largeIcon, res, packageName);
+            Bitmap largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
+            if (largeIconResId != 0 && (
+                    largeIcon != null ||
+                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
+                notificationBuilder.setLargeIcon(largeIconBitmap);
+            }
+        } else {
+            Bitmap largeIconBitmap = ReactNativeUtil.fetchImage(
+                    bundle.getString(KEY_REMOTE_NOTIFICATION_AVATAR_URL));
+            if (largeIconBitmap != null) {
+                notificationBuilder.setLargeIcon(largeIconBitmap);
+            }
+        }
+
+        String bigText = bundle.getString(KEY_REMOTE_NOTIFICATION_BIG_TEXT);
+        if (bigText == null) {
+            bigText = message;
+        }
+        notificationBuilder.setStyle(ReactNativeUtil.getBigTextStyle(bigText));
+
+        // Create notification intent
+        Intent intent = ReactNativeUtil.createNotificationIntent(context, bundle, intentClass);
+
+        if (!bundle.containsKey(KEY_REMOTE_NOTIFICATION_PLAY_SOUND) || bundle.getBoolean(KEY_REMOTE_NOTIFICATION_PLAY_SOUND)) {
+            Uri soundUri = ReactNativeUtil.getSoundUri(context, bundle);
+            notificationBuilder.setSound(soundUri);
+        }
+
+        if (bundle.containsKey(KEY_REMOTE_NOTIFICATION_ONGOING)) {
+            notificationBuilder.setOngoing(bundle.getBoolean(KEY_REMOTE_NOTIFICATION_ONGOING));
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            notificationBuilder.setCategory(NotificationCompat.CATEGORY_CALL);
+
+            String color = bundle.getString(KEY_REMOTE_NOTIFICATION_COLOR);
+            if (color != null) {
+                notificationBuilder.setColor(Color.parseColor(color));
+            }
+        }
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationID, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        notificationBuilder.setContentIntent(pendingIntent);
+
+        if (!bundle.containsKey(KEY_REMOTE_NOTIFICATION_VIBRATE) || bundle.getBoolean(KEY_REMOTE_NOTIFICATION_VIBRATE)) {
+            long vibration = bundle.containsKey(KEY_REMOTE_NOTIFICATION_VIBRATION) ?
+                    (long) bundle.getDouble(KEY_REMOTE_NOTIFICATION_VIBRATION) : DEFAULT_VIBRATION;
+            if (vibration == 0)
+                vibration = DEFAULT_VIBRATION;
+            notificationBuilder.setVibrate(new long[]{0, vibration});
+        }
+
+        if (bundle.containsKey(KEY_REMOTE_NOTIFICATION_FULL_SCREEN_INTENT) && bundle.getBoolean(KEY_REMOTE_NOTIFICATION_FULL_SCREEN_INTENT)) {
+            notificationBuilder.setFullScreenIntent(pendingIntent, true);
+        }
+
+        // Process notification's actions
+        ReactNativeUtil.processNotificationActions(context, bundle, notificationBuilder, notificationID);
+        return notificationBuilder.build();
+    }
+
     /**
      * Used for "data" payload type in order to create a notification and announce it using
      * notification service.
-     *
+     * <p>
      * Example: {"data":{"message":"Notification Hub test notification"}}
      */
     public static void sendNotification(final Context context,
                                         final Bundle bundle,
                                         final String notificationChannelID) {
         ReactNativeUtil.runInWorkerThread(new Runnable() {
-            @SuppressLint("NewApi")
             public void run() {
                 try {
-                    Class intentClass = ReactNativeUtil.getMainActivityClass(context);
-                    if (intentClass == null) {
-                        Log.e(TAG, ERROR_NO_ACTIVITY_CLASS);
-                        return;
-                    }
-
-                    String message = bundle.getString(KEY_REMOTE_NOTIFICATION_MESSAGE);
-                    if (message == null) {
-                        message = bundle.getString(KEY_REMOTE_NOTIFICATION_BODY);
-                    }
-
-                    if (message == null) {
-                        Log.e(TAG, ERROR_NO_MESSAGE);
-                        return;
-                    }
-
-                    Resources res = context.getResources();
-                    String packageName = context.getPackageName();
-
-                    String title = bundle.getString(KEY_REMOTE_NOTIFICATION_TITLE);
-                    if (title == null) {
-                        ApplicationInfo appInfo = context.getApplicationInfo();
-                        title = context.getPackageManager().getApplicationLabel(appInfo).toString();
-                    }
-
-                    int priority = ReactNativeUtil.getNotificationCompatPriority(
-                            bundle.getString(KEY_REMOTE_NOTIFICATION_PRIORITY));
-                    NotificationCompat.Builder notificationBuilder = ReactNativeUtil.initNotificationCompatBuilder(
-                            context,
-                            notificationChannelID,
-                            title,
-                            bundle.getString(KEY_REMOTE_NOTIFICATION_TICKER),
-                            NotificationCompat.VISIBILITY_PRIVATE,
-                            priority,
-                            getBooleanFrom(KEY_REMOTE_NOTIFICATION_AUTO_CANCEL, bundle));
-
-                    String group = bundle.getString(KEY_REMOTE_NOTIFICATION_GROUP);
-                    if (group != null) {
-                        notificationBuilder.setGroup(group);
-                    }
-
-                    notificationBuilder.setContentText(message);
-
-                    String subText = bundle.getString(KEY_REMOTE_NOTIFICATION_SUB_TEXT);
-                    if (subText != null) {
-                        notificationBuilder.setSubText(subText);
-                    }
-
-                    String numberString = bundle.getString(KEY_REMOTE_NOTIFICATION_NUMBER);
-                    if (numberString != null) {
-                        notificationBuilder.setNumber(Integer.parseInt(numberString));
-                    }
-
-                    int smallIconResId = ReactNativeUtil.getSmallIcon(bundle, res, packageName);
-                    notificationBuilder.setSmallIcon(smallIconResId);
-
-                    if (bundle.getString(KEY_REMOTE_NOTIFICATION_AVATAR_URL) == null) {
-                        String largeIcon = bundle.getString(KEY_REMOTE_NOTIFICATION_LARGE_ICON);
-                        int largeIconResId = ReactNativeUtil.getLargeIcon(bundle, largeIcon, res, packageName);
-                        Bitmap largeIconBitmap = BitmapFactory.decodeResource(res, largeIconResId);
-                        if (largeIconResId != 0 && (
-                                largeIcon != null ||
-                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)) {
-                            notificationBuilder.setLargeIcon(largeIconBitmap);
-                        }
-                    } else {
-                        Bitmap largeIconBitmap = ReactNativeUtil.fetchImage(
-                                bundle.getString(KEY_REMOTE_NOTIFICATION_AVATAR_URL));
-                        if (largeIconBitmap != null) {
-                            notificationBuilder.setLargeIcon(largeIconBitmap);
-                        }
-                    }
-
-                    String bigText = bundle.getString(KEY_REMOTE_NOTIFICATION_BIG_TEXT);
-                    if (bigText == null) {
-                        bigText = message;
-                    }
-                    notificationBuilder.setStyle(ReactNativeUtil.getBigTextStyle(bigText));
-
-                    // Create notification intent
-                    Intent intent = ReactNativeUtil.createNotificationIntent(context, bundle, intentClass);
-
-                    if (!bundle.containsKey(KEY_REMOTE_NOTIFICATION_PLAY_SOUND)
-                            || getBooleanFrom(KEY_REMOTE_NOTIFICATION_PLAY_SOUND, bundle)) {
-                        Uri soundUri = ReactNativeUtil.getSoundUri(context, bundle);
-                        notificationBuilder.setSound(soundUri);
-                    }
-
-                    if (bundle.containsKey(KEY_REMOTE_NOTIFICATION_ONGOING)) {
-                        notificationBuilder.setOngoing(getBooleanFrom(KEY_REMOTE_NOTIFICATION_ONGOING, bundle));
-                    }
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        notificationBuilder.setCategory(NotificationCompat.CATEGORY_CALL);
-
-                        String color = bundle.getString(KEY_REMOTE_NOTIFICATION_COLOR);
-                        if (color != null) {
-                            notificationBuilder.setColor(Color.parseColor(color));
-                        }
-                    }
-
                     int notificationID = bundle.getString(KEY_REMOTE_NOTIFICATION_ID).hashCode();
-                    PendingIntent pendingIntent = PendingIntent.getActivity(context, notificationID, intent,
-                            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                                    ? PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-                                    : PendingIntent.FLAG_UPDATE_CURRENT
-                    );
-                    notificationBuilder.setContentIntent(pendingIntent);
-
-                    if (!bundle.containsKey(KEY_REMOTE_NOTIFICATION_VIBRATE)
-                            || getBooleanFrom(KEY_REMOTE_NOTIFICATION_VIBRATE, bundle)) {
-                        long vibration = bundle.containsKey(KEY_REMOTE_NOTIFICATION_VIBRATION) ?
-                                (long) bundle.getDouble(KEY_REMOTE_NOTIFICATION_VIBRATION) : DEFAULT_VIBRATION;
-                        if (vibration == 0)
-                            vibration = DEFAULT_VIBRATION;
-                        notificationBuilder.setVibrate(new long[]{0, vibration});
-                    }
-
-                    if (getBooleanFrom(KEY_REMOTE_NOTIFICATION_FULL_SCREEN_INTENT, bundle)) {
-                        Log.d(TAG, "Starting full screen intent");
-                        notificationBuilder.setFullScreenIntent(pendingIntent, true);
-                    }
-
-                    // Process notification's actions
-                    ReactNativeUtil.processNotificationActions(context, bundle, notificationBuilder, notificationID);
-
-                    Notification notification = notificationBuilder.build();
+                    Notification notification = ReactNativeNotificationsHandler.buildNotification(
+                            context, bundle, notificationChannelID, notificationID);
                     NotificationManager notificationManager = (NotificationManager) context.getSystemService(
                             Context.NOTIFICATION_SERVICE);
                     if (bundle.containsKey(KEY_REMOTE_NOTIFICATION_TAG)) {

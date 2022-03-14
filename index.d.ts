@@ -19,6 +19,31 @@ declare namespace AzureNotificationHub {
     export interface RegistrationResponse {
         uuid: string;
     }
+
+    export interface NotificationData {
+        message: string;
+        body?: string;
+        title: string;
+        ticker?: string;
+        autoCancel?: boolean;
+        group?: string;
+        largeIcon?: string;
+        subText?: string;
+        number?: string;
+        smallIcon?: string;
+        bigText?: string;
+        playSound?: boolean;
+        soundName?: string;
+        ongoing?: boolean;
+        color?: string;
+        vibrate?: boolean;
+        vibration?: string;
+        foreground?: string;
+        actions?: string;
+        action?: string;
+        tag?: string;
+        avatarUrl?: string;
+    }
 }
 
 declare class AzureNotificationHub {
@@ -29,6 +54,8 @@ declare class AzureNotificationHub {
     static getUUID(autoGen: boolean): Promise<string>;
     static getInitialNotification<T>(): Promise<T>;
     static isNotificationEnabledOnOSLevel(): Promise<boolean>;
+    static scheduleLocalNotification(notification: NotificationData, whenMs: string): Promise<number>;
+    static cancelScheduledNotification(notificationId: number);
 }
 
 export = AzureNotificationHub;

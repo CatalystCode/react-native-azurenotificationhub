@@ -20,6 +20,15 @@ public class ReactNativeFirebaseMessagingService extends FirebaseMessagingServic
 
     private static String notificationChannelID;
 
+    public static String getOrCreateNotificationChannel(Context context) {
+        if (notificationChannelID != null) {
+            return notificationChannelID;
+        } else {
+            createNotificationChannel(context);
+            return notificationChannelID;
+        }
+    }
+
     public static void createNotificationChannel(Context context) {
         if (notificationChannelID == null) {
             ReactNativeNotificationHubUtil notificationHubUtil = ReactNativeNotificationHubUtil.getInstance();

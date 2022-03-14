@@ -1,12 +1,17 @@
 package com.azure.reactnative.notificationhub;
 
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
+import androidx.core.app.AlarmManagerCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -28,15 +33,19 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.UiThreadUtil;
 
+import java.util.HashMap;
+
 import static com.azure.reactnative.notificationhub.ReactNativeConstants.*;
 
 public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule implements
         ActivityEventListener, LifecycleEventListener {
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final int NOTIFICATION_DELAY_ON_START = 3000;
+    private static final String TAG = "ReactNativeFMS";
 
     private ReactApplicationContext mReactContext;
     private LocalBroadcastReceiver mLocalBroadcastReceiver;
+    private HashMap<Integer, AlarmManager.OnAlarmListener> mScheduledNotifications = new HashMap();
 
     public ReactNativeNotificationHubModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -375,6 +384,50 @@ public class ReactNativeNotificationHubModule extends ReactContextBaseJavaModule
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(reactContext);
         boolean areNotificationsEnabled = notificationManagerCompat.areNotificationsEnabled();
         promise.resolve(areNotificationsEnabled);
+    }
+
+    @ReactMethod
+    public void scheduleLocalNotification(ReadableMap map, String timeMsString, Promise promise) {
+        final long timeMs = Long.parseLong(timeMsString);
+        final ReactContext reactContext = getReactApplicationContext();
+        final Bundle bundle = Arguments.toBundle(map);
+        if (bundle == null) {
+            Log.e(TAG, "Notification data could not be parsed or is null");
+            promise.reject("Bad Argument", "Notification data could not be parsed or is null");
+            return;
+        }
+        final String notificationChannel = ReactNativeFirebaseMessagingService.getOrCreateNotificationChannel(reactContext);
+        int notificationID = bundle.hashCode();
+        if (!bundle.containsKey(KEY_REMOTE_NOTIFICATION_ID)) {
+            bundle.putString(KEY_REMOTE_NOTIFICATION_ID, String.valueOf(notificationID));
+        }
+        AlarmManager alarmManager = (AlarmManager) reactContext.getSystemService(Context.ALARM_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Log.d(TAG, "Registering alarm " + bundle + "; for time " + timeMs);
+            AlarmManager.OnAlarmListener listener = new AlarmManager.OnAlarmListener() {
+                @Override
+                public void onAlarm() {
+                    ReactNativeNotificationsHandler.sendNotification(reactContext, bundle, notificationChannel);
+                }
+            };
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, timeMs, "SafetyApp Scheduled Notification",
+                    listener, null);
+            mScheduledNotifications.put(notificationID, listener);
+            promise.resolve(notificationID);
+        } else {
+            Log.e(TAG, "AlarmHandler not supported");
+            promise.reject("Not Supported", "AlarmHandler not supported");
+        }
+    }
+
+    @ReactMethod
+    public void cancelScheduledNotification(int id) {
+        if (mScheduledNotifications.containsKey(id) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            final ReactContext reactContext = getReactApplicationContext();
+            AlarmManager alarmManager = (AlarmManager) reactContext.getSystemService(Context.ALARM_SERVICE);
+            alarmManager.cancel(mScheduledNotifications.get(id));
+            mScheduledNotifications.remove(id);
+        }
     }
 
     @Override
