@@ -38,7 +38,8 @@ declare namespace AzureNotificationHub {
         color?: string;
         vibrate?: boolean;
         vibration?: string;
-        foreground?: string;
+        foreground?: boolean;
+        fullScreenIntent?: boolean;
         actions?: string;
         action?: string;
         tag?: string;
