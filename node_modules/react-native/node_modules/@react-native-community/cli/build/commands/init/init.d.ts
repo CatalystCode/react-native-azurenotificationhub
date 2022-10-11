@@ -1,0 +1,12 @@
+declare type Options = {
+    template?: string;
+    npm?: boolean;
+    directory?: string;
+    displayName?: string;
+    title?: string;
+    skipInstall?: boolean;
+    version?: string;
+};
+declare const _default: ([projectName]: string[], options: Options) => Promise<void>;
+export default _default;
+//# sourceMappingURL=init.d.ts.map

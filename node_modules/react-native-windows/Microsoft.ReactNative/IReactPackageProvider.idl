@@ -1,0 +1,20 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+import "IReactPackageBuilder.idl";
+
+#include "DocString.h"
+
+namespace Microsoft.ReactNative
+{
+  [webhosthidden]
+  DOC_STRING("Implement this interface to provide custom native modules and view managers.")
+  interface IReactPackageProvider
+  {
+    DOC_STRING(
+      "Creates a new package with help of the @IReactPackageBuilder.\n"
+      "Use the @IReactPackageBuilder to register custom native modules and view managers.")
+    void CreatePackage(IReactPackageBuilder packageBuilder);
+  };
+
+} // namespace Microsoft.ReactNative

@@ -22,8 +22,8 @@
   },
   "homepage": "https://github.com/CatalystCode/react-native-azurenotificationhub#readme",
   "devDependencies": {
-    "react": "^15.3.0",
-    "react-native": "^0.32.0",
-    "react-native-windows": "^0.32.0"
+    "react": "^18.1.0",
+    "react-native": "^0.70.2",
+    "react-native-windows": "^0.70.3"
   }
 }

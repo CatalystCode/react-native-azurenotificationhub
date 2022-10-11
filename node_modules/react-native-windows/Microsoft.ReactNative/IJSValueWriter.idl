@@ -1,0 +1,68 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
+#include "DocString.h"
+
+namespace Microsoft.ReactNative
+{
+  [webhosthidden]
+  DOC_STRING(
+    "JSON-like stream writer.\n"
+    "It is used to write data that is sent between native modules and the Microsoft.ReactNative library.\n"
+    "\n"
+    "The JSON-like streams are data structures that satisfy the "
+    "[JSON specification](https://tools.ietf.org/html/rfc8259). "
+    "The data structure may have objects with name-value pairs and arrays of items. "
+    "Property values or array items can be of type `Null`, `Object`, `Array`, `String`, `Boolean`, or `Number`. "
+    "The `IJSValueWriter` treats the `Number` type as `Int64` or `Double`. See @JSValueType.\n"
+    "\n"
+    "See the @IJSValueReader for the corresponding reader interface.\n"
+    "\n"
+    "The @IJSValueReader and @IJSValueWriter must be rarely used directly. "
+    "Use them to create functions that serialize a native type or deserialize into a native type. "
+    "The rest of application code must use these functions to serialize/deserialize values. "
+    "The `Microsoft.ReactNative.Cxx` and `Microsoft.ReactNative.Managed` projects offer "
+    "serializer/deserializer functions for many standard types. Use them directly or to define "
+    "serializer/deserializer functions for your types.")
+  // TODO: [vmorozov] Add a reference to serializer and deserializer functions for some standard types.
+  // TODO: [vmorozov] Add a reference to usage examples.
+  interface IJSValueWriter
+  {
+    DOC_STRING("Writes a `Null` value.")
+    void WriteNull();
+
+    DOC_STRING("Writes a `Boolean` value.")
+    void WriteBoolean(Boolean value);
+
+    DOC_STRING("Writes a `Number` value from an integer.")
+    void WriteInt64(Int64 value);
+
+    DOC_STRING("Writes a `Number` value from a double.")
+    void WriteDouble(Double value);
+
+    DOC_STRING("Writes a `String` value.")
+    void WriteString(String value);
+
+    DOC_STRING("Starts writing an `Object`.")
+    void WriteObjectBegin();
+
+    DOC_STRING(
+      "Writes a property name within an object. "
+      "This call should then be followed by writing the value of that property.")
+    void WritePropertyName(String name);
+
+    DOC_STRING("Completes writing an object.")
+    void WriteObjectEnd();
+
+    DOC_STRING("Starts writing an array.")
+    void WriteArrayBegin();
+
+    DOC_STRING("Completes writing an array.")
+    void WriteArrayEnd();
+  }
+
+  DOC_STRING(
+    "The `JSValueArgWriter` delegate is used to pass values to ABI API. \n"
+    "In a function that implements the delegate use the provided `writer` to stream custom values.")
+  delegate void JSValueArgWriter(IJSValueWriter writer);
+} // namespace Microsoft.ReactNative
